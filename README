@@ -1,0 +1,196 @@
+	===================
+	String Manipulation
+	===================
+
+string.split(s, pattern)
+------------------------
+Splits s into multiple substrings by removing all occurrences of pattern, and
+returns these substrings. For example, the call:
+
+	string.split("one two    three  ", "%s+")
+
+would return "one","two","three".
+
+string.trim(s)
+--------------
+Returns a copy of s with all leading and trailing whitespace removed.
+
+string.join(seperator, ...)
+---------------------------
+Equivalent to table.concat( {...}, seperator)
+
+string.rfind(s, pattern, init, plain)
+-------------------------------------
+Equivalent to string.find(), but returns the -last- occurence of the pattern
+in the string (ie, searches in reverse). Init can be either positive or negative
+and has the same meaning as in other string functions in either case.
+
+string.count(s, pattern)
+------------------------
+Returns the number of (non-overlapping) ocurrences of pattern in string.
+
+string.interpolate(s, data, seeall)
+-----------------------------------
+Searches s for sequences of the form $(expression) or $(expression|format)
+and recursively expands them in the following manner:
+- the expression is evaluated using the standard Lua syntax
+- all variable references are resolved in terms of the 'data' table
+- if seeall is true, references that cannot be found in data will be looked
+  up in the caller's environment
+- if no |format sequence is present, the first result of expression is passed to
+  tostring(), and the result of the expansion is the return value of same
+- if a |format sequence is present, it is passed to string.format() followed by
+  all results of expression, and the return value of string.format becomes the
+  result of the expansion
+Nested expansions are possible, and if the result of an expansion contains
+expansions itself, those too will be expanded. As a simple example:
+
+	> mem = collectgarbage 'count'
+	> str = "The Lua version is $(_VERSION), and I am currently using $(mem|%d)KB of memory."
+	> print(str:interpolate(_G))
+	The Lua version is Lua 5.1, and I am currently using 22KB of memory.
+
+FIXME: add more examples showing how you can use more complicated expressions
+
+
+	==================
+	Table Manipulation
+	==================
+
+table.resize(table, size, filler)
+---------------------------------
+Resizes the array part of table to be size elements long. If this is shorter
+than the current length, excess elements are cleared (set to nil). If this is
+longer, new elements are set to the return value of filler if filler is a
+function, or to filler itself if it is not. Returns table. Example:
+
+	foo = {}
+	table.resize(foo, 4, true)
+	=> { true, true, true, true }
+	table.resize(foo, 2)
+	=> { true, true }
+	table.resize(foo, 4, function() return 5 end)
+	=> { true, true, 5, 5 }
+
+table.print(table)
+------------------
+Recursively displays table and all subtables in an indented, human-readable
+form. If the same table appears multiple times it will print the table pointer
+but not any of its contents on occurences after the first.
+This does not generate output in a form the interpreter will understand; if you
+are trying to serialize a table, use table.dump.
+
+table.dump(table)
+-----------------
+Returns a string that, when loaded (with loadfile() or similar), produces a
+function that when called returns a copy of table. The serialization is not
+perfect, in particular:
+- any key-value pair which contains a userdata or coroutine will be cleared
+- upvalues will be nil once serialized closures are deserialized
+To save and load a table, you would do something like this:
+
+	saved = table.dump(T)
+	-- maybe you save it to a file now and read it back later or something
+	T = loadstring(saved)()
+
+table.copy(table, depth)
+------------------------
+Returns a copy of table, duplicated down to depth. Beyond depth, subtables are
+copied by reference rather than duplicated. Other objects are copied by reference
+or by value according to the = operator. Note that metatables are not copied;
+any resulting tables will be metatable-less.
+Omitting depth is equivalent to specifying math.huge. A depth of 0 causes it to
+return table without copying anything.
+
+
+	====
+	Math
+	====
+
+math.oct(str)
+-------------
+Returns a number that is the result of interpreting str as a base-8 number.
+Leading zeroes are not required. For example,
+
+	math.oct("14")
+
+would return 12.
+
+math.dsin(deg) math.dcos(deg) math.dtan(deg)
+--------------------------------------------
+Versions of math.sin, math.cos and math.tan that take arguments in degrees
+rather than in radians.
+
+math.dasin(sin) math.dacos(cos) math.datan(tan) math.datan2(tan)
+----------------------------------------------------------------
+Versions of math.asin, .acos, .atan, and .atan2 that return values in degrees
+rather than in radians.
+
+
+	=====
+	Other
+	=====
+
+pairs(table)
+------------
+Replaces the pairs() that comes with Lua with one that is identical in every
+respect, except that if table has a __pairs metamethod, that is called instead
+of the Lua builtin function.
+
+ipairs(table)
+-------------
+As pairs, but looks for an __ipairs metamethod.
+
+type(v)
+-------
+Identical to the builtin, except that if v has a __type metamethod, it calls
+that instead.
+
+fprintf(file, format, ...)
+--------------------------
+Equivalent to file:write(string.format(format, ...)). Also present in the __index
+table for files as "printf", so that you can write file:printf(format, ...)
+
+printf(fmt, ...)
+----------------
+Equivalent to io.stdout:printf(fmt, ...)
+
+eprintf(fmt, ...)
+-----------------
+Equivalent to io.stderr:printf(fmt, ...)
+
+sprintf(fmt, ...)
+-----------------
+An alias for string.format.
+
+memoize(fn)
+-----------
+Returns a version of fn that is memoized; that is to say, return values from fn
+are cached, and when called again with the same arguments, the cached value is
+returned. Memoize is itself memoized.
+
+getopts(args, ...)
+------------------
+Reads a list of valid flags from args and returns an iterator that parses its
+remaining arguments looking for these flags, similar to getopt(3).
+Arguments are parsed in the following manner:
+- The argument "--" stops flag processing; all subsequent arguments are assumed
+  to be plain arguments.
+- any other argument starting with "-" is assumed to be a flag or flag list
+- any character other than : or - that appears in args is considered a valid flag
+- flags can be concatenated; "-abc" is equivalent to "-a" "-b" "-c"
+- a flag that appears in args followed by : requires an argument
+- a flag that appears in args followed by - can take an argument, but does not
+  require one
+- both seperate arguments ("-a" "foo") and concatenated ones ("-afoo") are handled
+The iterator, on each sucessive call, returns two values. If a valid flag was
+found, the first value is the flag and the second value is its argument (or nil
+if it doesn't take an argument or no optional argument was found). If a non-
+flag argument is found, it returns true followed by the argument. On error
+conditions, it returns false followed by a string describing the error. Note
+that in the case of errors the iterator remains valid and you can continue
+calling it to parse the rest of the argument list.
+
+This isn't a very good explanation; you might want to skim the getopts(1) or
+getopt(3) man pages.
+FIXME: write better documentation for getopts.
