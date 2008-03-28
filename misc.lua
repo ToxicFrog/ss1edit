@@ -1,3 +1,8 @@
+-- new global functions, either replacing existing ones or providing new
+-- ones for convenience
+-- replacements: pairs, ipairs, type
+-- new: printf, fprintf, eprintf, sprintf, srequire, L
+
 -- new versions of pairs and ipairs that respect the metamethods for same
 local _pairs,_ipairs = pairs,ipairs
 

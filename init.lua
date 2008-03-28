@@ -1,4 +1,5 @@
 require 'util.table'
+require 'util.list'
 require 'util.string'
 require 'util.math'
 require 'util.misc'

@@ -1,22 +1,5 @@
-function table.resize(T, size, fill)
-	local filler
-	if type(fill) ~= "function" then
-		filler = function() return fill end
-	else
-		filler = fill
-	end
-	
-	if #T > size then
-		for i=#T,size,-1 do
-			T[i] = nil
-		end
-	elseif #T < size then
-		for i=#T+1,size,1 do
-			T[i] = filler()
-		end
-	end
-	return T
-end
+-- new functions related to tables
+-- functions that handle tables-as-lists go in list.lua
 
 -- tprint - recursively display the contents of a table
 -- does not generate something the terp can read; use table.dump() for that
@@ -37,6 +20,9 @@ function table.print(T)
 	tprint_r(T, "")
 end
 
+-- dump Lua code which, when loaded and called, returns a copy
+-- of the table passed to table.dump
+-- analogous to string.dump() on functions
 function table.dump(T)
 	dump = "local loadstring = loadstring\nsetfenv(1, {})\n\n"
 	ref = {}
@@ -96,6 +82,12 @@ function table.dump(T)
 	return dump.."return "..getref(T)
 end
 
+-- return a possibly-deep copy of the given table
+-- metatables are not copied, references are resolved
+-- appropriately
+-- depth 0 simply returns the same table, depth 1 is
+-- a shallow copy, etc
+-- the default value for depth is infinity
 function table.copy(from, depth)
 	ref = {}
 	depth = depth or math.huge
@@ -127,22 +119,31 @@ function table.copy(from, depth)
 	return tcopy(from, depth)
 end
 
-function table.max(t, cmp)
-	if #t == 0 then return nil end
-	
-	if not cmp then cmp = function(lhs, rhs) return lhs > rhs end end
-	
-	local max = t[1]
-	for i,v in ipairs(t) do
-		if cmp(v,max) then max = v end
+-- map over keys
+-- if multiple calls return the same key the result is undefined
+function table.mapk(f, t)
+	local tprime = {}
+	for k,v in pairs(t) do
+		tprime[f(k)] = v
 	end
-	return max
+	return tprime
 end
 
-function table.map(f, t)
+-- map over values
+function table.mapv(f, t)
 	local tprime = {}
 	for k,v in pairs(t) do
 		tprime[k] = f(v)
+	end
+	return tprime
+end
+
+-- map over keys and values
+function table.mapv(f, t)
+	local tprime = {}
+	for k,v in pairs(t) do
+		k,v = f(k,v)
+		tprime[k] = v
 	end
 	return tprime
 end

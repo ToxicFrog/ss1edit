@@ -1,7 +1,11 @@
+-- math-related functions
+
+-- convert octal string to number
 function math.oct(n)
 	return tonumber(n, 8)
 end
 
+-- convert binary string to number
 function math.bin(n)
 	return tonumber(n, 2)
 end

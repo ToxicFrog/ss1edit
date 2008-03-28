@@ -1,5 +1,12 @@
+-- new string-related functions, all of them placed in table string
+-- and thus callable with str:foo()
+-- split, trim, join, rfind, count, interpolate
+
 -- string... split(string, pattern. max) - break up string on pattern
+-- default value for pattern is to split on whitespace
+-- default value for max is infinity
 function string.split(s, pat, max)
+	pat = pat or "%s+"
 	max = max or nil
 	local count = 0
 	local i = 1
@@ -10,7 +17,7 @@ function string.split(s, pat, max)
 		result[#result+1] = eof
 	end
 	
-	if not pat or pat == "" then return s end
+	if pat == "" then return s end
 
 	s:gsub("()"..pat.."()", splitter, max)
 
