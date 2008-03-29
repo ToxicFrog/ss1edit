@@ -1,8 +1,10 @@
-require 'util.table'
-require 'util.list'
-require 'util.string'
-require 'util.math'
-require 'util.misc'
+local name = (...)
+
+require (name..'.table')
+require (name..'.list')
+require (name..'.string')
+require (name..'.math')
+require (name..'.misc')
 
 local unpack = unpack
 local coroutine = coroutine

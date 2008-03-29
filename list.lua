@@ -2,12 +2,14 @@
 -- resize, max, foldl/foldr, scanl/scanr, zipn/unzipn, zipwith, reverse, split, partition
 -- select, reject
 
+list = table
+
 -- resize a list-table to the given size
 -- when shrinking it, simply removes excess elements
 -- when growing it, fills new entries with the value of 'fill', which
 -- can either be a function that returns a value, or a value which
 -- will be copied directly
-function table.resize(T, size, fill)
+function list.resize(T, size, fill)
 	local filler
 	if type(fill) ~= "function" then
 		filler = function() return fill end
@@ -31,7 +33,7 @@ end
 -- uses cmp to do the comparison, it is expected to return
 -- true if the first argument is > the second
 -- if cmp is not provided, defaults to the standard operator >
-function table.max(t, cmp)
+function list.max(t, cmp)
 	if #t == 0 then return nil end
 	
 	if not cmp then cmp = function(lhs, rhs) return lhs > rhs end end
