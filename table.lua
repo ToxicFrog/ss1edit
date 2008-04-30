@@ -121,7 +121,7 @@ end
 
 -- map over keys
 -- if multiple calls return the same key the result is undefined
-function table.mapk(f, t)
+function table.mapk(t, f)
 	local tprime = {}
 	for k,v in pairs(t) do
 		tprime[f(k)] = v
@@ -130,7 +130,7 @@ function table.mapk(f, t)
 end
 
 -- map over values
-function table.mapv(f, t)
+function table.mapv(t, f)
 	local tprime = {}
 	for k,v in pairs(t) do
 		tprime[k] = f(v)
@@ -139,7 +139,7 @@ function table.mapv(f, t)
 end
 
 -- map over keys and values
-function table.mapv(f, t)
+function table.map(t, f)
 	local tprime = {}
 	for k,v in pairs(t) do
 		k,v = f(k,v)
