@@ -2,6 +2,14 @@
 -- and thus callable with str:foo()
 -- split, trim, join, rfind, count, interpolate
 
+-- python-style string formatting with %
+getmetatable("").__mod = function(fmt, data)
+	return fmt:format(unpack(
+		type(data) == "table" and data
+		or { data }
+	))
+end
+
 -- string... split(string, pattern. max) - break up string on pattern
 -- default value for pattern is to split on whitespace
 -- default value for max is infinity
