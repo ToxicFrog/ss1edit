@@ -194,3 +194,11 @@ calling it to parse the rest of the argument list.
 This isn't a very good explanation; you might want to skim the getopts(1) or
 getopt(3) man pages.
 FIXME: write better documentation for getopts.
+
+curry(f, ...)
+-------------
+Returns a curried version of f, such that:
+	curry(f, 1, 2, 3)(4,5,6)
+Is equivalent to
+	f(1,2,3,4,5,6)
+In effect, saves some arguments for later invocations of f.

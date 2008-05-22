@@ -31,6 +31,8 @@ function type(obj)
 	end
 	return _type(obj)
 end
+-- update file metatable
+getmetatable(io.stdout).__type = function() return "file" end
 
 -- printf(format, ...)
 function printf(...)
@@ -73,3 +75,10 @@ function L(args)
 	end
 end
 
+-- bind args into function
+local function curry(f, arg1, ...)
+	if arg1 == nil then
+		return f
+	end
+	return curry(function(...) return f(arg1, ...) end, ...)
+end
