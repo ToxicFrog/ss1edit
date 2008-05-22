@@ -1,0 +1,122 @@
+================================================================================
+	RESOURCE FILE FORMAT
+================================================================================
+
+	Most of the resource files used by System Shock share the same basic format.
+These usually have the extension '.res'.
+	Looking Glass resource files are packed files, as is common in games; each
+file contains some number of chunks, each one of which contains either data or
+a set of subchunks. Shock has many resource files, each one containing a set of
+related chunks; level maps, graphics, text, sounds, and videos all reside in
+resource files. The format of these files is given below. (For details on the
+formats contained inside the resource files, see chapters 4 and 5)
+
+	--------------------
+	Resource file header
+	--------------------
+
+	The resource file header occupies the first 128 bytes of the file:
+
+0000	char[124]	comment field - "LG Res file v2\r\n\x1A"
+007c	uint32		absolute offset to start of table of contents
+0080	-
+
+	-----------------
+	Table of contents
+	-----------------
+
+	The table of contents is usually located at the end of the file, and
+contains information about the chunks that the file contains. It starts with a
+six byte header:
+
+0000	uint16		number of chunks in the file
+0002	uint32		absolute offset to start of first chunk
+0006	-
+
+	This header is immediately followed by the table itself, which consists of
+a series of 10 byte entries, in the same order that the chunks are packed in the
+file:
+
+0000	uint16		chunk ID (globally unique modulo language versions)
+0002	uint24		chunk length (unpacked)
+0005	uint8		flags:
+			0x01		chunk is compressed
+			0x02		chunk is a directory
+0006	uint24		chunk length (packed in file)
+0009	uint8		content type:
+			0x00		palette (?raw data)
+			0x01		text
+			0x02		bitmap (sprite/texture)
+			0x03		font
+			0x04		video clip
+			0x07		sound effect
+			0x0F		3d model
+			0x11		audio log or other spoken text?
+			0x30		map (see chapter 4)
+000a	-
+
+	Note that the start of each chunk is 4-aligned; if the size of the previous
+chunk is not a multiple of four, the file will be nul-padded so that the next
+chunk starts in the right place.
+
+	-----------
+	Directories
+	-----------
+
+	If flag 0x02 is set, the chunk in question is a directory, containing a set
+of subsidiary chunks (which cannot themselves be directories) of the given type.
+A directory starts with its own table of contents:
+
+0000	uint16		number of subchunks
+0002	uint32		offset (relative to start of chunk) to start of first SC
+...
+nnnn	uint32		offset to start of last SC
+nnnn+4	uint32		total length of chunk
+
+This is followed by the data of the actual subchunks. Note that for directory
+chunks with the compression flag set, the entire directory is compressed as a
+single chunk; unpacking routines should first decompress it, then process its
+contents normally.
+
+	---------------------
+	Compression algorithm
+	---------------------
+
+	The compression algorithm used for resfiles is a simple dictionary-based
+encoding. The data stored in the compressed chunk consists of 14-bit words
+stored big-endian; ie, if the first 7 bytes in the chunk are:
+
+	aaaaaaaa bbbbbbbb cccccccc dddddddd eeeeeeee ffffffff gggggggg
+
+the corresponding words are:
+
+	aaaaaaaabbbbbb bbccccccccdddd ddddeeeeeeeeff ffffffgggggggg
+
+with the high bit to the left in each case.
+
+	To unpack a word from the compressed data stream, say it has value x.
+- if x == 0x3FFF: it is the end-of-file marker. Stop.
+- if x == 0x3FFE: reinitialize the dictionary; forget all stored positions and
+	lengths of compressed words and start anew.
+- if x < 256: write the literal byte x to the output stream.
+- otherwise: take n = (x-256); re-unpack the n'th word from the compressed data
+	followed by the next _uncompressed_ byte; if this would take us beyond the
+	end of the so far uncompressed data, write a zero byte instead.
+
+	FIXME this bit needs to be much clearer FIXME
+
+I handle decompression by keeping a dictionary of all 16127 (16384-256-1)
+ possible reference words (as opposed to literal bytes or the end-of-stream
+ marker) consisting of position in the uncompressed stream, unpacked length
+ and original reference from the compressed data. Initialise all the lengths to
+ 1. Each time we take a word from the compressed stream, make a note of its
+ position, and if it is a reference word (255 < x < 16383) its value. For a
+ literal byte we then just write the byte to the output stream. Otherwise look
+ up the reference in the dictionary; if its length is 1 we have not encountered
+ it before, set the length to 1 + (length of original reference). Then unpack
+ it by repeating (length) bytes from (position).
+
+(I'm not 100% sure about this but it gets all the lengths right and comes up
+ with reasonable looking unpacked data)
+
+See lib/res/decompress.c for a sample unpacking routine in C.

@@ -1,0 +1,170 @@
+0	Weapons 	(16)
+	0	Semi-automatic		(5)
+	1	Fully-automatic 	(2)
+	2	Projectile			(2)
+	3	Melee				(2)
+	4	Beam				(3)
+	5	Energy projectile	(2)
+
+1	Ammo		(15)
+	0	ML pistol			(2)
+	1	SV dartgun			(2)
+	2	Magnum/Riotgun		(3)
+	3	Mk3 assault rifle	(2)
+	4	Flechettes			(2)
+	5	Skorpion			(2)
+	6	Magpulse/Railgun	(2)
+	
+	2 - (24) projectiles
+	2:0 - ( 6) tracers
+	2:1 - (16) projectiles
+	2:2 - ( 2) seekers?
+
+	3 - (8) explosives
+	3:0 - (5) grenades
+	3:1 - (3) explosives
+
+4	Drugs		(7)
+	0	Dermal patches		(7)
+
+5	Cyberware	(15)
+	0	Vision modes		(5)
+	1	Implants			(10)
+
+	6 - () Software
+	6:0 - (7) Weapons
+	6:1 - (3) Defences
+	6:2 - (4) Utility
+	6:3 - (5) Misc
+	6:3 - (2) Information
+	6:4 - (1) ???
+	
+	7 - (77) Fixtures
+	7:0 - ( 9) Electronics
+	7:1 - (10) Furniture
+	7:2 - (11) Text & Screens
+	7:3 - ( 4) Lights
+	7:4 - ( 9) Shiny Things
+	7:5 - ( 8) Non-Shiny Things
+	7:6 - (16) Plants
+	7:7 - (10) Terrain
+	
+	8 - (80) Items
+	8:0 - ( 8) Junk
+	8:1 - (10) Debris
+	8:2 - (15) Corpses & Body Parts
+	8:3 - ( 6) Main Items
+	8:4 - (12) Access Cards
+	8:5 - (12) C/Space Items
+	8:6 - ( 9) Stains & Decals
+	8:7 - ( 8) Quest Items
+	
+	9 - (35) Switches and Panels
+	9:0 - ( 9) Switches
+	9:1 - ( 7) Receptacles
+	9:2 - ( 3) Terminals
+	9:3 - (11) Panels
+	9:4 - ( 2) Vending Machines
+	9:5 - ( 3) Cybertoggles
+	
+	A - () Doors and Gratings
+    A:0:0 = 'BLAST DOOR';
+ 	A:0:1 = 'SERVICE ACCESS DOOR';
+ 	A:0:2 = 'DOOR';
+ 	A:0:3 = 'DOOR';
+ 	A:0:4 = 'DOOR';
+ 	A:0:5 = 'DOOR';
+ 	A:0:6 = 'STORAGE ROOM DOOR';
+ 	A:0:7 = 'SHIELDED DOOR';
+	A:0:8 = 'EXECUTIVE DOOR';
+    A:1:0 = 'THE WARM STONE';
+ 	A:1:1   [x('0135')] = 'DOORWAY';
+ 	A:1:2   [x('0136')] = 'DOORWAY';
+ 	A:1:3   [x('0137')] = 'DOORWAY';
+ 	A:1:4   [x('0138')] = 'DOORWAY';
+ 	A:1:5   [x('0139')] = 'GRATING';
+ 	A:1:6   [x('013A')] = 'GRATING';
+ 	A:1:7   [x('013B')] = 'GRATING';
+ 	A:1:8   [x('013C')] = 'GRATING';
+    A:1:9 = 'MY TOE IS AN EGGPLANT';
+    A:2:0 = 'FORCE DOOR';
+    A:2:1 = 'FORCE DOOR';
+    A:2:2 = 'FORCE DOOR';
+    A:2:3 = 'FORCE DOOR';
+    A:2:4 = 'FORCE DOOR';
+    A:2:5 = 'ENERGY GRATING';
+    A:2:6 = 'GREAT LORD SNAQUEOTRAHN';
+    A:3:0 = 'EXECUTIVE ELEVATOR';
+    A:3:1 = 'ELEVATOR DOOR';
+    A:3:2 = 'ELEVATOR DOOR';
+    A:3:3 = 'FREIGHT ELEVATOR DOOR';
+    A:3:4 = 'SALT THE FRIES';
+    A:4:0 = 'BULKHEAD DOOR';
+    A:4:1 = 'BULKHEAD DOOR';
+    A:4:2 = 'IRIS DOOR';
+    A:4:3 = 'VERTICAL OPEN DOOR';
+    A:4:4 = 'VERTICAL SPLIT DOOR';
+    A:4:5 = 'DARK LORD TUAOHTUA';
+    A:4:6 = 'HIDDEN DOOR';
+    A:4:7 = 'HIDDEN DOOR';
+    A:4:8 = 'HIDDEN DOOR';
+    A:4:9 = 'REPORT THIS AS A BUG';
+
+
+	B - () Animations
+    0 = 'INACTIVE EMERGENCY SIGNAL';
+ 1   [x('0155')] = 'ACTIVE EMERGENCY SIGNAL';
+ 2   [x('0156')] = 'INACTIVE EMERGENCY SIGNAL';
+ 3   [x('0157')] = 'ACTIVE EMERGENCY SIGNAL';
+ 4   [x('0158')] = 'SPARKING CABLES';
+ 5   [x('0159')] = 'DEAD MUTANT';
+ 6   [x('015A')] = 'MACHINERY';
+ 7   [x('015B')] = 'STATION HOLOGRAM';
+ 8   [x('015C')] = 'DEAD MUTANT';
+    [x('015D')] = 'LIGHT BLOOD';
+    [x('015E')] = 'CAMERA EXPLOSION';
+    [x('015F')] = 'TV EXPLOSION';
+    [x('0160')] = 'SIMPLE SMOKE';
+    [x('0161')] = 'PLANT EXPLOSION';
+    [x('0162')] = 'BULLET WALL HIT';
+    [x('0163')] = 'BEAM WALL HIT';
+    [x('0164')] = 'IMPACT';
+    [x('0165')] = 'PROJECTILE HIT';
+    [x('0166')] = 'BEAM HIT';
+    [x('0167')] = 'BEAM HIT';
+    [x('0168')] = 'EXPLOSION';
+    [x('0169')] = 'EXPLOSION';
+    [x('016A')] = 'EXPLOSION';
+    [x('016B')] = 'LARGE EXPLOSION';
+    [x('016C')] = 'MAGPULSE HIT';
+    [x('016D')] = 'STUN HIT';
+    [x('016E')] = 'PLASMA BEAM HIT';
+    [x('016F')] = 'SMOKEY EXPLOSION';
+    [x('0170')] = 'CRATE EXPLOSION';
+    [x('0171')] = 'MONITOR EXPLOSION';
+    [x('0172')] = 'GAS EXPLOSION';
+    [x('0173')] = 'EMP EXPLOSION';
+    [x('0174')] = 'HUMANOID CORPSE EXPLOSION';
+    [x('0175')] = 'ROBOT CORPSE EXPLOSION';
+
+
+	C - (19) Traps and Triggers
+	C:0 - (13) Triggers
+	C:1 - ( 1) Tripbeam
+	C:2 - ( 5) Marks
+
+	D - (46) Containers
+    D:0 - ( 3) Crates
+	D:1 - ( 3) Hazards
+    D:2 - ( 4) Lab Equipment
+	D:3 - ( 8) Corpses
+	D:4 - (13) Destroyed Bots
+	D:5 - ( 7) Destroyed Cyborgs
+	D:6 - ( 8) Destroyed Programs
+		
+	E - (37) Critters
+	E:0 - ( 9) Mutants
+	E:1 - (12) Bots
+	E:2 - ( 7) Cyborgs
+	E:3 - ( 7) Programs
+	E:4 - ( 2) Bosses

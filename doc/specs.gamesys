@@ -1,0 +1,197 @@
+================================================================================
+	THE GAMESYS
+================================================================================
+
+	The gamesys is the file that controls the 'rules' of the game - how much
+hitpoints enemies have, how much damage weapons do and what kinds of ammo they
+accept, how much things weigh, what sounds they make, and so forth. It resides
+in data/objprop.dat in the System Shock install directory; if Shock is not yet
+installed, it can be found in hd/data/objprop.dat on the CD.
+
+	Objects in System Shock can be classified according to three properties:
+category, subcategory, and type. Category consists of broad divisions such as
+weapons, containers, critters, and so forth; subcategory, smaller divisions such
+as melee weapons and beam weapons; and type is the unique object type itself
+such as the Sparq or Magpulse. Each one of these has a corresponding numeric
+ID and thus every object type in the game can be identified by three numbers;
+for example, the cyberjack is 12/0/4 - category 12, traps and triggers;
+subcategory 0, triggers; type 4, cyberjack.
+
+	Similarly, each object has a set of properties: some which are common to all
+types, such as mass; some which are common to all types of a given category; and
+some which are common to all types of a given subcategory. It is this
+information that the gamesys holds.
+
+	-----------------
+	Overall Structure
+	-----------------
+	
+	The gamesys starts with a 4-byte header of unknown purpose, consisting of
+the bytes 2D 00 00 00. This is followed by the various property tables, packed
+end to end thusly:
+
+		tables for category 0	(this is only the category-specific properties!)
+		tables for subcat 0/0	(only the subcat-specific properties)
+		tables for subcat 0/1
+		....
+		tables for category 1
+		tables for subcat 1/0
+		...
+		tables for common properties
+		
+	As you can see, the information for a given type is scattered across three
+locations in the gamesys: category-specific information goes at the start of
+that category's entries, subcategory-specific information is in a second set of
+tables located after it, and common object properties go at the very end of the
+gamesys. The format of these tables is documented below.
+
+	------------------------
+	Category 0: Weapons (16)
+	------------------------
+
+	The category-specific table starts at offset 0x0004 and contains 2 bytes per
+weapon, for a total of 32:
+
+0000	uint8		?? firing rate ??
+0001	uint8		clip control (zero for energy and melee weapons)
+			bits 0-3: this controls which types of clip the weapon takes.
+				there is a bit for each of a possible 4 types within the
+				subcategory; if set the weapon accepts that type.
+			bits 4-7: clip subcategory ID (category is always 1)
+0002	-
+
+	In the following, a "common weapon information" structure refers to an 8-
+byte table as follows:
+
+0000	uint16		damage
+0002	uint8		"offence" value
+0003	uint8		attacktypes. This is a bitmask:
+			0x01		impact
+			0x02		energy
+			0x04		EMP
+			0x08		ion (set for ion rifle)
+			0x10		gas
+			0x20		tranq
+			0x40		needle (needle darts, some full-auto rounds)
+			0x80		??? unknown (but some things take damage from it)
+0004	uint8		special effects? EMP weapons have 0x33 here
+0005	uint16		not used in the main weapons table; seems to be used in
+						critter attack information
+0007	uint8		armour penetration
+0008	-
+
+	-------------------------------------------
+	Subcategory 0/0: Semi-Automatic Weapons (5)
+	Subcategory 0/1: Full-Automatic Weapons (2)
+	-------------------------------------------
+	
+	There is no subcategory-specific information for these, and the table
+consists of 7 zero bytes, one for each type. Damage information and suchlike
+for these weapons is stored in their ammunition properties.
+
+	---------------------------------------
+	Subcategory 0/2: Projectile Weapons (2)
+	---------------------------------------
+
+	This table contains 16 bytes per weapon, for a total of 32:
+
+0000	byte[8] 	common weapon information
+0008	uint8		???
+0009	uint8		projectile type
+000A	uint8		projectile subcategory
+000B	uint8		projectile category
+000C	byte[4] 	???
+0010	-
+
+	----------------------------------
+	Subcategory 0/3: Melee Weapons (2)
+	----------------------------------
+	
+	This table contains 13 bytes per melee weapon, for a total of 26:
+
+0000	byte[8] 	common weapon information
+0008	uint8		energy usage
+0009	uint8		?? kickback ??
+000A	uint8		?? range ??
+000B	byte[2] 	???
+000D	-
+
+	----------------------------------------
+	Subcategory 0/4: Energy Beam Weapons (3)
+	----------------------------------------
+	
+	This table contains the same structures as the melee weapons table above,
+except that it contains one for each of the three energy beam weapons, totaling
+39 bytes.
+
+	----------------------------------------------
+	Subcategory 0/5: Energy Projectile Weapons (2)
+	----------------------------------------------
+	
+	This table contains 18 bytes per energy projectile weapon, for a total of
+36 bytes:
+
+0000	byte[8] 	common weapon information
+0008	uint8		energy usage
+0009	byte[5]		???
+000E	uint8		projectile type
+000F	uint8		projectile subcategory
+0010	uint8		projectile category
+0011	byte[1] 	???
+0012	-
+
+	---------------------------
+	Category 1: Ammunition (15)
+	---------------------------
+	
+	The category-specific information starts at file offset 0x00B0 and consists
+of 14 bytes per ammo type, for a total of 210:
+
+0000	byte[8] 	common weapon information
+0008	uint8		number of rounds per clip
+0009	uint8		?? kickback ??
+000A	byte[2] 	???
+000C	uint8		?? range ??
+000D	uint8		?? crosshair wander ??
+000E	-
+
+	The subcategory information consists of 15 zero bytes, one per ammo type.
+	
+	----------------------------
+	Category 2: Projectiles (24)
+	----------------------------
+	
+	The category information begins at offset 0x0191 and consists of 1 byte per
+projectile, which is a bitmask:
+
+	0x01	projectile casts light
+	0x02	projectile bounces off walls
+	0x04	projectile bounces off enemies
+	0x08	?? use Cyberspace coloring ??
+	
+	----------------------------
+	Subcategory 2/0: Tracers (6)
+	----------------------------
+	
+	The tracer table, subcategory 2/0, contains 20 zero bytes for each
+projectile in this subcat, for a total of 120.
+
+	---------------------------------
+	Subcategory 2/1: Projectiles (16)
+	---------------------------------
+
+	The projectile table 2/1 contains 6 bytes per type, for a total of 96. For
+cyberspace projectiles these control the color scheme; for physical projectiles,
+they are zero.
+
+	-----------------------------
+	Subcategory 2/2: Seekers? (2)
+	-----------------------------
+	
+	This table consists of two zero bytes, corresponding to projectiles that
+don't appear to be used in game.
+
+	---------------------------------
+	Category 3: Grenades & Explosives
+	---------------------------------
+

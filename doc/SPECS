@@ -1,0 +1,1993 @@
+================================================================================
+	THE UNOFFICIAL SYSTEM SHOCK SPECIFICATIONS
+================================================================================
+
+	0.1 Table of Contents
+	---------------------
+
+0	DOCUMENT METADATA
+	0.1 Table of contents
+	0.2 Revision history
+
+1	GENERAL FILE INFORMATION
+
+2	THE GAMESYS
+
+3	RESOURCE FILE FORMAT
+	3.1 Resource file header
+	3.2 Table of contents
+	3.3 Subchunks
+	3.4 Compression algorithm
+
+4	MAPS
+
+5	MISCELLANEOUS FORMATS
+	5.1 Logs and other text
+	5.2 Textures and sprites
+	5.3 Audio
+	5.4 3d models
+
+ ==========================================
+ THE UNOFFICIAL SYSTEM SHOCK SPECIFICATIONS
+ ==========================================
+
+2	GENERIC CHUNK TYPES
+
+	2.1	Textures and sprites
+		2.1.1	Bitmap header
+		2.1.2	Bitmap compression
+		2.1.3	Pixel 'Animation'
+
+	2.2	Sounds
+
+3	THE MAP ARCHIVE
+		3.0.1	Level chunk list
+
+	3.1	Level map
+		3.1.1	Chunk xx02
+		3.1.2	Chunk xx03
+		3.1.3	The level information chunk
+		3.1.4	The tile map
+		3.1.6	The texture list
+
+	3.2	Objects
+		3.2.1	The master object table
+		3.2.2	The object cross-reference table
+		3.2.3	The weapons table, class 0
+		3.2.4	The ammo table, class 1
+		3.2.5	The projectile table, class 2
+		3.2.6	The grenades / explosives table, class 3
+		3.2.7	The patches table, class 4
+		3.2.8	The hardware table, class 5
+		3.2.9	The software / logs table, class 6
+		3.2.10	The scenery / decorations table, class 7
+		3.2.11	The items table, class 8
+		3.2.12	The switches / panels table, class 9
+		3.2.13	The doors / gratings table, class 10
+		3.2.14	The animations table, class 11
+		3.2.15	The traps and triggers table, class 12
+		3.2.16	The containers table, class 13
+		3.2.17	The critters table, class 14
+
+4	OBJECT PROPERTIES
+
+	4.0	WEAPONS TABLE, class 0
+		4.0.0	SEMI-AUTO WEAPON TABLE, class 0/0
+		4.0.1	AUTOMATIC WEAPON TABLE, class 0/1
+		4.0.2	PROJECTILE WEAPON TABLE, class 0/2
+		4.0.3	MELEE WEAPON TABLE, class 0/3
+		4.0.4	ENERGY BEAM WEAPON TABLE, class 0/4
+		4.0.5	ENERGY PROJECTILE WEAPON TABLE, class 0/5
+
+	4.1	AMMO CLIP TABLE, class 1
+
+	4.2	PROJECTILE TABLE, class 2
+		4.2.0	TRACER TABLE, class 2/0
+		4.2.1	PROJECTILE TABLE, class 2/1
+		4.2.2	SEEKER TABLE, class 2/2
+
+	4.3	GRENADES / EXPLOSIVES TABLE, class 3
+		4.3.0	GRENADES TABLE, class 3/0
+		4.3.1	EXPLOSIVES TABLE, class 3/1
+
+	4.4	PATCHES TABLE, class 4
+
+	4.5	HARDWARE TABLE, class 5
+
+	4.6	SOFTS TABLE, class 6
+
+	4.7	FIXTURES TABLE, class 7
+
+	4.8	ITEMS TABLE, class 8
+		4.8.0	Junk
+		4.8.1	Debris
+		4.8.2	Corpses
+		4.8.3	Items
+		4.8.4	Access cards
+		4.8.5	Cyber items
+		4.8.6	Stains
+		4.8.7	Quest items
+
+	4.9	SWITCHES TABLE, class 9
+		4.9.0	Switches
+		4.9.1	Receptacles
+		4.9.2	Terminals
+		4.9.3	Panels
+		4.9.4	Vending
+		4.9.5	Cybertoggles
+
+
+
+================================================================================
+	1	GENERAL FILE INFO
+================================================================================
+
+	FIXME - this section needs cleanup and completion - FIXME
+
+	System Shock data files fall into two categories: cached and rarely-accessed
+files which are left on the CD, and frequently-accessed files which are copied
+onto the hard disk at install time and read from there.
+
+	1.1 CD files
+	------------
+	
+	These are always found in the directory cdrom/data/ on the CD.
+
+archive.dat 	Level map archive (despite the extension, this is a res file)
+bwtabl.dat		???
+citalog.res		Audio logs (English)
+citbark.res		Audio trap messages (English)
+cutspal.res		Palettes for cutscenes
+death.res		? death animation?
+frnalog.res		Audio logs (French)
+frnbark.res		Audio trap messages (French)
+gamepal.res		In-game palette data
+geralog.res		Audio logs (German)
+gerbark.res		Audio trap messages (German)
+gryntabl.dat
+intro.res
+ipal.dat		Colour cube
+lofrintr.res	low-res intro movie (French)
+logeintr.res	low-res intro movie (German)
+lowdeth.res 	low-res death movie
+lowend.res		low-res ending movie
+lowintr.res 	low-res intro movie
+mongtabl.dat
+objart.res		Sprites for objects
+objprop.dat		Object properties (generic and class-specific)
+shadtabl.dat
+splash.res		Splash screens
+splshpal.res	Palettes for splash screens
+start1.res
+svfrintr.res	SVGA intro movie, (French)
+svgadeth.res	SVGA death movie
+svgaend.res 	SVGA ending movie
+svgaintr.res	SVGA intro movie
+svgeintr.res	SVGA into movie, (German)
+textprop.dat	Texture properties
+vidmail.res		Video mail
+whyttabl.dat
+win1.res
+
+
+1.3.2 Hard-disc files
+
+	These start off in directory hd/data/ of the CDROM, and are copied to the
+data/ subdirectory of your System Shock install on the hard disc.
+
+citmat.res		Textures for 3D object models
+cybstrng.res	Game strings (English)
+digifx.res		Sound FX
+digiparm.bin
+frnstrng.res	Game strings (French)
+gamescr.res		HUD borders, fonts, buttons
+gerstrng.res	Game strings (German)
+handart.res		Graphics for wielded weapons
+intro.res
+mfdart.res		MFD icons (target/email/item display) (English)
+mfdfrn.res		MFD icons (target/email/item display) (French)
+mfdger.res		MFD icons (target/email/item display) (German)
+obj3d.res		3D object models
+objart2.res		Graphics for critters
+objart3.res		Graphics for critters, decals and doors
+objprop.dat		The gamesys; see chapter 2
+sideart.res		Sidebar icons
+texture.res		Map textures
+
+================================================================================
+	2	THE GAMESYS
+================================================================================
+
+	The gamesys is the file that controls the 'rules' of the game - how much
+hitpoints enemies have, how much damage weapons do and what kinds of ammo they
+accept, how much things weigh, what sounds they make, and so forth. It resides
+in data/objprop.dat in the System Shock install directory; if Shock is not yet
+installed, it can be found in hd/data/objprop.dat on the CD.
+
+	Objects in System Shock are identified by three numbers: their type
+("weapon"), subtype ("melee weapon") and class ("pipe"). Each weapon also has
+three sets of properties: common properties that are shared by all objects in
+the game; type-specific properties shared by
+
+================================================================================
+	3	RESOURCE FILE FORMAT
+================================================================================
+
+	Most of the resource files used by System Shock share the same basic format.
+These usually have the extension '.res'.
+	Looking Glass resource files are packed files, as is common in games; each
+file contains some number of chunks, each one of which contains either data or
+a set of subchunks. Shock has many resource files, each one containing a set of
+related chunks; level maps, graphics, text, sounds, and videos all reside in
+resource files. The format of these files is given below. (For details on the
+formats contained inside the resource files, see chapters 4 and 5)
+
+	------------------------
+	3.1 Resource file header
+	------------------------
+
+	The resource file header occupies the first 128 bytes of the file:
+
+0000	char[124]	comment field - "LG Res file v2\r\n\x1A"
+007c	uint32		absolute offset to start of table of contents
+0080	-
+
+	---------------------
+	3.2 Table of contents
+	---------------------
+
+	The table of contents is usually located at the end of the file, and
+contains information about the chunks that the file contains. It starts with a
+six byte header:
+
+0000	uint16		number of chunks in the file
+0002	uint32		absolute offset to start of first chunk
+0006	-
+
+	This header is immediately followed by the table itself, which consists of
+a series of 10 byte entries, in the same order that the chunks are packed in the
+file:
+
+0000	uint16		chunk ID (globally unique modulo language versions)
+0002	uint24		chunk length (unpacked)
+0005	uint8		flags:
+			0x01		compressed
+			0x02		contains subchunks
+0006	uint24		chunk length (packed in file)
+0009	uint8		content type:
+			0x00		palette (?raw data)
+			0x01		text
+			0x02		bitmap (sprite/texture)
+			0x03		font
+			0x04		video clip
+			0x07		sound effect
+			0x0F		3d model
+			0x11		audio log or other spoken text?
+			0x30		map (see chapter 4)
+000a	-
+
+	Note that the start of each chunk is 4-aligned; if the size of the previous
+chunk is not a multiple of four, the file will be nul-padded so that the next
+chunk starts in the right place.
+
+	-------------
+	3.3 Subchunks
+	-------------
+
+	If flag 0x02 is set, the chunk in question contains subchunks - in effect it
+is a directory containing its own set of chunks. In that case, the chunk starts
+out with a chunk subdirectory header:
+
+0000	uint16		number of subchunks
+0002	uint32		offset (relative to start of chunk) to start of first SC
+...
+nnnn	uint32		offset to start of last SC
+nnnn+4	uint32		total length of chunk
+
+Note: for type 3 (subdir, compressed) chunks the subdir is not compressed;
+	offsets are offsets in the unpacked data
+
+	-------------------------
+	3.4 Compression algorithm
+	-------------------------
+
+
+
+
+1.2 RESOURCE FILE COMPRESSION ALGORITHM
+---------------------------------------
+
+The compression algorithm used for resfiles is a simple dictionary-based
+ coding scheme. The data stored in the compressed chunk consists of a
+ continuous stream of 14-bit words stored big-endian i.e. if the first 7
+ bytes in the chunk are
+
+	aaaaaaaa bbbbbbbb cccccccc dddddddd eeeeeeee ffffffff gggggggg
+
+ the corresponding words are
+
+	aaaaaaaabbbbbb bbccccccccdddd ddddeeeeeeeeff ffffffgggggggg
+
+ with the high bit to the left in each case.
+
+To unpack a word from the compressed data stream, say it has value x.
+If x == 0x3fff (16383) it is the end-of-stream marker. Stop.
+If x == 0x3ffe (16382) reinitialise the dictionary. Forget all stored
+ positions and lengths of compressed words and start as if from scratch.
+If x is less than 256, write the literal byte x to the uncompressed data.
+Otherwise take n = x - 256; re-unpack the n'th word from the compressed data
+ followed by the next _uncompressed_ byte; if this would take us beyond the
+ end of the so-far uncompressed data, write a literal zero byte instead.
+
+I handle decompression by keeping a dictionary of all 16127 (16384-256-1)
+ possible reference words (as opposed to literal bytes or the end-of-stream
+ marker) consisting of position in the uncompressed stream, unpacked length
+ and original reference from the compressed data. Initialise all the lengths to
+ 1. Each time we take a word from the compressed stream, make a note of its
+ position, and if it is a reference word (255 < x < 16383) its value. For a
+ literal byte we then just write the byte to the output stream. Otherwise look
+ up the reference in the dictionary; if its length is 1 we have not encountered
+ it before, set the length to 1 + (length of original reference). Then unpack
+ it by repeating (length) bytes from (position).
+
+(I'm not 100% sure about this but it gets all the lengths right and comes up
+ with reasonable looking unpacked data)
+
+As promised, here is a sample unpacking routine in C.
+
+ ---
+
+  void unpack_data (unsigned char *pack,    unsigned char *unpack,
+		    unsigned long packsize, unsigned long unpacksize)
+  {
+
+    unsigned char *byteptr;
+    unsigned char *exptr;
+    unsigned long word;
+    int nbits;
+    int val;
+
+    int ntokens = 0;
+    static int offs_token [16384];
+    static int len_token  [16384];
+    static int org_token  [16384];
+
+    int i;
+
+    for (i = 0; i < 16384; ++i)
+    {
+      len_token [i] = 1;
+      org_token [i] = -1;
+    }
+    memset (unpack, 0, unpacksize);
+
+    byteptr = pack;
+    exptr   = unpack;
+    nbits = 0;
+
+    while (exptr - unpack < unpacksize)
+    {
+
+      while (nbits < 14)
+      {
+        word = (word << 8) + *byteptr++;
+        nbits += 8;
+      }
+
+      nbits -= 14;
+      val = (word >> nbits) & 0x3FFF;
+      if (val == 0x3FFF)
+      {
+        break;
+      }
+
+      if (val == 0x3FFE)
+      {
+        for (i = 0; i < 16384; ++i)
+        {
+	  len_token [i] = 1;
+	  org_token [i] = -1;
+        }
+        ntokens = 0;
+        continue;
+      }
+
+      if (ntokens < 16384)
+      {
+        offs_token [ntokens] = exptr - unpack;
+        if (val >= 0x100)
+        {
+	  org_token [ntokens] = val - 0x100;
+        }
+        ++ntokens;
+      }
+
+      if (val < 0x100)
+      {
+        *exptr++ = val;
+      }
+      else
+      {
+        val -= 0x100;
+
+        if (len_token [val] == 1)
+        {
+	  if (org_token [val] != -1)
+	  {
+	    len_token [val] += len_token [org_token [val]];
+	  }
+	  else
+	  {
+	    len_token [val] += 1;
+	  }
+        }
+        for (i = 0; i < len_token [val]; ++i)
+        {
+	  *exptr++ = unpack [i + offs_token [val]];
+        }
+
+      }
+
+    }
+
+  }
+
+ ---
+
+
+
+2 GENERIC CHUNK TYPES
+=====================
+
+
+2.1 TEXTURES AND SPRITES
+------------------------
+
+Textures and sprites have content type 2 (bitmap) and use the following general
+ format:
+
+
+2.1.1 Bitmap header
+
+The bitmap header is 28 bytes long, as follows.
+
+0000	int32	??? always 0
+0004	int16	??? compression?
+0006	int16	???
+0008	int16	width
+000A	int16	height
+000C	int16	??? always same as width
+000E	int8	??? log2 width
+000F	int8	??? log2 height
+0010	int16	\
+0012	int16	 \ These seem to be used for animation frames to keep the
+0014	int16	 /  sprite centred.
+0016	int16	/
+0018	int32	??? always 0
+
+
+2.1.2 Bitmap compression
+
+A compressed (type 4) bitmap can be unpacked as follows:
+	00 nn xx		write nn bytes of colour xx
+	nn .. ..    0<nn<0x80	copy nn bytes direct
+	80 00 00		skip rest of file (end of compressed data)
+	80 mm nn    0<nn<0x80	skip (nn*256+mm) bytes (write transparencies)
+	80 nn 80 .. ..		copy nn bytes direct
+	80 mm nn    0x80<nn	copy ((nn&0x3f)*256+mm) bytes  
+	nn	    0x80<nn	skip (nn&0x7f) bytes
+
+Thanks to Joerg Fischer (jofis@cs.uni-sb.de) for kindly sending me the source
+ code to his texture extractor (you can get it from the hackers' page at TTLG)
+ which cleared up some questions I had about the bitmap format. Vasily Volkov
+ (no known e-presence) also had a hand in the decompression. Joerg has asked
+ that I not distribute the sources myself; email him direct if you want them.
+
+Note that _all_ bitmaps are subchunks, even when there is only one bitmap
+ stored in a chunk. This is presumably to simplify the loading logic.
+
+Textures are uncompressed square bitmaps stored at 4 resolutions each: 16x16,
+ 32x32, 64x64 and 128x128. There are 273 textures stored, but some (a few) do
+ not contain useful graphics. Chunks containing textures are:
+
+	  76		16x16 textures   (sub-chunks 0-272)
+	  77		32x32 textures   (sub-chunks 0-272)
+	 707-979	64x64 textures   (one chunk each)
+	1000-1272	128x128 textures (one chunk each)
+
+
+2.1.3 Pixel 'Animation'
+
+The 'animations' that appear with some textures (SHODAN's mail
+images, hardware buttons, ...) are done by palette looping.
+It seems that there are generally four steps.
+Those I have yet found out:
+
+??                      0x04 to 0x07
+??                      0x08 to 0x0B
+Sensaround:             0x0C to 0x0F
+Motion Booster:         0x10 to 0x13
+SHODAN:	seems to use   0x14 to 0x17
+Jump Boots:             0x18 to 0x1B
+??                      0x1C to 0x1F
+
+ff1: Perhaps energy weapons are done the same way...
+12052002, ff1: must be; furthermore the ones marked with ??
+               also ought to be animated (guessed).
+               0x00 to 0x03 I hardly think is one loop as it
+               includes 'special' index 0x00
+
+
+
+2.2 SOUNDS
+----------
+
+All sounds are stored in 8bit, mono, linear signed format, either at 11 or
+ 22kHz.
+
+Digitised sound effects reside in the file digifx.res and have chunk type 07.
+ These are simply Creative Labs .voc files embedded in the resfile, one chunk
+ each. Check Wotsit (www.wotsit.org) for the format.
+
+Audio logs reside in the files citalog.res (English), geralog.res (German) and
+ frnalog.res (French) and have chunk type 0x11 (17). Chunk IDs are shared
+ between the languages (i.e. the same log will have the same ID in each
+ language file). If the text of a log has chunk ID n, the audio sample will
+ have chunk ID 300+n.
+
+Audio logs seem to be embedded movie files of some description but I don't
+ know which format they are in yet.
+
+
+
+
+3 THE MAP ARCHIVE
+=================
+
+The game maps are stored in the file archive.dat which contains 834 chunks
+ starting at ID 4000. The sharp-eyed amongst us will note that
+ 834 == 52 * 16 + 2. I would have thought 64 * 13 would be more logical as
+ there are 10 levels (1-9 + R) and 3 groves, but the chunk sizes clearly
+ repeat in blocks of 52. I haven't yet examined the maps thoroughly enough to
+ figure out the extra 3: perhaps they are to do with cyberspace?
+
+3.0.1 Level list
+
+	Reactor		Map 0  (chunk 40xx)
+	Levels 1-9	Map L  (chunk 4Lxx)
+	SHODAN c/space	Map 10 (chunk 50xx)
+	Delta grove	Map 11 (chunk 51xx)
+	Alpha grove	Map 12 (chunk 52xx)
+	Beta grove	Map 13 (chunk 53xx)
+	C/space L1-2    Map 14 (chunk 54xx)
+	C/space other	Map 15 (chunk 55xx)
+
+(Thanks to Glen Sawyer <glen_s@enol.com> for compiling the list)
+
+Each map uses 52 blocks but has IDs allocated for 100. Chunks 4000 and 4001 are
+ not specific to any individual map, so level R uses chunks 4002-4053, level
+ 1 4102-4153 and so on.
+
+
+
+3.1 LEVEL MAP
+-------------
+
+The first 6 chunks (xx02-xx07) in each map (seem to) contain information about
+ the level geometry.
+
+
+3.1.1 Chunk xx02
+3.1.2 Chunk xx03
+
+These chunks are only 4 bytes long, containing a single 32-bit word. I don't
+ know what they mean yet tho.
+
+
+3.1.3 The level information chunk
+
+This resides in blocks 4004, 4104 etc. and contains miscellaneous information
+ about the level.
+
+0000	int32	\ Map size in tiles
+0004	int32	/
+0008	int32	?? always 6 could be log2 map size
+000C	int32	?? always 6
+0010	int32	log2 (no. height units per tile width). If this value is x,
+		 a (non-sloping) tile with height 2**x will be a perfect cube.
+0014	int32	This is a placeholder for the tile map pointer when the chunk
+		 is loaded into memory. It is meaningless on disc
+0018	int32	Cyberspace flag. 1 if level is c/space, 0 otherwise
+001C	8byte	Unknown
+0024	int32	always 16384
+0028	18byte	Unknown
+
+
+3.1.4 The tile map
+
+This resides in blocks 4005, 4105 etc. and is always compressed. The unpacked
+ chunk has size 0x10000 (aha! 16*64*64, you say). This is a 64x64 grid of
+ tiles, starting at the bottom left corner of the level, where each tile does
+ indeed (thanks Jim!) have format
+
+0000	int8	Type. I have so far identified
+			00 solid
+			01 open
+			02 diagonal open s/e
+			03 diagonal open s/w
+			04 diagonal open n/w
+			05 diagonal open n/e
+			06 slope s->n (all slopes expressed as low->high)
+			07 slope w->e
+			08 slope n->s
+			09 slope e->w
+		 though there are certainly more types defined. Perhaps there
+		 are diagonal slopes as well.
+		10-Jun-2000 Glen has now identified the diagonals:
+			0A slope se->nw	valley
+			0B slope sw->ne valley
+			0C slope nw->se valley
+			0D slope ne->sw valley
+			0E slope nw->se ridge
+			0F slope ne->sw ridge
+			10 slope se->nw ridge
+			11 slope sw->ne ridge
+		A "valley" tile has 3 vertices level and one lower: the floor
+		 is split into 2 triangular sloping sections along the diagonal
+		 from the lower to the opposite vertex. A "ridge" tile has 3
+		 vertices level and one higher, and is likewise split along the
+		 diagonal. (This means that ridged tiles are no longer
+		 completely convex and need careful handling in 3D). If that
+		 makes sense I'll be impressed 8-)
+0001	int8	Floor
+0002	int8	Ceiling. These are
+			bit 0-4 height (ceiling is in units DOWN from top)
+			bit 5-6 orientation
+			bit 7   hazard flag (floor contains biohazard, ceiling
+					     radiation hazard flag)
+0003	int8	Steepness of slope
+0004	int16	Index into object xref table of first object in tile
+0006	int16	Texture info
+0008	int32	Flags
+000C	4xint8	State (?) These always seem to contain FF 00 00 00 in the
+		 archive.dat file; presumably they contain game flags when
+		 levels are archived in saved games.
+
+It appears that slopes can refer to floor, ceiling or both, presumably
+ controlled by bits in the flag word but I haven't identified which ones.
+30-May-2000 It looks as if slope is controlled by bits 12-13 in the flag word
+ as follows:
+	xxxxx0xx	Floor & ceiling, same direction
+	xxxxx4xx	Floor & ceiling, ceiling opposite dir to tile type
+	xxxxx8xx	Floor only
+	xxxxxCxx	Ceiling only
+Only 30 flag bits still to go 8-)
+
+Texture info: It appears that each level may use a maximum of 64 textures out
+ of the 273 available. This strongly suggests that 6 bits are used per
+ texture. My current best guess at bits in the texture info word is:
+	0-5	Wall texture (index into texture list)
+	6-10	Ceiling texture
+	11-15	Floor texture
+It appears that there are only 32 floor/ceiling textures available. The height
+ bytes don't supply the missing bit; heights are definitely signed.
+13-Jun-2000 That last bit was a lie. Only the bottom 5 bits of the height
+ bytes are used for tile heights. The others seem to be environmental flags.
+Each tile may only store ONE wall texture (unless there are others stored
+ elsewhere that I haven't yet found out about). They may clearly pick and
+ choose between their own and adjacent textures; current best guess is that
+ this is controlled by bit 8 of the flags word.
+
+Flags:	
+	80000000 tile visited (automapper)
+	0F0F0000 shade control
+	0000F000 music nibble 
+	00000C00 slope control
+	00000200 Spooky music flag? This appears to be set for areas which
+		  have been largely remodelled by SHODAN's forces.
+	00000100 use adjacent rather than local textures for walls
+	0000001F vertical texture offset adjust
+
+
+3.1.6 The texture list
+
+This resides in blocks 4007, 4107 etc. and contains a 16-bit word for each
+ texture used by the level, up to a maximum of 64. A texture ID as stored in
+ the tile map is an index into this list.
+
+
+
+3.2 OBJECTS
+-----------
+
+An "object" in System Shock can be anything that isn't part of the basic level
+ geometry itself i.e. not a wall or floor texture. This includes all items,
+ sprites, 3D models, decals, doors and gratings, and invisible stuff such as
+ traps and triggers.
+
+An object is generally identified by class, subclass and type. This forms a
+ hierarchy of object classification from coarsest (class) to finest (type).
+ This is denoted in this document and elsewhere as class/subclass/type, e.g.
+ the Cyberjack is object 12/0/4 .
+
+Object classes are
+0	Weapons
+1	Ammo
+2	Projectiles
+3	Grenades and explosives
+4	Patches
+5	Hardware
+6	Software & logs
+7	Scenery and fixtures
+8	Gettable and other objects
+9	Switches and panels
+10	Doors and gratings
+11	Animated objects (?)
+12	Traps and markers
+13	Containers (includes corpses)
+14	Critters
+
+The object information is stored from chunk xx08 to xx24 inclusive. The first
+ two tables give general information about the objects and their positioning in
+ the level map. The remaining 15 are each specific to a given object class, and
+ contain extra information about the objects in that class.
+
+
+3.2.1 The master object table
+
+This resides in chunks 4008, 4108 etc. and contains an entry for everything in
+ the level that is not part of a tile (i.e. a wall, floor or ceiling).
+ Each entry is 27 bytes long as follows:
+
+0000	int8	in-use flag. 0 slot is free, 1 in use.
+0001	int8	object class
+0002	int8	object subclass
+0003	int16	class index. This is an index into the class specific table in
+		 one of the following chunks.
+0005	int16	index into object cross-reference table (next chunk)
+0007	int16	prev link
+0009	int16	next link
+000B	int16	x coord (high byte is tile x)
+000D	int16	y coord (high byte is tile y)
+000F	int8	z coord (?)
+0010	int8	\
+0011	int8	 } These seem to be the 3 angles for 3d positioning
+0012	int8	/
+0013	int8	?? AI index - is 0xFF for all but damageable things (critters
+		 and crates)
+0014	int8	object type
+0015	int16	Hitpoints? Initial values tend to be round decimal numbers
+0017	int8	State (sprite frame)
+
+
+3.2.2 The object cross-reference table
+
+This resides in chunks 4009, 4109 etc. and is used to link map tiles with the
+ objects that they contain. The "index" field in the tile map is an index
+ into this table. Entries themselves contain an index field which is used to
+ chain objects together when there is more than one object in a map tile.
+
+Objects which extend over more than one tile get an entry in this table for
+ each tile which partially contains them. Entries for a single object and
+ multiple tiles are linked by the 5th field (0008) while entries for a single
+ tile and multiple objects are linked by the 4th (0006).
+
+An object cross-ref entry consists of 10 bytes as follows:
+
+0000	int16	Tile x position
+0002	int16	Tile y position
+0004	int16	Index into master object table
+0006	int16	Cross-ref index for next object in tile
+0008	int16	Cross-ref index for next tile object extends into
+
+
+3.2.3 The weapons table, class 0
+
+This resides in chunks 4010, 4110 etc. and contains special info on weapons.
+ Each entry consists of 8 bytes as follows:
+
+0000	int16	Weapon index in master object table
+0002	int16	"Prev" link for slot list
+0004	int16	"Next" link for slot list
+0006	int8	Ammo type (projectile) or charge (energy)
+0007	int8	Ammo count (projectile) or ?temperature (energy)
+
+
+3.2.4 The ammo table, class 1
+
+This resides in chunks 4011, 4111 etc. and contains special info on ammo clips.
+ An ammo clip is an ammo clip is an ammo clip, really, so this chunk isn't
+ very interesting; it has 6 bytes in it:
+
+0000	int16	Ammo clip index in master object table
+0002	int16	"Prev" link for slot list
+0004	int16	"Next" link for slot list
+
+
+3.2.5 The projectile table, class 2
+
+This resides in chunks 4012, 4112 etc. and is not used in the map archive for
+ obvious reasons. It might be used in saved games.
+
+
+3.2.6 The grenades / explosives table, class 3
+
+
+3.2.7 The patches table, class 4
+
+This resides in chunk 4014, 4114 etc. and contains information about the
+ dermal patches. There is no special information on these, so this table just
+ contains the master object cross-ref and the links for the slot list.
+
+
+3.2.8 The hardware table, class 5
+
+This resides in chunks 4015, 4115 etc. and contains information on hardware.
+ Each entry is 7 bytes long:
+
+0000	int16	Hardware index in master object table
+0002	int16	"Prev" link for slot list
+0004	int16	"Next" link for slot list
+0006	int8	Version
+
+
+3.2.9 The software / logs table, class 6
+
+This resides in chunks 4016, 4116 etc. and contains information on software
+ and logs. Each entry is 9 bytes long:
+
+0000	int16	Software index in master object table
+0002	int16	"Prev" link for slot list
+0004	int16	"Next" link for slot list
+0006	int8	(Softs) Version no. of software
+0007	int8	(Log) Log chunk number (offset from 0x09B8 2488)
+0008	int8	(Log) Level no. log refers to
+
+
+3.2.10 The scenery / decorations table, class 7
+
+This resides in chunks 4017, 4117 etc. and contains information on permanent
+ fixtures of the station which aren't parts of walls. Each entry is 16 bytes
+ long; the first 6 bytes are the index and slot-list links as follows, and
+ the rest depend on the object type.
+
+For WORDS 07:02:03
+0006	int16	text (subchunk to chunk 0868 (2152))
+0008	int16	font and size
+000A	int16	colour (0 seems to default to red)
+
+For animated screens (Glen figured this one out):
+0006	int16	Number of frames
+0008	int16	Loop repeats backwards flag
+000C	int16	Start frame (offset from chunk 321)
+
+Some values of "start frame" are special:
+	246	Static fading into SHODAN's face
+	247
+	248-255	Surveillance ID, see "surveillance control chunk" below
+
+For values of "start frame" greater than 255 the low 7 bits give a text message
+ (subchunk of text chunk 0877 2167) to be rendered onto the screen. Here 127
+ 0x7F is the special value; it is used for the random numbers in the CPU rooms
+ on levels 1-6 before the nodes have been destroyed.
+If bit 7 is set for a text message the text scrolls vertically. Each frame
+ consists of several strings, starting at (start frame & 0x7f) + (current
+ frame). The number of strings per frame is simply the number that will fit on
+ the screen; partial lines are not drawn.
+
+
+For bridges subchunk 7 (Glen again):
+0008	int8	bits 0-3 X size (4 is tile width)
+		bits 4-7 Y size (4 is tile width) - 0 is bridge's normal size
+						    in its 3D model
+0009	int8	bridge height (0 is default) 32 units per texture height
+000A	int8	bits 0-6 top/bottom texture
+		bit 7    set if texture comes from the main textures referred
+		 to in chunk xx07, otherwise it is taken from the 3D model
+		 texture maps in citmat.res .
+000B	int8	side textures (similarly)
+
+
+Note that in CYBERSPACE levels (10, 14, 15) fixtures are not used as such, but
+ are co-opted as extra softs/logs in case that table becomes full, and act as
+ objects of class 6. From a cursory investigation the fixture data in this
+ case seems to be:
+0006	int16	version no. (softs)
+0008	int16	softs/logs subclass
+000C	int16	softs/logs type
+
+
+3.2.11 The items table, class 8
+
+
+
+3.2.12 The switches / panels table, class 9
+
+This resides in chunks 4019, 4119 etc. and contains information on switches and
+ panels. Each entry is 30 bytes long, having the first 12 Bytes in common;
+ the second half is specific to switch type.
+ As it seems, the State of the switch (mostly Puzzles) isn't stored within
+ this table.
+
+0000	int16	Panel index in master object table
+0002	int16	"Prev" link for slot list
+0004	int16	"Next" link for slot list
+0006  int16 unknown??
+0008  int16 Condition: Variable Index
+0010  int16 Condition: Message on fail
+
+Number Pads (9 3 7):
+000C	int16	Combination in BCD
+000E  int16 Map Object to trigger
+0018  int16 Map Object to Extra Trigger (?)
+
+
+Puzzles (9/3/0 to 9/3/3)
+
+These are either wire or block (power) puzzles. The dword at offset 0x10 seems
+ to be the determining factor: if bit 28 is set (0x10000000) it is a block
+ puzzle, else it is a wire puzzle.
+
+For both types the word at offset 0x0C is a reference to a map object to frob
+ when the puzzle is completed.
+
+For a wire puzzle:
+0010  int8  Size (nibble0: Wires (default: 4 if 0), 
+                  nibble1: Connectors per side (default: 6 if 0))
+0011  int8  Power level to be reached (out of 0xFF)
+0012  int16 unknown
+0014  int32 Target State of Wires
+0018  int32 Current State of Wires
+            The States are stored in 3bit pairs from right to left
+            (first pair: first wire, second pair second, ...)
+            the first triple states the left connector, 
+            the second the right one.
+            (so a maximum of 8 connectors is possible and
+             maximum of 5 Wires (32 / 6 = 5)
+
+For a block puzzle:
+0010  int32 "Helper" trigger object for state (is an Action 0x00 Trigger)
+	    Bit 28 of this field is set to indicate that it is a block puzzle.
+0016  int32 Puzzle information:
+	    b4-6    Y coord of power source connector
+	    b7-8    Source direction (10=left)
+	    b12-14  Y coord of power destination connector
+	    b15-16  Destination direction (11=right, 00=up)
+	    b20-23  Width
+	    b24-27  Height
+	    b28-31  Side effect type
+
+The actual state of the puzzle is stored in the "helper" object's trigger info,
+ from offset 0x10 on. Each block has 3 bits describing what is in it. Blocks
+ are stored from top left to bottom right in the usual order, but the way in
+ which they are encoded is slightly complicated.
+Puzzle state is read in 32-bit words starting at the LAST dword in the trigger
+ info, and the block descriptors are rotated out at the bottom. When the word
+ has been fully examined, any bits left over are kept and combined with enough
+ bits from the bottom of the previous word to make up a 3-bit block descriptor.
+Thus the top left block is described by the bottom 3 bits of the last trigger
+ word (the bottom 3 bits of the byte at offset 0x1C), the next block to the
+ right by bits 3-5 of the same word, and so on until the 11th block, if the
+ puzzle is that large. This is made up of the top 2 bits of the last word (bits
+ 6-7 of byte 0x1F) as its low 2 bits and the bottom bit of the penultimate word
+ (bit 0 of byte 0x18) as the high bit. The 12th block is taken from bits 1-3 of
+ the penultimate word, and so on.
+It might be simpler just to look at Trig_get_block_puzzle() in src/trigger.c
+ for clarification of the above.
+
+Block types are:
+00	Empty
+01	Inactive connector (x)
+02	Active connector (+)
+04	Solid block
+06	Switching node (hollow square)
+
+
+Panels:
+yet unknown
+
+Buttons (9 0 2):
+yet unknown
+
+Cyberjacks:
+000C  int16 X of target Cyberspace
+0010  int16 Y of target Cyberspace
+0014  int16 Z of target Cyberspace
+0018  int16 Level (Cyberspace)
+
+Elevators (9 3 5):
+000C  int16 Map index of Panel of target Level1
+000E  int16 Map index of Panel of target Level2
+0012  int16 Map index of Panel of target Level3
+0018  int16 Bitfield of accessible Levels (Actual)
+001A  int16 Bitfield of accessible Levels (Shaft)
+	    Levels with a 1 in the "shaft" field but not in the "Actual" field
+	     give a "Shaft damage: Unable to go there" message.
+
+
+
+3.2.13 The doors / gratings table, class 10
+
+This resides in chunks 4020, 4120 etc. and contains information on doors and
+ gratings. Each entry is 14 bytes long:
+
+0000	int16	Door index in master object table
+0002	int16	"Prev" link for slot list
+0004	int16	"Next" link for slot list
+0006	int16	?? trigger cross-ref
+0008	int16	Message
+000A	int8	Access required 0-31
+
+
+3.2.14 The animations table, class 11
+
+
+3.2.15 The traps and triggers table, class 12
+
+This resides in chunks 4022, 4122 etc. and contains information on traps and
+ triggers.
+
+A trigger has a type and an action. The type is stored with the generic object
+ definition in the master object table and determines how the trigger is set
+ off. The action is stored with the trigger definition in this table and
+ determines what happens. Types of trigger are
+
+	Entry		0C 00 00	Player enters trigger's tile
+	Null		0C 00 01	Not set off automatically, must be
+					 explicitly activated by a switch or
+					 another trigger
+	Floor		0C 00 02
+	Player death	0C 00 03	Player dies. These are used to
+					 resurrect the player if the
+					 resurrection machine has been reset
+	Deathwatch	0C 00 04	Object is destroyed / dies
+	AOE entry	0C 00 05
+	AOE continuous	0C 00 06
+	AI hint		0C 00 07
+	Level		0C 00 08	Player enters level
+	Continuous	0C 00 09
+	Repulsor	0C 00 0A	Repulsor lift floor
+	Ecology		0C 00 0B
+	SHODAN		0C 00 0C
+	Tripbeam	0C 01 00
+	Biohazard	0C 02 00
+	Rad hazard	0C 02 01
+	Chem hazard	0C 02 02
+	Map note	0C 02 03	Map note placed by player (presumably)
+	Music mark	0C 02 04
+
+Trigger data is 28 bytes long. The first 12 bytes have the same format for all
+ triggers; the remaining 16 depend for their interpretation on the action.
+
+0000	int16	Trigger index in master object list
+0002	int16	"Prev" link for slot list
+0004	int16	"Next" link for slot list
+0006	int8	Action
+0007	int8	?? 0 or 1
+0008	4xint8	Condition
+
+The condition is usually a game variable and value, but depends on the trigger
+ type; for deathwatch triggers it is the class and type of the object(s) being
+ watched.
+
+Trigger actions are
+
+	00 Do nothing / default action (switch)
+
+	01 Transport (elevator panel / cyber term)
+
+	04 Set variable
+		000C	int16	variable to set
+		0010	int16	value
+		0012	int16	?? action 00 set 01 add
+
+	06 Propagate. Set off the listed triggers. Triggers to activate are
+		at 000C, 0010, 0014, 0018; it looks as if 000E etc. are
+		parameters to pass to them.
+
+	07 I have a sneaky suspicion that this one is to do with lighting.
+
+	09 Moving platform
+		000C	int16	Tile x coord of platform
+		0010	int16	Tile y coord of platform
+		0014	int16	Target floor height
+		0016	int16	Target ceiling height
+		0018	int16	Speed
+
+	0C Choice. Set off trigger depending on [what?]
+		000C	int16	Trigger 1
+		0010	int16	Trigger 2
+
+	0F Player receives email
+		000C	int16	Chunk no. of email (offset from 2441 0x0989)
+
+	13 Operate repulsor lift
+
+	16 Trap message
+		000C	int16	"Success" message
+		0010	int16	"Fail" message
+
+	18 Force bridge extend/retract
+
+
+3.2.16 The containers table, class 13
+
+This resides in chunks 4023, 4123 etc. and contains information on containers.
+ As the name suggests, a container is an object that may contain other objects;
+ this includes corpses and dead monsters as well as crates etc. Each entry is
+ 21 bytes long:
+
+0000	int16	Container index in master object table
+0002	int16	"Prev" link for slot list
+0004	int16	"Next" link for slot list
+0006	4xint16	Up to 4 objects contained
+000E	int8	Width  (for crates)       0 means use default
+000F	int8	Height (for crates)       0 means use default
+0010	int8	Depth  (for crates)       0 means use default
+0011	int8	Top texture  (for crates) 0 means use default
+0012	int8	Side texture (for crates) 0 means use default
+0013	int16	??
+
+Crates, like bridges, may specify their dimensions and texture mapping
+ information independently of the actual 3D model they are associated with
+ (which is just a placeholder and is ignored). Default dimensions are 80x80x80
+ for a "small crate" (13/0/0), 160x160x160 for a "large crate" (13/0/1) and
+ 240x240x240 for a "secure crate" (13/0/2). Textures are taken from the
+ special model texture block from chunk 2180. 
+
+
+
+3.2.17 The critters table, class 14
+
+
+ ==============================
+
+The surveillance control chunk
+
+This resides in chunks 4043, 4143 etc. and controls surveillance screens i.e.
+ those displaying live scenes from within the 3D world.
+
+It contains a maximum of 8 16-bit words giving the object IDs of up to 8 "null"
+ trigger objects; these are dummy objects which exist only to provide a
+ position and orientation for the camera transform associated with that screen.
+
+Objects referred to in this chunk are linked by special values in the "start
+ frame" field of their respective screens. Special start frames 248-255 refer
+ to words 0-7 in this chunk. Thus if a screen has start frame 248, the first
+ word in the surveillance control chunk is used as an object ID to look up an
+ object whose position and orientation are then used to render a scene into a
+ bitmap, which in turn is projected onto the screen.
+
+
+ ===============================
+Logs, eMails, vMails, Data Fragments (From Rebecca)
+
+Those texts are stored in blocks of Strings (String arrays). Information about
+them is also stored in this block:
+Line       Content
+0          Info
+1          'Title' (that appears in lists)
+2          Sender
+3          Subject
+4 to n-1   Verbose Text
+n          Empty Line ("")
+n+1 to m-1 Terse Text
+m          Empty Line ("")
+
+Info Line: has the following format:
+  [event ][colour ]LeftId[,[ ]RightId]
+  event: 'iEE' or 't'
+         EE = Hex Number of Log/eMail to follow immediately
+         't' is set for Texts following a 'iEE' Text
+  colour: 'cCC'
+          CC = Hex Number of Colour Index in Palette;
+               only Sender and Subject are drawn in this colour
+  LeftId, RightId:
+    decimal subchunk number of left (and right) bitmaps to show; 
+    (based from main chunk ID 0x28)
+    Note that the blank between ',' and RightId is omitted sometimes...
+
+  vMails only have a number between 256 and 261 in this line - but don't 
+  match any bitmaps -- orig SS even skips Sender and Subject Lines (since
+  there is no bitmap where they could be shown)
+
+Title, Sender, Subject: always one line
+
+Verbose and Terse Text:
+  although the texts are torn apart, those breaks do not mark Newlines.
+  Instead, character 0x0A does this. Character 0x02 marks possible
+  soft hyphens (but as it turned out, not all texts are formatted this way).
+  The string '$N' is a placeholder for the hackers name.
+
+ ===============================
+Notes (Sheets lying on the ground on Citadel)
+
+Same as above, those Texts are stored in string arrays. They don't have
+any special formatting or different versions, just one block of Text form
+the first line on and end with one empty line.
+
+
+The object properties list, objprop.dat
+---------------------------------------
+
+This file is not a resource file, it is a flat file containing tables of
+ miscellaneous object information. For each object class, there is a general
+ table, followed by a table for each subclass. Each object (with very few
+ exceptions) therefore has 2 table entries. If there is nothing of interest to
+ be defined, the entry may be a single zero byte.
+
+The object properties file has a "header" consisting of a single 4-byte
+ integer, 0x0000002d, purpose unknown to date.
+
+
+4.0 WEAPONS TABLE, class 0
+--------------------------
+
+The generic weapon info begins at file offset 0x0004, and has 2 bytes per
+ weapon to a total of 32:
+
+0000	int8	If I were to hazard a guess, I might surmise that this was
+		 involved with firing rate
+0001	int8	This controls what types of clip the weapon takes.
+		     b0-3 clip types. There is a bit for each of a possible
+			  4 types within the subclass, if set the weapon
+			  accepts that clip (0-3)
+		     b4-7 clip subclass
+		This byte is zero for energy weapons, of course.
+
+In the following, a "common weapon information" structure refers to an 8-byte
+ table as follows
+
+0000	int16	Damage
+0002	int8	"Offence" value
+0003	int8	Damage type. This seems to be organised as a bitfield:
+		01 impact
+		02 energy
+		04 EMP
+		08 ion (the ion rifle has this bit set)
+		10 gas
+		20 tranq
+		40 needle (SV needle darts and full-auto rounds)
+		80 unknown (this is set for a few vulnerabilities?)
+0004	int8	Seems to have to do with special effects. EMP weapons have 0x33
+		 here
+0005	int16	Not used in the main weapons table. Seems to be used for
+		 critter attack descriptions
+0007	int8	Armour penetration
+
+
+4.0.0 SEMI-AUTO WEAPON TABLE, class 0/0
+
+There is no extra information on these, and the table consists of 5 zero bytes.
+
+
+4.0.1 SEMI-AUTO WEAPON TABLE, class 0/1
+
+There is no extra information on these, and the table consists of 2 zero bytes.
+
+
+4.0.2 PROJECTILE WEAPON TABLE, class 0/2
+
+This table contains 16 bytes per weapon in this subclass, 32 in total:
+
+0000	8byte	common weapon info
+0008	int8	???
+0009	int32	Projectile class/subclass/type
+
+
+4.0.3 MELEE WEAPON TABLE, class 0/3
+
+This table contains 13 bytes per melee weapon, 26 in total:
+
+0000	8byte	common weapon info
+0008	int8	Energy usage
+0009	int8	?? kickback ??
+000a	int8	?? Range ??
+000b	int16	???
+
+
+4.0.4 ENERGY BEAM WEAPON TABLE, class 0/4
+
+This table seems to have the same values as the melee weapons table above.
+
+
+4.0.5 ENERGY PROJECTILE WEAPON TABLE, class 0/5
+
+This table contains 18 bytes per projectile weapon, 36 in total:
+
+0000	8byte	common weapon info
+0008	int8	Energy usage
+0009	int32	unknown
+000d	int32	Projectile class/subclass/type
+0011	int8	unknown
+
+
+4.1 AMMO CLIP TABLE, class 1
+----------------------------
+
+The generic ammo clip info begins at file offset 0x00B0, and has 14 bytes per
+ ammo clip to a total of 210:
+
+0000	8byte 	common weapon info
+0008	int8	No. rounds per clip
+0009	int8	?? kickback ??
+000a	int16
+000c	int8	?? Range ??
+000d	int8	?? crosshair wander ??
+
+The "specific" info for ammo clips just consists of a single zero byte each.
+
+
+4.2 PROJECTILE TABLE, class 2
+-----------------------------
+
+The generic projectile info begins at file offset 0x0191, and has 1 byte per
+ projectile. This is a bitmask organized thus:
+
+0x01	Projectile casts light
+0x02	Projectile bounces off walls
+0x04	Projectile bounces off enemies
+0x08	Use cyberspace color scheme?
+
+4.2.0 TRACER TABLE, class 2/0
+
+This table has 20 bytes reserved for each projectile in this class, to a total
+ of 120. In the file objprop.dat they are all zero.
+
+
+4.2.1 PROJECTILE TABLE, class 2/1
+
+This table contains 6 bytes per projectile in this class, to a total of 96.
+ These control the cyberspace model colour scheme. Naturally they are only used
+ for the c/space projectiles.
+
+
+4.2.2 class 2/2
+
+This table has a single zero byte for each object in this class, 2 in all.
+
+
+4.3 GRENADES / EXPLOSIVES TABLE, class 3
+----------------------------------------
+The generic explosives info begins at file offset 0x0283, and has 15 bytes per
+ explosives type, to a total of 120.
+
+0000	8byte 	common weapon info
+0008	byte[7] unknown
+
+
+4.3.0 GRENADES TABLE, class 3/0
+
+This table has a single zero byte for each object in this class, 5 in all.
+
+
+4.3.1 EXPLOSIVES TABLE, class 3/1
+
+This table has 3 bytes for each object in this class, to a total of 9.
+ This is clearly set to something meaningful, but what?
+
+
+4.4 PATCHES TABLE, class 4
+--------------------------
+
+The patch info begins at file offset 0x0309 and contains 24 bytes per patch for
+ a total of 168 bytes, all zeros.
+
+
+4.5 HARDWARE TABLE	class 5
+---------------------------
+
+This table starts at file offset 0x3B1 and contains 15 entries, each one
+ consisting of 11 zero bytes, for a total of 165.
+
+4.5.0 VISION MODES		5 items
+4.5.1 IMPLANTS			10 items
+
+
+4.6 SOFTS TABLE 	class 6
+---------------------------
+
+This table starts at file offset 0x456 and contains 22 entries, each one
+ consisting of 5 zero bytes, for a total of 110.
+
+4.6.0 ATTACK SOFTWARE	7 items
+4.6.1 DEFENCE SOFTWARE	3 items
+4.6.2 UTILITY SOFTWARE	4 items
+4.6.3 NON-C/SPACE		5 items
+4.6.4 INFORMATION		2 items
+4.6.X ???				1 item	; it's unsure whether this is 6:5:0 or 6:4:2, as
+								; it's never used in the maps. Presumably it
+								; shows up in save games.
+
+
+4.7 FIXTURES TABLE	class 7
+---------------------------
+
+This table starts at file offset 0x4C4 and contains 77 entries, each one
+ consisting of 3 zero bytes, for a total of 231.
+
+4.7.0 ELECTRONICS		 9 items
+4.7.1 FURNITURE 		10 items
+4.7.2 TEXT/SCREENS		11 items
+4.7.3 LIGHTS			 4 items
+4.7.4 "SHINY THINGS"	 9 items
+4.7.5 "!SHINY THINGS"	 8 items
+4.7.6 PLANTS			16 items
+4.7.6 TERRAIN			10 items
+
+
+4.8 ITEMS TABLE, class 8
+------------------------
+
+The common items info begins at file offset 0x05ab and has 2 bytes per item in
+ class 8, to a total of 160. The meaning of these bytes is unknown.
+
+The specific info for each subtype (apart from 8:5, CYBER ITEMS) consists of
+ a single zero byte per entry.
+
+4.8.0 JUNK			class 8/0	0x064b		 8 bytes
+4.8.1 DEBRIS		class 8/1	0x0653		10 bytes
+4.8.2 CORPSES		class 8/2	0x065d		15 bytes
+4.8.3 ITEMS			class 8/3	0x066c		 6 bytes
+4.8.4 ACCESS CARDS	class 8/4	0x0672		12 bytes
+4.8.5 CYBER ITEMS	class 8/5	0x067e		12 items x 6 bytes
+	This table begins at objprop.dat offset 0x067e and contains 6 bytes per cyber
+ 	item, 72 in all, containing the colour scheme for each.
+4.8.6 STAINS		class 8/6	0x06c6		 9 bytes
+4.8.7 QUEST ITEMS	class 8/7	0x06cf		16 bytes
+
+
+4.9 SWITCHES TABLE, class 9
+---------------------------
+
+The common switch table begins at objprop.dat offset 0x06df and has but a
+ single zero byte per switch object, to a total of 35.
+
+There is NO table for vending machines class 9/4, and no space allotted in
+ objprop.dat . These don't appear in the game and were obviously an intended
+ element that didn't make it.
+
+4.9.0 SWITCHES		class 9/0	0x0702		 9 bytes
+4.9.1 RECEPTACLES	class 9/1	0x070b		 7 bytes
+4.9.2 TERMINALS		class 9/2	0x0712		 3 bytes
+4.9.3 PANELS		class 9/3	0x0715		11 bytes
+4.9.4 VENDING		class 9/4	N/A 		 0 bytes; 2 objects
+4.9.5 CYBERTOGGLES	class 9/5	0x0720		 3 bytes
+
+
+4.A DOORS TABLE, class 10
+-------------------------
+This table starts at offset 0x0723, and contains 41 entries, each one consisting
+ of two zero bytes, for a total of 82.
+
+
+4.B ANIMATIONS TABLE, class 11
+------------------------------
+The common animations table starts at offset 0x775 and contains 34 entries, each
+ one two bytes long, for a total of 68.
+
+0000	uint8_t 	always 0x1E
+0001	uint8_t 	??? usually 0x00, is 0x01 for most explosions
+
+
+4.C TRAPS/TRIGGERS TABLE, class 12
+----------------------------------
+19 entries
+
+4.C.0 TRIGGERS		class C/0	13 items
+4.C.1 TRIPBEAM		class C/1	 1 item
+4.C.2 MARKS 		class C/2	 5 items
+
+
+4.D CONTAINERS TABLE, class 13
+------------------------------
+46 entries
+
+4.D.0 CRATES				class D/0	 3 items
+4.D.1 HAZARDS				class D/1	 3 items
+4.D.2 LAB EQUIPMENT 		class D/2	 4 items
+4.D.3 CORPSES				class D/3	 8 items
+4.D.4 DESTROYED BOTS		class D/4	13 items
+4.D.5 DESTROYED CYBORGS 	class D/5	 7 items
+4.D.6 DESTROYED PROGRAMS	class D/6	 8 items
+
+
+4.E CRITTERS TABLE, class 14
+----------------------------
+The common critter property table starts at 0x08BA and contains 37 entries, each
+ one 75 bytes long. They are formatted thusly:
+
+0000	uint32_t	Primary weapon attacktypes (same as for common weapon info struct)
+0004	uint16_t	Primary weapon damage
+0005	uint8_t 	PW penetration? Higher values -> more damage
+0007	uint8_t 	????
+0008	uint8_t 	PW knockback?
+0009	byte[3] 	????
+000C	uint8_t 	Primary weapon range
+000D	byte[8] 	????
+0015	uint32_t	Secondary weapon attacktypes
+0019	uint16_t	Secondary weapon damage
+001B	uint8_t 	SW penetration? Higher values -> more damage
+001C	uint8_t 	????
+001D	uint8_t 	SW knockback?
+001E	byte[3] 	????
+0021	uint8_t 	Secondary weapon range
+0022	uint16_t	???? Field of view? 120 and 180 are common values
+0024	byte[2]		????
+0026	uint32_t	Secondary weapons projectile class
+002A	uint16_t	Perception index (128 seems to be 'medium')
+002C	uint16_t 	flag word
+			00 01	Ignore gravity
+			00 04	??? set for repair-, serv-, exec-, maint- bots
+			02 00	??? set for Mutantborg
+			10 00	??? set for Mutantborg
+			20 00	??? set for Elite Guard
+002E	byte[12]	????
+003A	uint8_t 	Time (frames?) between frames of death animation.
+003B	uint8_t 	Attack sound
+003C	uint8_t 	Target acquisition sound
+003D	uint8_t 	Pain sound
+003E	uint8_t 	Death sound
+003F	uint8_t 	???? sound -- used by null-G mutants
+0040	uint32_t	Corpse class
+0044	uint8_t		????
+0045	uint8_t 	Probably of using secondary attack (/256)
+0046	uint8_t 	"Disruptability"
+0047	uint8_t 	Inventory generation control
+			00 nothing
+			01 mutants (patches & beverage cans)
+			02 cyborg drone (darts, ML rounds)
+			03 cyborg assassin
+			04 cyborg warrior (ML rounds)
+			05 flier
+			06 sec-1 (ML pistol rounds)
+			07 exec-bots (flechette and magnum rounds)
+			08 Enforcer
+			09 sec-2 bot (magnum rounds)
+			0A Elite, Mutantborg
+			0B misc. junk
+			0C ML standard rounds
+			0D repairbot/maintbot
+			0E servbot (glassware, batteries & medi)
+0048	uint8_t 	Injury animation type
+			00 meat
+			01 plant
+			02 metal
+0049	uint16_t 	always 0
+004B				Total length 75 bytes
+
+B'SERK	x3	4/0/2
+MEDI	x1	4/0/3
+BEVG	x2	8/0/0
+
+4.E.0 MUTANTS	class E/0	 9 items x 3 bytes each, all zero
+4.E.1 BOTS		class E/1	12 items; the hopper has 0x32 (50) here, all others are 0
+4.E.2 CYBORGS	class E/2	 7 items, all zero
+4.E.3 PROGRAMS	class E/3	 7 items x 6 bytes
+	This table contains 6 bytes per object (containing the C/space color scheme?)
+	 for a total of 42 bytes.
+4.E.4 BOSSES	class E/4	 2 items
+	This table consists of two zero bytes, one per critter.
+
+
+4.Z COMMON OBJECT PROPERTIES
+----------------------------
+
+The very last table in the file is the common object properties; every object
+ in the game has an entry here, 27 bytes per object. There are 476 objects, and
+ the table is a total of 12,852 bytes long, starting at 0x13EB:
+
+0000	int32	??? mass (in units of 100g)
+0004	int16	hitpoints
+0006	int8	armour
+0007	int8	render type
+			01 3D object
+			02 sprite
+			03 screen
+			04 critter
+			06 fragments (e.g. the Cyberdog)
+			07 not drawn
+			08 oriented surface (door, wall decoration)
+			0B special case handling required
+			0C force door
+0008	byte[6] ???
+000e	int8	vulnerabilities. This has the same bit values as the weapon
+		 "type" field
+000f	int8	Special vulnerabilities. This relates to the "special effects"
+		 field of the weapon descriptions. Some objects are
+		 particularly vulnerable to certain types of weapon, e.g.
+		 magpulse+robots.
+0010	int16	???
+0012	int8	"defence" value
+0013	int8	???
+0014	int16	flags
+		0001 inventory object (main or access card)
+		0002 touchable (something interesting happens when touched;
+		      projectile / pushable / melee
+		0004 ??? set for tracers
+		0004 ??? set for tracers
+		0010 consumable; inv. item is consumed when used
+		0020 blocks 3d (door) when shut i.e. is opaque, don't bother
+		      drawing behind it
+		0040 ??? unused?
+		0080 ??? unused?
+		0100 solid but openable i.e door
+		0200 solid, can't be walked or fallen through
+		0400 ?? set for some explosions
+		0800 explodes on hit; missile or live grenade
+		1000-8000 unknown
+0016	int16	3D model: index, in obj3d.res
+0019	int8	b4-7 no. extra frames
+
+Some notes on render type: 3D objects use the model information from chunk
+ (2300 + "3D model" field). Critters are drawn as sprites, but with the
+ appropriate frame based on orientation and state. "Fragments" objects have 2
+ bitmaps. The first contains the colour information for the fragments. The
+ second gives the z position of each fragment: it is a grey-scale bitmap with
+ the shade of grey (offset from colour 0xd0) giving the z value.
+
+
+
+  --------------------------------------------------------------------------
+
+
+The texture properties file, textprop.dat
+-----------------------------------------
+
+This is not a resource file, but a flat file containing an 11-byte record for
+ each texture in the game, structured as follows:
+
+0001	int8	Starfield control (for station windows)
+0002	int8	Animation group
+0003	int8	Animation index (within group)
+0004	int8	\ These are usually the same as the low byte of the texture no.
+0005	int8	/
+0006	int32	Always 10
+000A	int8	Climbable flag (1 for e.g. ladders and vines)
+
+
+The 3D model file, obj3d.res
+----------------------------
+
+This file contains the model definitions for all 3D objects (not sprites).
+Each model lives in its own chunk, of type 0x0F, of which it is subchunk 0.
+
+Coordinates are (apparently) stored as 24.8 fixed-point numbers.
+
+The model header consists of 8 bytes, followed by the instructions on how to
+ draw the object:
+
+	0000	byte[6] always 27 00 08 00 02 00
+	0006	int16	no. faces
+
+Models appear to be based around drawing commands:
+
+0000	end of sub-hull
+	0000	int16	command = 0x0000
+
+0001	define face:
+	0000	int16	command = 0x0001
+	0002	int16	face length
+	0004	3*fix	normal vector
+	0010	3*fix	point on face
+	001C	...	face drawing commands
+
+0003	define multiple vertices
+	0000	int16	command = 0x0003
+	0002	int16	no. vertices
+	0006	3*fix	first vertex
+	0012	...	more vertices
+
+0004	draw flat-shaded polygon:
+	0000	int16	command = 0x0004
+	0002	int16	no. vertices
+	0004	n*int16	vertices (defined previously in file)
+
+0005	set colour for flat shading
+	0000	int16	command = 0x0005
+	0002	int16	colour
+
+0006	split plane??? this defines a plane and references 2 faces, but I don't know what
+	 it's actually for
+	0000	int16	command = 0x0006
+	0002	3*fix	normal vector
+	000E	3*fix	point on face
+	001A	int16	left child offset  (from start of this command)
+	001C	int16	right child offset (from start of this command)
+
+000A	define vertex:
+	0000	int16	command = 0x000A
+	0002	int16	vertex no. to define
+	0004	int16	reference vertex
+	0006	fix	offset from reference in X direction
+
+000B	define vertex: as 0x000A except offset is in Y direction
+000C	define vertex: as 0x000A except offset is in Z direction
+
+000D	define vertex: as 0x000A except 2 offsets X, Y
+000E						  X, Z
+000F						  Y, Z
+
+0015	??? define initial vertex
+	0000	int16	command = 0x0015
+	0004	3*fix	vertex coords
+
+001C	define colour and shade
+	0000	int16	command = 0x001C
+	0002	int16	colour
+	0004	int16	shade
+
+0025	define texture mapping:
+	0000	int16	command = 0x0025
+	0002	int16	no. vertices
+	0004	int16	vertex no. of first vertex
+		fix	texture u coord (fix16.16)
+		fix	texture v coord (fix16.16)
+	000E	int16	vertex no. of second vertex
+		...
+
+0026	plot texture-mapped face:
+	0000	int16	command = 0x0026
+	0002	int16	texture no. (stored in citmat.res 475-525)
+	0004	int16	no. vertices
+	0006	n*int16	vertex numbers
+
+
+
+vidmail.res
+-----------
+
+Video mails. This file has 24 chunks:
+- the first 12 (id 0A40 to 0A4B)
+  contain the frames in subchunks
+- the second 12 (id 0A4C to 0A57)
+  are video information chunks (type 04) stored in
+  one subchunk each
+
+This I have yet found out about the videos:
+- a framerate of about 10 per second
+- some videos are split up into several parts (chunks)
+- the TriOp init jingle is id 0A4A (the first part
+  always played)
+- the frames (bitmaps) contain huge areas of
+  value 00 which means the previous pixel at
+  this position has to be preserved.
+  (ff1: But this is not always true as I found out...)
+- the video info structure should store the information
+  about keyframes (if there are such)
+
+
+The video information structure (type 04)
+I yet don't know what everything means;
+it's of variable size since it contains a sub-table:
+
+0000    int16       width of video (always 00C8)
+0002    int16       height of video (always 0064)
+0004    int16       corresponding chunk id of frames
+0006    6xint8      ?? always 00
+000C    int16       ?? (TriOp jingle: 0001
+                         all other:    0000)
+000E    nx5xint8    sub-table of n entries
+mmmm    int16       'end tag' always 010C
+
+The video info sub-table
+This table seems to determine how frames should be rendered.
+The from_ and to_ fields are inclusive;
+the first entry has from_frame = 0 and
+the last has to_frame = last frame
+
+0000    int8     'video command' (my name for it, always 04)
+0001    int8     from_frame
+0002    int8     to_frame
+0003    int8     ?? render operation? (*)
+0004    int8     ?? flags? (contains 0x00 to 0x04) (*)
+
+*) those last two bytes could be the frame time as Jim 
+   suggested - but if that is true, where is the information
+   how frames are drawn?
+
+5.0 CLASS TREE
+
+	0 - (16) weapons
+	0:0 - (5) semi-automatic
+	0:1 - (2) automatic
+	0:2 - (2) projectile
+	0:3 - (2) melee
+	0:4 - (3) beam
+	0:5 - (2) energy projectile
+
+	1 - (15) ammo
+	1:0 - (2) ML pistol
+	1:1 - (2) SV dartgun
+	1:2 - (3) Magnum and Riotgun
+	1:3 - (2) Mk3 Assault Rifle
+	1:4 - (2) Flechettes
+	1:5 - (2) RF Skorpion
+	1:6 - (2) Projectile weapons
+	
+	2 - (24) projectiles
+	2:0 - ( 6) tracers
+	2:1 - (16) projectiles
+	2:2 - ( 2) seekers?
+
+	3 - (8) explosives
+	3:0 - (5) grenades
+	3:1 - (3) explosives
+
+	4 - (7) patches
+	4:0 - (7) (no subtypes)
+	
+	5 - (15) cybermods
+	5:0 - (5) vision modes
+	5:1 - (10) implants
+
+	6 - () Software
+	6:0 - (7) Weapons
+	6:1 - (3) Defences
+	6:2 - (4) Utility
+	6:3 - (5) Misc
+	6:3 - (2) Information
+	6:4 - (1) ???
+	
+	7 - (77) Fixtures
+	7:0 - ( 9) Electronics
+	7:1 - (10) Furniture
+	7:2 - (11) Text & Screens
+	7:3 - ( 4) Lights
+	7:4 - ( 9) Shiny Things
+	7:5 - ( 8) Non-Shiny Things
+	7:6 - (16) Plants
+	7:7 - (10) Terrain
+	
+	8 - (80) Items
+	8:0 - ( 8) Junk
+	8:1 - (10) Debris
+	8:2 - (15) Corpses & Body Parts
+	8:3 - ( 6) Main Items
+	8:4 - (12) Access Cards
+	8:5 - (12) C/Space Items
+	8:6 - ( 9) Stains & Decals
+	8:7 - ( 8) Quest Items
+	
+	9 - (35) Switches and Panels
+	9:0 - ( 9) Switches
+	9:1 - ( 7) Receptacles
+	9:2 - ( 3) Terminals
+	9:3 - (11) Panels
+	9:4 - ( 2) Vending Machines
+	9:5 - ( 3) Cybertoggles
+	
+	A - () Doors and Gratings
+    A:0:0 = 'BLAST DOOR';
+ 	A:0:1 = 'SERVICE ACCESS DOOR';
+ 	A:0:2 = 'DOOR';
+ 	A:0:3 = 'DOOR';
+ 	A:0:4 = 'DOOR';
+ 	A:0:5 = 'DOOR';
+ 	A:0:6 = 'STORAGE ROOM DOOR';
+ 	A:0:7 = 'SHIELDED DOOR';
+	A:0:8 = 'EXECUTIVE DOOR';
+    A:1:0 = 'THE WARM STONE';
+ 	A:1:1   [x('0135')] = 'DOORWAY';
+ 	A:1:2   [x('0136')] = 'DOORWAY';
+ 	A:1:3   [x('0137')] = 'DOORWAY';
+ 	A:1:4   [x('0138')] = 'DOORWAY';
+ 	A:1:5   [x('0139')] = 'GRATING';
+ 	A:1:6   [x('013A')] = 'GRATING';
+ 	A:1:7   [x('013B')] = 'GRATING';
+ 	A:1:8   [x('013C')] = 'GRATING';
+    A:1:9 = 'MY TOE IS AN EGGPLANT';
+    A:2:0 = 'FORCE DOOR';
+    A:2:1 = 'FORCE DOOR';
+    A:2:2 = 'FORCE DOOR';
+    A:2:3 = 'FORCE DOOR';
+    A:2:4 = 'FORCE DOOR';
+    A:2:5 = 'ENERGY GRATING';
+    A:2:6 = 'GREAT LORD SNAQUEOTRAHN';
+    A:3:0 = 'EXECUTIVE ELEVATOR';
+    A:3:1 = 'ELEVATOR DOOR';
+    A:3:2 = 'ELEVATOR DOOR';
+    A:3:3 = 'FREIGHT ELEVATOR DOOR';
+    A:3:4 = 'SALT THE FRIES';
+    A:4:0 = 'BULKHEAD DOOR';
+    A:4:1 = 'BULKHEAD DOOR';
+    A:4:2 = 'IRIS DOOR';
+    A:4:3 = 'VERTICAL OPEN DOOR';
+    A:4:4 = 'VERTICAL SPLIT DOOR';
+    A:4:5 = 'DARK LORD TUAOHTUA';
+    A:4:6 = 'HIDDEN DOOR';
+    A:4:7 = 'HIDDEN DOOR';
+    A:4:8 = 'HIDDEN DOOR';
+    A:4:9 = 'REPORT THIS AS A BUG';
+
+
+	B - () Animations
+    0 = 'INACTIVE EMERGENCY SIGNAL';
+ 1   [x('0155')] = 'ACTIVE EMERGENCY SIGNAL';
+ 2   [x('0156')] = 'INACTIVE EMERGENCY SIGNAL';
+ 3   [x('0157')] = 'ACTIVE EMERGENCY SIGNAL';
+ 4   [x('0158')] = 'SPARKING CABLES';
+ 5   [x('0159')] = 'DEAD MUTANT';
+ 6   [x('015A')] = 'MACHINERY';
+ 7   [x('015B')] = 'STATION HOLOGRAM';
+ 8   [x('015C')] = 'DEAD MUTANT';
+    [x('015D')] = 'LIGHT BLOOD';
+    [x('015E')] = 'CAMERA EXPLOSION';
+    [x('015F')] = 'TV EXPLOSION';
+    [x('0160')] = 'SIMPLE SMOKE';
+    [x('0161')] = 'PLANT EXPLOSION';
+    [x('0162')] = 'BULLET WALL HIT';
+    [x('0163')] = 'BEAM WALL HIT';
+    [x('0164')] = 'IMPACT';
+    [x('0165')] = 'PROJECTILE HIT';
+    [x('0166')] = 'BEAM HIT';
+    [x('0167')] = 'BEAM HIT';
+    [x('0168')] = 'EXPLOSION';
+    [x('0169')] = 'EXPLOSION';
+    [x('016A')] = 'EXPLOSION';
+    [x('016B')] = 'LARGE EXPLOSION';
+    [x('016C')] = 'MAGPULSE HIT';
+    [x('016D')] = 'STUN HIT';
+    [x('016E')] = 'PLASMA BEAM HIT';
+    [x('016F')] = 'SMOKEY EXPLOSION';
+    [x('0170')] = 'CRATE EXPLOSION';
+    [x('0171')] = 'MONITOR EXPLOSION';
+    [x('0172')] = 'GAS EXPLOSION';
+    [x('0173')] = 'EMP EXPLOSION';
+    [x('0174')] = 'HUMANOID CORPSE EXPLOSION';
+    [x('0175')] = 'ROBOT CORPSE EXPLOSION';
+
+
+	C - (19) Traps and Triggers
+	C:0 - (13) Triggers
+	C:1 - ( 1) Tripbeam
+	C:2 - ( 5) Marks
+
+	D - (46) Containers
+    D:0 - ( 3) Crates
+	D:1 - ( 3) Hazards
+    D:2 - ( 4) Lab Equipment
+	D:3 - ( 8) Corpses
+	D:4 - (13) Destroyed Bots
+	D:5 - ( 7) Destroyed Cyborgs
+	D:6 - ( 8) Destroyed Programs
+		
+	E - (37) Critters
+	E:0 - ( 9) Mutants
+	E:1 - (12) Bots
+	E:2 - ( 7) Cyborgs
+	E:3 - ( 7) Programs
+	E:4 - ( 2) Bosses
+
+
+6.0 SIGNIFICANT CHUNKS
+	0x0024	Long names
+		- name is stored in subchunk index equal to class tree index
+		- so the riot gun is at index 4 (starting from 0) and the
+		- Skorpion at six
+	0x086A	Texture names
+	0x086B	"can't use foo" strings for textures
+		- name is stored in subchunk equal to texture ID
+	0x086D	Short names
+		- as 0x0024
+
+					Doom		SS1
+Maps				2d poly 	2d tile
+Renderer			2.5d		3d
+World lights		Yes 		Yes
+Object Lights		No? 		Yes
+Angled Walls		Yes 		Yes
+Sloped Floor/Ceil	No			Yes
+Sprites 			Yes 		Yes
+3d Models			No			Yes
+Over/Under			No			Almost (faked by using 3d models for floors and ceilings)
+Player X			Yes 		Yes
+Player Y			Yes 		Yes
+Player Z			Grav/World	Grav/World/Jump
+Player Yaw			Yes 		Yes
+Player Pitch		No		 	Yes
+Player Roll 		No			Cyberspace
+Player Lean 		No			Yes
+Player Crouch		No			Yes
+Player Prone		No			Yes
+Physics 			No			Yes

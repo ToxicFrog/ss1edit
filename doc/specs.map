@@ -1,0 +1,592 @@
+================================================================================
+	THE LEVEL MAP ARCHIVE
+================================================================================
+
+	The game maps are stored in ARCHIVE.DAT, which despite the name is actually
+a resfile. It contains 834 chunks, most of them compressed, which between them
+make up the 16 maps of the game. Each map consists of 52 chunks, all of them
+allocated IDs within a range of 100 which is specific to each map; see below.
+
+	----------------
+	Level/chunk list
+	----------------
+
+(list compiled by Glen Sawyer <glen_s@enol.com>)
+ID range	Map #	Level
+40xx		0		Deck R
+4Lxx		L		Decks 1-9
+50xx		10		SHODAN cyberspace
+51xx		11		Delta Grove
+52xx		12		Alpha Grove
+53xx		13		Beta Grove
+54xx		14		Deck 1/2 cyberspace
+55xx		15		Other cyberspace
+
+	The first two chunks, 4000 and 4001, are reserved for ?? metadata ??; so
+level 0 actually uses chunks in the range 4002-4101, level 1 chunks in the
+range 4102-4201, and so forth.
+
+	----------------
+	Level Map Format
+	----------------
+
+	The first six chunks (xx02-xx07) in each map contain general information
+about the level geometry.
+
+	* Chunk xx02
+	* Chunk xx03
+
+	These chunks are 4 bytes long each, and their purpose has not yet been
+determined.
+
+	* Chunk xx04, the level information chunk
+
+	This chunk contains miscellanous information about the level
+
+0000	uint32		map width, tiles
+0004	uint32		map height, tiles
+0008	uint32		?? always 6 - log2 map width?
+000C	uint32		?? always 6 - log2 map height?
+0010	uint32		log2(number of height units per tile width). If this value
+			is X, a nonsloping tile with height 2^X will be a perfect cube.
+0014	uint32		this is a placeholder for a pointer to the tile map when
+			the map is loaded into memory. It is meaningless on disk.
+0018	uint32		cyberspace flag. 1 if level is c/space, 0 otherwise.
+001C	byte[8] 	???
+0024	uint32		??? always 16384
+0028	byte[18]	???
+003A	-
+
+	* Chunk xx05, the tile map
+	
+	This chunk contains the the actual level geometry. It is always compressed,
+and once unpacked has size 0x10000, 16*64*64. It is a 64x64 grid, packed bottom
+to top, left to right (and thus starting in the lower left). Each tile consists
+of a 16-byte record formatted thusly:
+
+0000	uint8		tile shape.
+			00			solid
+			01			open
+			02			diagonal, open S+E
+			03			diagonal, open S+W
+			04			diagonal, open N+W
+			05			diagonal, open N+E
+			06			slope, S->N (all slopes expressed as low->high)
+			07			slope, W->E
+			08			slope, N->S
+			09			slope, E->W
+			0A			slope, valley SE->NW
+			0B			slope, valley SW->NE
+			0C			slope, valley NW->SE
+			0D			slope, valley NE->SW
+			0E			slope, ridge NW->SE
+			0F			slope, ridge NE->SW
+			10			slope, ridge SE->NW
+			11			slope, ridge SW->NE
+0001	uint8		floor
+0002	uint8		ceiling - these have format:
+			bit 0-4 height (ceiling is in units DOWN from top)
+			bit 5-6 orientation (for texture?)
+			bit 7   hazard flag (floor contains biohazard, ceiling
+					     radiation hazard flag)
+0003	uint8		Steepness of slope - FIXME how does this work
+0004	uint16		Index into object xref table of first object in tile
+0006	uint16		Texture info
+			bits 0-5	wall texture (as index into map texture list)
+			bits 6-10	ceiling texture
+			bits 11-15	floor texture
+			Each tile is allowed to specify *one* wall texture; the engine picks
+			between that texture and the ones selected by adjacent tiles based
+			on the flags.
+0008	uint32		flags:
+			8000 0000	tile has been visited/automapped
+			0F0F 0000	?? shade control ??
+			0000 F000	?? music nibble ??
+			0000 0C00	slope control:
+			     x0xx	floor & ceiling, same direction
+				 x4xx	floor & ceiling, opposite directions
+				 x8xx	floor only
+				 xCxx	ceiling only
+			0000 0200	?? spooky music flag ??
+			0000 0100	use adjacent rather than local wall textures
+			0000 001F	vertical texture offset adjustment
+000C	byte[8]		?? state ?? this always seems to be FF 00 00 00 in the
+			archive.dat file; presumably it contains something more interesting
+			in saved games.
+			
+	* Chunk xx06
+	
+	Is this used at all?
+	
+	* Chunk xx07, the texture list
+
+	This chunk contains a list of up to 64 uint16s, one for each texture used
+by the level. Each one is the texture number to load. This is not the same as
+the chunk ID, as the engine picks between texture chunks based on which texture
+resolution has been selected - see specs.chunks.
+	Texture IDs in the tile map are indexes into this list; note that since the
+tile map only provides 5 bits for ceiling/floor textures, there's a limit of 32
+different such textures per map and those textures must be referred to by the
+first 32 slots in the list. Wall textures have a full 6 bits and may be placed
+anywhere in the list.
+
+3.2 OBJECTS
+-----------
+
+An "object" in System Shock can be anything that isn't part of the basic level
+ geometry itself i.e. not a wall or floor texture. This includes all items,
+ sprites, 3D models, decals, doors and gratings, and invisible stuff such as
+ traps and triggers.
+
+An object is generally identified by class, subclass and type. This forms a
+ hierarchy of object classification from coarsest (class) to finest (type).
+ This is denoted in this document and elsewhere as class/subclass/type, e.g.
+ the Cyberjack is object 12/0/4 .
+
+Object classes are
+0	Weapons
+1	Ammo
+2	Projectiles
+3	Grenades and explosives
+4	Patches
+5	Hardware
+6	Software & logs
+7	Scenery and fixtures
+8	Gettable and other objects
+9	Switches and panels
+10	Doors and gratings
+11	Animated objects (?)
+12	Traps and markers
+13	Containers (includes corpses)
+14	Critters
+
+The object information is stored from chunk xx08 to xx24 inclusive. The first
+ two tables give general information about the objects and their positioning in
+ the level map. The remaining 15 are each specific to a given object class, and
+ contain extra information about the objects in that class.
+
+
+3.2.1 The master object table
+
+This resides in chunks 4008, 4108 etc. and contains an entry for everything in
+ the level that is not part of a tile (i.e. a wall, floor or ceiling).
+ Each entry is 27 bytes long as follows:
+
+0000	int8	in-use flag. 0 slot is free, 1 in use.
+0001	int8	object class
+0002	int8	object subclass
+0003	int16	class index. This is an index into the class specific table in
+		 one of the following chunks.
+0005	int16	index into object cross-reference table (next chunk)
+0007	int16	prev link
+0009	int16	next link
+000B	int16	x coord (high byte is tile x)
+000D	int16	y coord (high byte is tile y)
+000F	int8	z coord (?)
+0010	int8	\
+0011	int8	 } These seem to be the 3 angles for 3d positioning
+0012	int8	/
+0013	int8	?? AI index - is 0xFF for all but damageable things (critters
+		 and crates)
+0014	int8	object type
+0015	int16	Hitpoints? Initial values tend to be round decimal numbers
+0017	int8	State (sprite frame)
+
+
+3.2.2 The object cross-reference table
+
+This resides in chunks 4009, 4109 etc. and is used to link map tiles with the
+ objects that they contain. The "index" field in the tile map is an index
+ into this table. Entries themselves contain an index field which is used to
+ chain objects together when there is more than one object in a map tile.
+
+Objects which extend over more than one tile get an entry in this table for
+ each tile which partially contains them. Entries for a single object and
+ multiple tiles are linked by the 5th field (0008) while entries for a single
+ tile and multiple objects are linked by the 4th (0006).
+
+An object cross-ref entry consists of 10 bytes as follows:
+
+0000	int16	Tile x position
+0002	int16	Tile y position
+0004	int16	Index into master object table
+0006	int16	Cross-ref index for next object in tile
+0008	int16	Cross-ref index for next tile object extends into
+
+
+3.2.3 The weapons table, class 0
+
+This resides in chunks 4010, 4110 etc. and contains special info on weapons.
+ Each entry consists of 8 bytes as follows:
+
+0000	int16	Weapon index in master object table
+0002	int16	"Prev" link for slot list
+0004	int16	"Next" link for slot list
+0006	int8	Ammo type (projectile) or charge (energy)
+0007	int8	Ammo count (projectile) or ?temperature (energy)
+
+
+3.2.4 The ammo table, class 1
+
+This resides in chunks 4011, 4111 etc. and contains special info on ammo clips.
+ An ammo clip is an ammo clip is an ammo clip, really, so this chunk isn't
+ very interesting; it has 6 bytes in it:
+
+0000	int16	Ammo clip index in master object table
+0002	int16	"Prev" link for slot list
+0004	int16	"Next" link for slot list
+
+
+3.2.5 The projectile table, class 2
+
+This resides in chunks 4012, 4112 etc. and is not used in the map archive for
+ obvious reasons. It might be used in saved games.
+
+
+3.2.6 The grenades / explosives table, class 3
+
+
+3.2.7 The patches table, class 4
+
+This resides in chunk 4014, 4114 etc. and contains information about the
+ dermal patches. There is no special information on these, so this table just
+ contains the master object cross-ref and the links for the slot list.
+
+
+3.2.8 The hardware table, class 5
+
+This resides in chunks 4015, 4115 etc. and contains information on hardware.
+ Each entry is 7 bytes long:
+
+0000	int16	Hardware index in master object table
+0002	int16	"Prev" link for slot list
+0004	int16	"Next" link for slot list
+0006	int8	Version
+
+
+3.2.9 The software / logs table, class 6
+
+This resides in chunks 4016, 4116 etc. and contains information on software
+ and logs. Each entry is 9 bytes long:
+
+0000	int16	Software index in master object table
+0002	int16	"Prev" link for slot list
+0004	int16	"Next" link for slot list
+0006	int8	(Softs) Version no. of software
+0007	int8	(Log) Log chunk number (offset from 0x09B8 2488)
+0008	int8	(Log) Level no. log refers to
+
+
+3.2.10 The scenery / decorations table, class 7
+
+This resides in chunks 4017, 4117 etc. and contains information on permanent
+ fixtures of the station which aren't parts of walls. Each entry is 16 bytes
+ long; the first 6 bytes are the index and slot-list links as follows, and
+ the rest depend on the object type.
+
+For WORDS 07:02:03
+0006	int16	text (subchunk to chunk 0868 (2152))
+0008	int16	font and size
+000A	int16	colour (0 seems to default to red)
+
+For animated screens (Glen figured this one out):
+0006	int16	Number of frames
+0008	int16	Loop repeats backwards flag
+000C	int16	Start frame (offset from chunk 321)
+
+Some values of "start frame" are special:
+	246	Static fading into SHODAN's face
+	247
+	248-255	Surveillance ID, see "surveillance control chunk" below
+
+For values of "start frame" greater than 255 the low 7 bits give a text message
+ (subchunk of text chunk 0877 2167) to be rendered onto the screen. Here 127
+ 0x7F is the special value; it is used for the random numbers in the CPU rooms
+ on levels 1-6 before the nodes have been destroyed.
+If bit 7 is set for a text message the text scrolls vertically. Each frame
+ consists of several strings, starting at (start frame & 0x7f) + (current
+ frame). The number of strings per frame is simply the number that will fit on
+ the screen; partial lines are not drawn.
+
+
+For bridges subchunk 7 (Glen again):
+0008	int8	bits 0-3 X size (4 is tile width)
+		bits 4-7 Y size (4 is tile width) - 0 is bridge's normal size
+						    in its 3D model
+0009	int8	bridge height (0 is default) 32 units per texture height
+000A	int8	bits 0-6 top/bottom texture
+		bit 7    set if texture comes from the main textures referred
+		 to in chunk xx07, otherwise it is taken from the 3D model
+		 texture maps in citmat.res .
+000B	int8	side textures (similarly)
+
+
+Note that in CYBERSPACE levels (10, 14, 15) fixtures are not used as such, but
+ are co-opted as extra softs/logs in case that table becomes full, and act as
+ objects of class 6. From a cursory investigation the fixture data in this
+ case seems to be:
+0006	int16	version no. (softs)
+0008	int16	softs/logs subclass
+000C	int16	softs/logs type
+
+
+3.2.11 The items table, class 8
+
+
+
+3.2.12 The switches / panels table, class 9
+
+This resides in chunks 4019, 4119 etc. and contains information on switches and
+ panels. Each entry is 30 bytes long, having the first 12 Bytes in common;
+ the second half is specific to switch type.
+ As it seems, the State of the switch (mostly Puzzles) isn't stored within
+ this table.
+
+0000	int16	Panel index in master object table
+0002	int16	"Prev" link for slot list
+0004	int16	"Next" link for slot list
+0006  int16 unknown??
+0008  int16 Condition: Variable Index
+0010  int16 Condition: Message on fail
+
+Number Pads (9 3 7):
+000C	int16	Combination in BCD
+000E  int16 Map Object to trigger
+0018  int16 Map Object to Extra Trigger (?)
+
+
+Puzzles (9/3/0 to 9/3/3)
+
+These are either wire or block (power) puzzles. The dword at offset 0x10 seems
+ to be the determining factor: if bit 28 is set (0x10000000) it is a block
+ puzzle, else it is a wire puzzle.
+
+For both types the word at offset 0x0C is a reference to a map object to frob
+ when the puzzle is completed.
+
+For a wire puzzle:
+0010  int8  Size (nibble0: Wires (default: 4 if 0), 
+                  nibble1: Connectors per side (default: 6 if 0))
+0011  int8  Power level to be reached (out of 0xFF)
+0012  int16 unknown
+0014  int32 Target State of Wires
+0018  int32 Current State of Wires
+            The States are stored in 3bit pairs from right to left
+            (first pair: first wire, second pair second, ...)
+            the first triple states the left connector, 
+            the second the right one.
+            (so a maximum of 8 connectors is possible and
+             maximum of 5 Wires (32 / 6 = 5)
+
+For a block puzzle:
+0010  int32 "Helper" trigger object for state (is an Action 0x00 Trigger)
+	    Bit 28 of this field is set to indicate that it is a block puzzle.
+0016  int32 Puzzle information:
+	    b4-6    Y coord of power source connector
+	    b7-8    Source direction (10=left)
+	    b12-14  Y coord of power destination connector
+	    b15-16  Destination direction (11=right, 00=up)
+	    b20-23  Width
+	    b24-27  Height
+	    b28-31  Side effect type
+
+The actual state of the puzzle is stored in the "helper" object's trigger info,
+ from offset 0x10 on. Each block has 3 bits describing what is in it. Blocks
+ are stored from top left to bottom right in the usual order, but the way in
+ which they are encoded is slightly complicated.
+Puzzle state is read in 32-bit words starting at the LAST dword in the trigger
+ info, and the block descriptors are rotated out at the bottom. When the word
+ has been fully examined, any bits left over are kept and combined with enough
+ bits from the bottom of the previous word to make up a 3-bit block descriptor.
+Thus the top left block is described by the bottom 3 bits of the last trigger
+ word (the bottom 3 bits of the byte at offset 0x1C), the next block to the
+ right by bits 3-5 of the same word, and so on until the 11th block, if the
+ puzzle is that large. This is made up of the top 2 bits of the last word (bits
+ 6-7 of byte 0x1F) as its low 2 bits and the bottom bit of the penultimate word
+ (bit 0 of byte 0x18) as the high bit. The 12th block is taken from bits 1-3 of
+ the penultimate word, and so on.
+It might be simpler just to look at Trig_get_block_puzzle() in src/trigger.c
+ for clarification of the above.
+
+Block types are:
+00	Empty
+01	Inactive connector (x)
+02	Active connector (+)
+04	Solid block
+06	Switching node (hollow square)
+
+
+Panels:
+yet unknown
+
+Buttons (9 0 2):
+yet unknown
+
+Cyberjacks:
+000C  int16 X of target Cyberspace
+0010  int16 Y of target Cyberspace
+0014  int16 Z of target Cyberspace
+0018  int16 Level (Cyberspace)
+
+Elevators (9 3 5):
+000C  int16 Map index of Panel of target Level1
+000E  int16 Map index of Panel of target Level2
+0012  int16 Map index of Panel of target Level3
+0018  int16 Bitfield of accessible Levels (Actual)
+001A  int16 Bitfield of accessible Levels (Shaft)
+	    Levels with a 1 in the "shaft" field but not in the "Actual" field
+	     give a "Shaft damage: Unable to go there" message.
+
+
+
+3.2.13 The doors / gratings table, class 10
+
+This resides in chunks 4020, 4120 etc. and contains information on doors and
+ gratings. Each entry is 14 bytes long:
+
+0000	int16	Door index in master object table
+0002	int16	"Prev" link for slot list
+0004	int16	"Next" link for slot list
+0006	int16	?? trigger cross-ref
+0008	int16	Message
+000A	int8	Access required 0-31
+
+
+3.2.14 The animations table, class 11
+
+
+3.2.15 The traps and triggers table, class 12
+
+This resides in chunks 4022, 4122 etc. and contains information on traps and
+ triggers.
+
+A trigger has a type and an action. The type is stored with the generic object
+ definition in the master object table and determines how the trigger is set
+ off. The action is stored with the trigger definition in this table and
+ determines what happens. Types of trigger are
+
+	Entry		0C 00 00	Player enters trigger's tile
+	Null		0C 00 01	Not set off automatically, must be
+					 explicitly activated by a switch or
+					 another trigger
+	Floor		0C 00 02
+	Player death	0C 00 03	Player dies. These are used to
+					 resurrect the player if the
+					 resurrection machine has been reset
+	Deathwatch	0C 00 04	Object is destroyed / dies
+	AOE entry	0C 00 05
+	AOE continuous	0C 00 06
+	AI hint		0C 00 07
+	Level		0C 00 08	Player enters level
+	Continuous	0C 00 09
+	Repulsor	0C 00 0A	Repulsor lift floor
+	Ecology		0C 00 0B
+	SHODAN		0C 00 0C
+	Tripbeam	0C 01 00
+	Biohazard	0C 02 00
+	Rad hazard	0C 02 01
+	Chem hazard	0C 02 02
+	Map note	0C 02 03	Map note placed by player (presumably)
+	Music mark	0C 02 04
+
+Trigger data is 28 bytes long. The first 12 bytes have the same format for all
+ triggers; the remaining 16 depend for their interpretation on the action.
+
+0000	int16	Trigger index in master object list
+0002	int16	"Prev" link for slot list
+0004	int16	"Next" link for slot list
+0006	int8	Action
+0007	int8	?? 0 or 1
+0008	4xint8	Condition
+
+The condition is usually a game variable and value, but depends on the trigger
+ type; for deathwatch triggers it is the class and type of the object(s) being
+ watched.
+
+Trigger actions are
+
+	00 Do nothing / default action (switch)
+
+	01 Transport (elevator panel / cyber term)
+
+	04 Set variable
+		000C	int16	variable to set
+		0010	int16	value
+		0012	int16	?? action 00 set 01 add
+
+	06 Propagate. Set off the listed triggers. Triggers to activate are
+		at 000C, 0010, 0014, 0018; it looks as if 000E etc. are
+		parameters to pass to them.
+
+	07 I have a sneaky suspicion that this one is to do with lighting.
+
+	09 Moving platform
+		000C	int16	Tile x coord of platform
+		0010	int16	Tile y coord of platform
+		0014	int16	Target floor height
+		0016	int16	Target ceiling height
+		0018	int16	Speed
+
+	0C Choice. Set off trigger depending on [what?]
+		000C	int16	Trigger 1
+		0010	int16	Trigger 2
+
+	0F Player receives email
+		000C	int16	Chunk no. of email (offset from 2441 0x0989)
+
+	13 Operate repulsor lift
+
+	16 Trap message
+		000C	int16	"Success" message
+		0010	int16	"Fail" message
+
+	18 Force bridge extend/retract
+
+
+3.2.16 The containers table, class 13
+
+This resides in chunks 4023, 4123 etc. and contains information on containers.
+ As the name suggests, a container is an object that may contain other objects;
+ this includes corpses and dead monsters as well as crates etc. Each entry is
+ 21 bytes long:
+
+0000	int16	Container index in master object table
+0002	int16	"Prev" link for slot list
+0004	int16	"Next" link for slot list
+0006	4xint16	Up to 4 objects contained
+000E	int8	Width  (for crates)       0 means use default
+000F	int8	Height (for crates)       0 means use default
+0010	int8	Depth  (for crates)       0 means use default
+0011	int8	Top texture  (for crates) 0 means use default
+0012	int8	Side texture (for crates) 0 means use default
+0013	int16	??
+
+Crates, like bridges, may specify their dimensions and texture mapping
+ information independently of the actual 3D model they are associated with
+ (which is just a placeholder and is ignored). Default dimensions are 80x80x80
+ for a "small crate" (13/0/0), 160x160x160 for a "large crate" (13/0/1) and
+ 240x240x240 for a "secure crate" (13/0/2). Textures are taken from the
+ special model texture block from chunk 2180. 
+
+
+
+3.2.17 The critters table, class 14
+
+
+ ==============================
+
+The surveillance control chunk
+
+This resides in chunks 4043, 4143 etc. and controls surveillance screens i.e.
+ those displaying live scenes from within the 3D world.
+
+It contains a maximum of 8 16-bit words giving the object IDs of up to 8 "null"
+ trigger objects; these are dummy objects which exist only to provide a
+ position and orientation for the camera transform associated with that screen.
+
+Objects referred to in this chunk are linked by special values in the "start
+ frame" field of their respective screens. Special start frames 248-255 refer
+ to words 0-7 in this chunk. Thus if a screen has start frame 248, the first
+ word in the surveillance control chunk is used as an object ID to look up an
+ object whose position and orientation are then used to render a scene into a
+ bitmap, which in turn is projected onto the screen.
