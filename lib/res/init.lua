@@ -72,6 +72,34 @@ function res.typename(t)
 	return res_types[t] or ("0x%02X" % t)
 end
 
+-- FIXME
+function res_decompress(c)
+	return c
+end
+
+local function read_content(file, chunk)
+	local content = struct.unpack(file, "a4 s%d" % chunk.packsize)
+	
+	if chunk.compressed then
+		content = res_decompress(content)
+		-- FIXME
+		chunk.directory = false
+	end
+	
+	if chunk.directory then
+		chunk.content = {}
+		local count = struct.unpack(content, "u2")
+		local offsets = { struct.unpack(content, "@2 (u4)*%d" % (count+1)) }
+		for i=1,count do
+			chunk.content[i] = content:sub(offsets[i]+1, offsets[i+1])
+		end
+	else
+		chunk.content = content
+	end
+	
+	return chunk
+end
+
 -- res_file res.open(string filename | fd file)
 -- open a file, read all metadata and chunk data, and return a resource handle
 function res.open(file)
@@ -99,8 +127,8 @@ function res.open(file)
 	for i,chunk in ipairs(chunks) do
 		chunk.compressed = chunk.flags[1]
 		chunk.directory = chunk.flags[2]
+		read_content(file, chunk)
 		rh.index[chunk.id] = chunk
-		chunk.content = struct.unpack(file, "a4 s%d" % chunk.packsize)
 	end
 		
 	file:close()
