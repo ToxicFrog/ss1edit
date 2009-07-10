@@ -3,11 +3,12 @@
 -- split, trim, join, rfind, count, interpolate
 
 -- python-style string formatting with %
-getmetatable("").__mod = function(fmt, data)
-	return fmt:format(unpack(
-		type(data) == "table" and data
-		or { data }
-	))
+getmetatable("").__mod = function(lhs, rhs)
+    if type(rhs) == "table" then
+        return lhs:format(unpack(rhs))
+    else
+        return lhs:gsub('%%', '%%%%'):gsub('%%%%', '%%', 1):format(rhs)
+    end
 end
 
 -- string... split(string, pattern. max) - break up string on pattern

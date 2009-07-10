@@ -4,6 +4,7 @@
 -- tprint - recursively display the contents of a table
 -- does not generate something the terp can read; use table.dump() for that
 function table.print(T)
+	assert(T, "bad argument to table.print")
 	local done = {}
 	local function tprint_r(T, prefix)
 		for k,v in pairs(T) do
