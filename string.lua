@@ -2,6 +2,9 @@
 -- and thus callable with str:foo()
 -- split, trim, join, rfind, count, interpolate
 
+-- so you can s:tonumber()
+string.tonumber = tonumber
+
 -- python-style string formatting with %
 getmetatable("").__mod = function(lhs, rhs)
     if type(rhs) == "table" then

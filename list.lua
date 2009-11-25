@@ -45,3 +45,12 @@ function list.max(t, cmp)
 	return max
 end
 
+list.map = table.mapv
+
+function list.fold(L, f, val)
+    for i=1,#L do
+        val = f(L[i], val)
+    end
+    
+    return val
+end
