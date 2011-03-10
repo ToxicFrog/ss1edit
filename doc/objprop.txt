@@ -195,3 +195,283 @@ don't appear to be used in game.
 	Category 3: Grenades & Explosives
 	---------------------------------
 
+	Category information starts at 0x0283 and consists of 15 bytes per
+type, for a total of 120.
+
+0000    byte[8]         common weapon information
+0008	byte[7]		??? unknown
+000F	-
+
+
+4.3.0 GRENADES TABLE, class 3/0
+
+This table has a single zero byte for each object in this class, 5 in all.
+
+
+4.3.1 EXPLOSIVES TABLE, class 3/1
+
+This table has 3 bytes for each object in this class, to a total of 9.
+ This is clearly set to something meaningful, but what?
+
+
+4.4 PATCHES TABLE, class 4
+--------------------------
+
+The patch info begins at file offset 0x0309 and contains 24 bytes per patch for
+ a total of 168 bytes, all zeros.
+
+
+4.5 HARDWARE TABLE	class 5
+---------------------------
+
+This table starts at file offset 0x3B1 and contains 15 entries, each one
+ consisting of 11 zero bytes, for a total of 165.
+
+4.5.0 VISION MODES		5 items
+4.5.1 IMPLANTS			10 items
+
+
+4.6 SOFTS TABLE 	class 6
+---------------------------
+
+This table starts at file offset 0x456 and contains 22 entries, each one
+ consisting of 5 zero bytes, for a total of 110.
+
+4.6.0 ATTACK SOFTWARE	7 items
+4.6.1 DEFENCE SOFTWARE	3 items
+4.6.2 UTILITY SOFTWARE	4 items
+4.6.3 NON-C/SPACE		5 items
+4.6.4 INFORMATION		2 items
+4.6.X ???				1 item	; it's unsure whether this is 6:5:0 or 6:4:2, as
+								; it's never used in the maps. Presumably it
+								; shows up in save games.
+
+
+4.7 FIXTURES TABLE	class 7
+---------------------------
+
+This table starts at file offset 0x4C4 and contains 77 entries, each one
+ consisting of 3 zero bytes, for a total of 231.
+
+4.7.0 ELECTRONICS		 9 items
+4.7.1 FURNITURE 		10 items
+4.7.2 TEXT/SCREENS		11 items
+4.7.3 LIGHTS			 4 items
+4.7.4 "SHINY THINGS"	 9 items
+4.7.5 "!SHINY THINGS"	 8 items
+4.7.6 PLANTS			16 items
+4.7.6 TERRAIN			10 items
+
+
+4.8 ITEMS TABLE, class 8
+------------------------
+
+The common items info begins at file offset 0x05ab and has 2 bytes per item in
+ class 8, to a total of 160. The meaning of these bytes is unknown.
+
+The specific info for each subtype (apart from 8:5, CYBER ITEMS) consists of
+ a single zero byte per entry.
+
+4.8.0 JUNK			class 8/0	0x064b		 8 bytes
+4.8.1 DEBRIS		class 8/1	0x0653		10 bytes
+4.8.2 CORPSES		class 8/2	0x065d		15 bytes
+4.8.3 ITEMS			class 8/3	0x066c		 6 bytes
+4.8.4 ACCESS CARDS	class 8/4	0x0672		12 bytes
+4.8.5 CYBER ITEMS	class 8/5	0x067e		12 items x 6 bytes
+	This table begins at objprop.dat offset 0x067e and contains 6 bytes per cyber
+ 	item, 72 in all, containing the colour scheme for each.
+4.8.6 STAINS		class 8/6	0x06c6		 9 bytes
+4.8.7 QUEST ITEMS	class 8/7	0x06cf		16 bytes
+
+
+4.9 SWITCHES TABLE, class 9
+---------------------------
+
+The common switch table begins at objprop.dat offset 0x06df and has but a
+ single zero byte per switch object, to a total of 35.
+
+There is NO table for vending machines class 9/4, and no space allotted in
+ objprop.dat . These don't appear in the game and were obviously an intended
+ element that didn't make it.
+
+4.9.0 SWITCHES		class 9/0	0x0702		 9 bytes
+4.9.1 RECEPTACLES	class 9/1	0x070b		 7 bytes
+4.9.2 TERMINALS		class 9/2	0x0712		 3 bytes
+4.9.3 PANELS		class 9/3	0x0715		11 bytes
+4.9.4 VENDING		class 9/4	N/A 		 0 bytes; 2 objects
+4.9.5 CYBERTOGGLES	class 9/5	0x0720		 3 bytes
+
+
+4.A DOORS TABLE, class 10
+-------------------------
+This table starts at offset 0x0723, and contains 41 entries, each one consisting
+ of two zero bytes, for a total of 82.
+
+
+4.B ANIMATIONS TABLE, class 11
+------------------------------
+The common animations table starts at offset 0x775 and contains 34 entries, each
+ one two bytes long, for a total of 68.
+
+0000	uint8_t 	always 0x1E
+0001	uint8_t 	??? usually 0x00, is 0x01 for most explosions
+
+
+4.C TRAPS/TRIGGERS TABLE, class 12
+----------------------------------
+19 entries
+
+4.C.0 TRIGGERS		class C/0	13 items
+4.C.1 TRIPBEAM		class C/1	 1 item
+4.C.2 MARKS 		class C/2	 5 items
+
+
+4.D CONTAINERS TABLE, class 13
+------------------------------
+46 entries
+
+4.D.0 CRATES				class D/0	 3 items
+4.D.1 HAZARDS				class D/1	 3 items
+4.D.2 LAB EQUIPMENT 		class D/2	 4 items
+4.D.3 CORPSES				class D/3	 8 items
+4.D.4 DESTROYED BOTS		class D/4	13 items
+4.D.5 DESTROYED CYBORGS 	class D/5	 7 items
+4.D.6 DESTROYED PROGRAMS	class D/6	 8 items
+
+
+4.E CRITTERS TABLE, class 14
+----------------------------
+The common critter property table starts at 0x08BA and contains 37 entries, each
+ one 75 bytes long. They are formatted thusly:
+
+0000	uint32_t	Primary weapon attacktypes (same as for common weapon info struct)
+0004	uint16_t	Primary weapon damage
+0005	uint8_t 	PW penetration? Higher values -> more damage
+0007	uint8_t 	????
+0008	uint8_t 	PW knockback?
+0009	byte[3] 	????
+000C	uint8_t 	Primary weapon range
+000D	byte[8] 	????
+0015	uint32_t	Secondary weapon attacktypes
+0019	uint16_t	Secondary weapon damage
+001B	uint8_t 	SW penetration? Higher values -> more damage
+001C	uint8_t 	????
+001D	uint8_t 	SW knockback?
+001E	byte[3] 	????
+0021	uint8_t 	Secondary weapon range
+0022	uint16_t	???? Field of view? 120 and 180 are common values
+0024	byte[2]		????
+0026	uint32_t	Secondary weapons projectile class
+002A	uint16_t	Perception index (128 seems to be 'medium')
+002C	uint16_t 	flag word
+			00 01	Ignore gravity
+			00 04	??? set for repair-, serv-, exec-, maint- bots
+			02 00	??? set for Mutantborg
+			10 00	??? set for Mutantborg
+			20 00	??? set for Elite Guard
+002E	byte[12]	????
+003A	uint8_t 	Time (frames?) between frames of death animation.
+003B	uint8_t 	Attack sound
+003C	uint8_t 	Target acquisition sound
+003D	uint8_t 	Pain sound
+003E	uint8_t 	Death sound
+003F	uint8_t 	???? sound -- used by null-G mutants
+0040	uint32_t	Corpse class
+0044	uint8_t		????
+0045	uint8_t 	Probably of using secondary attack (/256)
+0046	uint8_t 	"Disruptability"
+0047	uint8_t 	Inventory generation control
+			00 nothing
+			01 mutants (patches & beverage cans)
+			02 cyborg drone (darts, ML rounds)
+			03 cyborg assassin
+			04 cyborg warrior (ML rounds)
+			05 flier
+			06 sec-1 (ML pistol rounds)
+			07 exec-bots (flechette and magnum rounds)
+			08 Enforcer
+			09 sec-2 bot (magnum rounds)
+			0A Elite, Mutantborg
+			0B misc. junk
+			0C ML standard rounds
+			0D repairbot/maintbot
+			0E servbot (glassware, batteries & medi)
+0048	uint8_t 	Injury animation type
+			00 meat
+			01 plant
+			02 metal
+0049	uint16_t 	always 0
+004B				Total length 75 bytes
+
+B'SERK	x3	4/0/2
+MEDI	x1	4/0/3
+BEVG	x2	8/0/0
+
+4.E.0 MUTANTS	class E/0	 9 items x 3 bytes each, all zero
+4.E.1 BOTS		class E/1	12 items; the hopper has 0x32 (50) here, all others are 0
+4.E.2 CYBORGS	class E/2	 7 items, all zero
+4.E.3 PROGRAMS	class E/3	 7 items x 6 bytes
+	This table contains 6 bytes per object (containing the C/space color scheme?)
+	 for a total of 42 bytes.
+4.E.4 BOSSES	class E/4	 2 items
+	This table consists of two zero bytes, one per critter.
+
+
+4.Z COMMON OBJECT PROPERTIES
+----------------------------
+
+The very last table in the file is the common object properties; every object
+ in the game has an entry here, 27 bytes per object. There are 476 objects, and
+ the table is a total of 12,852 bytes long, starting at 0x13EB:
+
+0000	int32	??? mass (in units of 100g)
+0004	int16	hitpoints
+0006	int8	armour
+0007	int8	render type
+			01 3D object
+			02 sprite
+			03 screen
+			04 critter
+			06 fragments (e.g. the Cyberdog)
+			07 not drawn
+			08 oriented surface (door, wall decoration)
+			0B special case handling required
+			0C force door
+0008	byte[6] ???
+000e	int8	vulnerabilities. This has the same bit values as the weapon
+		 "type" field
+000f	int8	Special vulnerabilities. This relates to the "special effects"
+		 field of the weapon descriptions. Some objects are
+		 particularly vulnerable to certain types of weapon, e.g.
+		 magpulse+robots.
+0010	int16	???
+0012	int8	"defence" value
+0013	int8	???
+0014	int16	flags
+		0001 inventory object (main or access card)
+		0002 touchable (something interesting happens when touched;
+		      projectile / pushable / melee
+		0004 ??? set for tracers
+		0004 ??? set for tracers
+		0010 consumable; inv. item is consumed when used
+		0020 blocks 3d (door) when shut i.e. is opaque, don't bother
+		      drawing behind it
+		0040 ??? unused?
+		0080 ??? unused?
+		0100 solid but openable i.e door
+		0200 solid, can't be walked or fallen through
+		0400 ?? set for some explosions
+		0800 explodes on hit; missile or live grenade
+		1000-8000 unknown
+0016	int16	3D model: index, in obj3d.res
+0019	int8	b4-7 no. extra frames
+
+Some notes on render type: 3D objects use the model information from chunk
+ (2300 + "3D model" field). Critters are drawn as sprites, but with the
+ appropriate frame based on orientation and state. "Fragments" objects have 2
+ bitmaps. The first contains the colour information for the fragments. The
+ second gives the z position of each fragment: it is a grey-scale bitmap with
+ the shade of grey (offset from colour 0xd0) giving the z value.
+
+
+
