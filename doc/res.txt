@@ -74,9 +74,10 @@ nnnn	uint32		offset to start of last SC
 nnnn+4	uint32		total length of chunk
 
 This is followed by the data of the actual subchunks. Note that for directory
-chunks with the compression flag set, the entire directory is compressed as a
-single chunk; unpacking routines should first decompress it, then process its
-contents normally.
+chunks with the compression flag set, the chunk directory header is not
+compressed, but the rest of the chunk is; to get a subchunk, you first
+decompress the chunk body, then use the offsets in the header into the
+uncompressed chunk.
 
 	---------------------
 	Compression algorithm

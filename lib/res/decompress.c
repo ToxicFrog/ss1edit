@@ -1,10 +1,16 @@
+#include <lua.h>
+#include <lauxlib.h>
+#include <stdlib.h>
+#include <stdint.h>
+#include <string.h>
+
 void do_unpack(
-	uint8_t * pack,
+	const uint8_t * pack,
 	uint8_t * unpack,
 	unsigned long packsize,
 	unsigned long unpacksize
 ) {
-	uint8_t * byteptr;
+	const uint8_t * byteptr;
 	uint8_t * exptr;
 	unsigned long word;
 	int nbits;
@@ -83,4 +89,26 @@ void do_unpack(
 			}
 		}
 	}
+}
+
+int res_decompress(lua_State * L)
+{
+	uint32_t packsize, unpacksize;
+	const uint8_t * pack;
+	uint8_t * unpack;
+
+	pack = (const uint8_t *)luaL_checklstring(L, 1, &packsize);
+	unpacksize = luaL_checkinteger(L, 2);
+	unpack = malloc(unpacksize);
+	
+	do_unpack(pack, unpack, packsize, unpacksize);
+	
+	lua_pushlstring(L, (const char *)unpack, unpacksize);
+	return 1;
+}
+
+int luaopen_res_decompress(lua_State * L)
+{
+	lua_pushcfunction(L, res_decompress);
+	return 1;
 }

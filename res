@@ -4,6 +4,7 @@
 -- stage 1: simply list the contents
 
 package.path = "lib/?.lua;lib/?/init.lua;"..package.path
+package.cpath = "lib/?.so;"..package.cpath
 
 require "res"
 
@@ -20,8 +21,10 @@ function main(filename)
 			res.typename(chunk.type),
 			chunk.size,
 			chunk.compressed and " (compressed %d)" % chunk.packsize or "",
-			chunk.nested and " (directory: %d subchunks)" % #chunk.content or ""
+			chunk.directory and " (directory: %d subchunks)" % #chunk.content or ""
 		)
+		--print("\t\t\t\t%d" % #chunk.content)
+		--io.open("tmp/"..tostring(chunk.id), "wb"):write(chunk.content)
 	end
 end
 
