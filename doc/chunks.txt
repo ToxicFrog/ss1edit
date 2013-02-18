@@ -1,0 +1,13 @@
+================================================================================
+	SIGNIFICANT CHUNKS
+================================================================================
+
+0x0024		Long object names
+				Each name is stored in the subchunk with index equal to the
+				index of the corresponding definition in the gamesys.
+				So, the riot gun is at index 4, and the Skorpion at 6.
+0x086A		Texture names
+0x086B		"can't use ____" messages for textures
+				Names/messages are stored in subchunk equal to texture ID
+0x086D		Short object names
+				As 0x0024

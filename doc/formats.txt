@@ -1,0 +1,317 @@
+================================================================================
+	MISCELLANEOUS DATA FORMATS
+================================================================================
+
+	--------------------
+	TEXTURES AND SPRITES
+	--------------------
+
+	Textures and sprites have content type 2 (bitmap) and use the following
+general format:
+
+	-------------
+	Bitmap header
+	-------------
+
+	The bitmap header is 28 bytes long, as follows.
+
+0000	int32		??? always 0
+0004	int16		??? compression?
+0006	int16		???
+0008	int16		width
+000a	int16		height
+000c	int16		??? always same as width
+000e	int8		??? log2 width
+000f	int8		??? log2 height
+0010	int16		\
+0012	int16		 \ These seem to be used for animation frames to keep the
+0014	int16		 /  sprite centred.
+0016	int16		/
+0018	int32		??? always 0
+001c	-
+
+	------------------
+	Bitmap compression
+	------------------
+
+	A compressed (type 4) bitmap can be unpacked as follows:
+
+00 nn xx				write nn bytes of colour xx
+nn .. ..    0<nn<0x80	copy nn bytes direct
+80 00 00				skip rest of file (end of compressed data)
+80 mm nn    0<nn<0x80	skip (nn*256+mm) bytes (write transparencies)
+80 nn 80 .. ..			copy nn bytes direct
+80 mm nn    0x80<nn		copy ((nn&0x3f)*256+mm) bytes  
+nn	    	0x80<nn		skip (nn&0x7f) bytes
+
+	Thanks to Joerg Fischer (jofis@cs.uni-sb.de) for kindly sending me the
+source code to his texture extractor (you can get it from the hackers' page at
+TTLG) which cleared up some questions I had about the bitmap format. Vasily
+Volkov (no known e-presence) also had a hand in the decompression. Joerg has
+asked that I not distribute the sources myself; email him direct if you want
+them.
+
+	Note that _all_ bitmaps are subchunks, even when there is only one bitmap
+stored in a chunk. This is presumably to simplify the loading logic.
+
+	Textures are uncompressed square bitmaps stored at 4 resolutions each:
+16x16, 32x32, 64x64 and 128x128. There are 273 textures stored, but some (a
+few) do not contain useful graphics. Chunks containing textures are:
+
+	  76		16x16 textures   (sub-chunks 0-272)
+	  77		32x32 textures   (sub-chunks 0-272)
+	 707-979	64x64 textures   (one chunk each)
+	1000-1272	128x128 textures (one chunk each)
+
+	-----------------
+	Pixel 'Animation'
+	-----------------
+
+	The 'animations' that appear with some textures (SHODAN's mail images,
+hardware buttons, ...) are done by palette looping. It seems that there are
+generally four steps. Those I have yet found out:
+
+??                     0x04 to 0x07
+??                     0x08 to 0x0B
+Sensaround:            0x0C to 0x0F
+Motion Booster:        0x10 to 0x13
+SHODAN:	seems to use   0x14 to 0x17
+Jump Boots:            0x18 to 0x1B
+??                     0x1C to 0x1F
+
+ff1: Perhaps energy weapons are done the same way...
+12052002, ff1: must be; furthermore the ones marked with ??
+               also ought to be animated (guessed).
+               0x00 to 0x03 I hardly think is one loop as it
+               includes 'special' index 0x00
+
+	-----------------------------------------
+	textprop.dat, the texture properties file
+	-----------------------------------------
+
+	This is not a resource file, but a flat file containing one 11-byte record
+for each texture in the game, structured as follows:
+
+0000	byte	???
+0001	uint8	?? Starfield control (for station windows)
+0002	uint8	?? Animation group
+0003	uint8	?? Animation index (within group)
+0004	uint8	\ These are usually the same as the low byte of the texture no.
+0005	uint8	/
+0006	uint32	??? always 10
+000A	uint8	Climbable flag (1 for e.g. ladders and vines)
+000B	-
+
+
+	=========
+	3D MODELS
+	=========
+
+	obj3d.res contains the model definitions for all 3D objects (not sprites).
+Each model lives in its own chunk, of type 0x0F, of which it is subchunk 0.
+
+	Coordinates are (apparently) stored as 24.8 fixed-point numbers. In this
+chapter, 'fixN' is the type of a 32-bit fixed point number with N bits before
+the decimal point, so a fix24 is 24.8 and a fix16 is 16.16.
+
+	The model header consists of 8 bytes, followed by the instructions on how to
+draw the object:
+
+0000	byte[6] 	always 27 00 08 00 02 00
+0006	int16		no. faces
+0008	-
+
+	Models appear to be based around drawing commands. Each command consists of
+a 16-bit command code, followed by zero or more bytes of command arguments. Some
+commands are variable-width; for example, 0003 DEFINE VERTICES is followed by 2
+bytes of arguments (the vertex count) and then (vertex count)*12 bytes of vertex
+data.
+
+0000	end of sub-hull
+	0000	int16		command = 0x0000
+
+0001	define face:
+	0000	int16		command = 0x0001
+	0002	int16		face length
+	0004	fix24[3]	normal vector
+	0010	fix24[3]	point on face
+	001C	...	face drawing commands
+
+0003	define multiple vertices
+	0000	int16		command = 0x0003
+	0002	int16		no. vertices
+	0004	fix24[3]	first vertex
+	0010	...	more vertices
+
+0004	draw flat-shaded polygon:
+	0000	int16		command = 0x0004
+	0002	int16		no. vertices
+	0004	int16[n]	vertices (each entry v is a reference to the v'th
+						vertex previously defined in the model? or is a byte/
+						word offset??? investigate)
+
+0005	set colour for flat shading
+	0000	int16		command = 0x0005
+	0002	int16		colour
+
+0006	split plane??? this defines a plane and references 2 faces, but I don't know what
+	 it's actually for
+	0000	int16		command = 0x0006
+	0002	fix24[3]	normal vector
+	000E	fix24[3]	point on face
+	001A	int16		left child offset  (from start of this command)
+	001C	int16		right child offset (from start of this command)
+
+000A	define vertex relative with X displacement:
+	0000	int16		command = 0x000A
+	0002	int16		vertex no. to define
+	0004	int16		reference vertex
+	0006	fix24		offset from reference on X axis
+
+000B	define vertex relative with Y displacement
+000C	define vertex relative with Z displacement
+	as 0x000A except displacement is on Y or Z axis
+
+000D	define vertex relative with X,Y displacements
+000E	define vertex relative with X,Z displacements
+000F	define vertex relative with Y,Z displacements
+	as 0x000A except with 2 displacement values
+
+0015	??? define initial vertex
+	0000	int16		command = 0x0015
+	0004	fix24[3]		vertex coords
+
+001C	define colour and shade
+	0000	int16		command = 0x001C
+	0002	int16		colour
+	0004	int16		shade
+
+0025	define texture mapping:
+	0000	int16		command = 0x0025
+	0002	int16		no. vertices
+	0004	int16		vertex no. of first vertex
+	0006	fix16		texture u coord
+	000A	fix16		texture v coord
+	000E	int16		vertex no. of second vertex
+		...
+
+0026	plot texture-mapped face:
+	0000	int16	command = 0x0026
+	0002	int16	texture no. (stored in citmat.res 475-525)
+	0004	int16	no. vertices
+	0006	n*int16	vertex numbers
+
+
+	=======
+	V-MAILS
+	=======
+
+	V-mails are stored in vidmail.res. This file has 24 chunks:
+
+- 0A40-0A4B contain the frames in subchunks
+- 0A4C-0A57 contain video information chunks (type 4) stored in one subchunk each
+
+	This is what is currently known about the video format:
+
+- about 10fps
+- some videos are split up across multiple chunks
+- the TriOp jingle is 0A4A and is always the first part played
+- the frames contain huge areas of 0x00 which means the previous pixel at this
+  position should be preserved
+  ff1: but this is not always true, as I found out...
+- the video info structure stores information about keyframes, if such exist
+
+	The video information sturcture has type 04. We don't yet know what
+everything means, and it's of variable size since it contains a sub-table.
+
+0000	int16		width of video (always 00C8)
+0002	int16		height of video (always 0064)
+0004	int16		corresponding chunk id of frames
+0006	int8[6]		?? always 00
+000C	int16		?? (TriOp jingle: 0001
+						all others:   0000)
+000E	n*int8[5]	sub-table of n entries
+xxxx	int16		'end tag', always 010C
+
+	The video info sub-table seems to determine how frames should be rendered.
+The from_ and to_ fields are inclusive; the first entry has from_frame=0 and the
+last has to_frame=last_frame.
+
+0000	int8		'video command' (my name for it, always 04)
+0001	int8		from_frame
+0002	int8		to_frame
+0003	int8		??? render operation? (*)
+0004	int8		??? flags? contains 0x00 to 0x04 (*)
+
+(*) those last two bytes could be the frame time as Jim suggested, but if so,
+	where is the information on how frames are drawn?
+
+
+	======
+	SOUNDS
+	======
+
+	All sounds are stored in 8bit, mono, linear signed format, either at 11 or
+at 22 kHz.
+
+	Digitized sound effects reside in the file digifx.res and have chunk type
+07. These are simply Creative Labs .voc files embedded in the resfile, one chunk
+each. Check Wotsit <www.wotsit.org> for the format.
+
+	Audio logs reside in the files citalog.res (English), geralog.res (German)
+and frnalog.res (French) and have chunk type 0x11 (17). Chunk IDs are shared
+between the languages (i.e. the same log will have the same ID in each language
+file). If the text of a log has chunk ID n, the audio sample will have chunk ID
+(n + 300).
+
+	Audio logs seem to be embedded movie files of some form, but the specific
+format is as yet unknown.
+
+
+	=====================================================
+	LOGS, E-MAILS, V-MAILS, DATA FRAGMENTS AND OTHER TEXT
+	=====================================================
+
+	These texts are stored as null-terminated strings packed end to end. Each
+log has the following format:
+
+String		Content
+0			information line (see below)
+1			title (as it appears in lists)
+2			sender
+3			subject
+4 to n-1	verbose text
+n			empty string
+n+1 to m-1	terse text
+m			empty line
+
+	The info line has the following format:
+
+[event ][color ]leftID[,[ ]rightID]
+event: 'iXX' or 't'
+	XX is the (hex) chunk ID of the log/email to follow this
+	one with; 't' is set for texts following an 'iXX' text
+color: 'cXX'
+	XX is an index into the color palette, in hex. Sender and subject
+	are drawn in this color, the rest of the text uses the HUD colors.
+leftID, rightID: DD
+	DD is a subchunk ID in _decimal_; this subchunk (from chunk ID 0x28) is used
+	as the image to display in the left/right MFDs.
+	V-mails only have a number between 256 and 251 in this line, which doesn't
+	match any bitmaps in chunk 0x28.
+
+
+Title, Sender, Subject: always one line
+
+Verbose and Terse Text:
+	Although the text is broken into seperate strings, these do not mark
+	newlines. Instead, character 0x0A marks hard newlines; in the absence of
+	hard newlines, the game will wrap the text on spaces. Character 0x02 marks
+	places where a hyphen and newline can be inserted. "$N" is a placeholder
+	for the hacker's name.
+
+Notes (Sheets lying on the ground on Citadel)
+
+	Same as above, those Texts are stored in string arrays. They don't have
+any special formatting or different versions, just one block of text from
+the first line on and end with one empty string.
