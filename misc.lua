@@ -8,16 +8,16 @@ local _pairs,_ipairs = pairs,ipairs
 
 function pairs(obj)
 	local mt = getmetatable(obj)
-	if mt and mt.__pairs then
-		return mt.__pairs(obj)
+	if mt and rawget(mt, "__pairs") then
+		return rawget(mt, "__pairs")(obj)
 	end
 	return _pairs(obj)
 end
 
 function ipairs(obj)
 	local mt = getmetatable(obj)
-	if mt and mt.__ipairs then
-		return mt.__ipairs(obj)
+	if mt and rawget(mt, "__ipairs") then
+		return rawget(mt, "__ipairs")(obj)
 	end
 	return _ipairs(obj)
 end
@@ -26,8 +26,8 @@ end
 local _type = type
 function type(obj)
 	local mt = getmetatable(obj)
-	if mt and mt.__type then
-		return mt.__type(obj)
+	if mt and rawget(mt, "__type") then
+		return rawget(mt, "__type")(obj)
 	end
 	return _type(obj)
 end
