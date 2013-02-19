@@ -9,8 +9,6 @@ require (name..'.misc')
 local unpack = unpack
 local coroutine = coroutine
 
-module "util"
-
 memoize = (function(f) return f(f) end)(function(f)
 	local memos = {}
 	local function findmemo(memo, args, first, ...)
