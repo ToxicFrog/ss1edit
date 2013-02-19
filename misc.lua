@@ -49,15 +49,15 @@ function srequire(...)
 end
 
 -- fast one-liner lambda creation
-function L(args)
-	return function(exp)
-		return assert(loadstring(
-			"return function("..args..") return "..exp.." end"))()
-	end
+function f(src)
+	return assert(loadstring(
+		"return function(" .. src:gsub(" => ", ") return ") .. " end"
+	))()
 end
 
+
 -- bind args into function
-local function curry(f, arg1, ...)
+function partial(f, arg1, ...)
 	if arg1 == nil then
 		return f
 	end
