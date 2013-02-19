@@ -3,25 +3,6 @@
 -- replacements: pairs, ipairs, type
 -- new: printf, fprintf, eprintf, sprintf, srequire, L
 
--- new versions of pairs and ipairs that respect the metamethods for same
-local _pairs,_ipairs = pairs,ipairs
-
-function pairs(obj)
-	local mt = getmetatable(obj)
-	if mt and rawget(mt, "__pairs") then
-		return rawget(mt, "__pairs")(obj)
-	end
-	return _pairs(obj)
-end
-
-function ipairs(obj)
-	local mt = getmetatable(obj)
-	if mt and rawget(mt, "__ipairs") then
-		return rawget(mt, "__ipairs")(obj)
-	end
-	return _ipairs(obj)
-end
-
 -- new version of type() that supports the __type metamethod
 local _type = type
 function type(obj)
