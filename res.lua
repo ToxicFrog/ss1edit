@@ -18,7 +18,7 @@ local typenames = {
 
 
 function res.load(filename)
-	local RES_TOCENTRY = [[%d * { id:u2 size:u3 [1|compressed:b1 dir:b1 x6] packed_size:u3 type:u1 }]]
+	local RES_TOCENTRY = [[%d * { id:u2 size:u3 [1|x6 dir:b1 compressed:b1] packed_size:u3 type:u1 }]]
     local toc_offs,chunk_offs
 
 	local fd,err = io.open(filename, "rb")
