@@ -19,11 +19,8 @@ local typenames = {
 -- decompress a compressed chunk
 local function decompress(data, unpacksize)
 	local offs_token,len_token,org_token = {},{},{}
-	local unpacked = ""
 
-	local function bytes(offset, length)
-		return data:sub(offset, offset+(length or 1)-1)
-	end
+	local unpacked = ""
 
 	local ntokens = 0
 	for i=0,16383 do
@@ -34,9 +31,11 @@ local function decompress(data, unpacksize)
 	local nbits,word,byteptr,exptr = 0,0,0,0
 	while #unpacked < unpacksize do
 		while nbits < 14 do
-			word = bit32.bor(bit32.lshift(word, 8), bytes(byteptr):byte())
+			eprintf("MORE BITS (have %d : %08x)\n", nbits, word)
+			word = bit32.bor(bit32.lshift(word, 8), data:sub(byteptr+1,byteptr+1):byte())
 			nbits = nbits + 8
 			byteptr = byteptr + 1
+			eprintf("MORE BITS (got %d : %08x)\n", nbits, word)
 		end
 
 		nbits = nbits - 14
