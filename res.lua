@@ -19,13 +19,15 @@ local typenames = {
 -- decompress a compressed chunk
 local function decompress(data, unpacksize)
 	local words = coroutine.wrap(function()
+		local yield = coroutine.yield
+		local word,nbits = 0,0
 		for char in data:gmatch(".") do
 			word = bit32.bor(bit32.lshift(word, 8), char:byte())
 			nbits = nbits + 8
 
 			if nbits >= 14 then
 				nbits = nbits - 14
-				coroutine.yield(bit32.band(bit32.rshift(word, nbits), 0x3FFF))
+				yield(bit32.band(bit32.rshift(word, nbits), 0x3FFF))
 			end
 		end
 	end)
@@ -40,18 +42,12 @@ local function decompress(data, unpacksize)
 		org_token[i] = -1
 	end
 
-	local word,nbits,byteptr,exptr = 0,0,0,0
-	while #unpacked < unpacksize do
-		while nbits < 14 do
-			word = bit32.bor(bit32.lshift(word, 8), data:sub(byteptr+1,byteptr+1):byte())
-			nbits = nbits + 8
-			byteptr = byteptr + 1
-		end
-
-		nbits = nbits - 14
-		local val = bit32.band(bit32.rshift(word, nbits), 0x3FFF)
+	local byteptr,exptr = 0,0,0,0
+	for val in words do
 		if val == 0x3FFF then
-			eprintf("WARNING: unpack break early after %d/%d bytes due to STOP marker\n", #unpacked, unpacksize)
+			if #unpacked < unpacksize then
+				eprintf("WARNING: unpack break early after %d/%d bytes due to STOP marker\n", #unpacked, unpacksize)
+			end
 			break
 		end
 
