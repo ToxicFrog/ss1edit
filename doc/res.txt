@@ -121,3 +121,66 @@ I handle decompression by keeping a dictionary of all 16127 (16384-256-1)
  with reasonable looking unpacked data)
 
 See lib/res/decompress.c for a sample unpacking routine in C.
+
+
+
+Compressed data is a stream of 14-bit words, with the following meanings:
+
+- 0x3FFF: end of compressed data. If you get this and length of unpacked data
+  doesn't exactly equal the length recorded in the TOC, something's gone wrong.
+
+- 0x3FFE: reset dictionary. Continue unpacking as though we had just started.
+
+- < 0x100: write this literal byte to the output stream
+
+- otherwise: access dictionary reference D = (word - 0x100)
+	- re-unpack that dictionary word, i.e. write the same data
+	  that you did the first time you saw word D
+	- THEN, write the byte in the unpacked data that immediately follows
+	  the results of the original unpacking of word D
+	- the dictionary entry for THIS word is the data you just wrote (the
+	  data for word D followed by the next byte in the unpacked stream)
+	- the specs say that if this would take you past the end, nul-pad. However,
+	  the IMPLEMENTATION writes bytes one at a time, so given the output buffer:
+	  	01
+	  and told to write 3 bytes starting at byte 0, it would write:
+	    01 01 01 01
+	  because it copies the 01 ahead of itself. It's unclear which is the correct
+	  behaviour. For now I should probably implement *both* and report any cases
+	  in which these give different results.
+
+For example, given the words 001 002 003 100 103:
+
+	word	output						dict
+	# the first three words are literal bytes
+	001		01							01
+	002		01.02						01, 02
+	003		01.02.03					01, 02, 03
+	# 100 is dictionary reference D=0, so re-unpack the 0'th word, which was
+	# 001, followed by the next byte; word 0 was unpacked to offset 0, so
+	# we want the first two bytes of the output buffer
+	100		01.02.03.01 02				01, 02, 03, 0102
+	# 103 is a dictionary reference D=3. 3 is the word we just unpacked, so we
+	# re-unpack that:
+	103		01.02.03.01 02.01 02 ??
+	# followed by the next byte (which we just wrote, so it's 1):
+	103		01.02.03.01 02.01 02 01		01, 02, 03, 0102, 010201
+
+
+####
+initialize all lengths to 1.
+for each word (index in packed data n, value W):
+	record offsetof[n] = <offset in unpacked data of next>
+	if W >= 0x100: record original[n] = W - 0x100
+
+	if W < 0x100: write literal byte; continue
+
+	else
+		D = W - 0x100
+		if lengthof[D] == 1: /* we haven't seen it before */
+			if original[D]:
+				lengthof[D] += lengthof[original[D]]
+			else
+				++lengthof[D]
+
+		copy lengthof[D], starting at offset offsetof[D]

@@ -22,9 +22,14 @@ ID range	Map #	Level
 54xx		14		Deck 1/2 cyberspace
 55xx		15		Other cyberspace
 
-	The first two chunks, 4000 and 4001, are reserved for ?? metadata ??; so
-level 0 actually uses chunks in the range 4002-4101, level 1 chunks in the
-range 4102-4201, and so forth.
+	The first two chunks, 4000 and 4001, are reserved for data not specific to
+any one map; so, level 0 actually uses chunks in the range 4002-4101, level 1
+uses chunks 4102-4201, and so forth.
+
+	Chunk 4000, in saved games, contains the name of the saved game as a null-
+terminated string and nothing else. In ARCHIVE.DAT, it contains the text
+"Starting Game" followed by 114 bytes of additional data, the purpose of which
+is as yet unknown.
 
 	----------------
 	Level Map Format
@@ -116,7 +121,12 @@ of a 16-byte record formatted thusly:
 			
 	* Chunk xx06
 	
-	Is this used at all?
+	It's unknown what this is used for. Here are some recorded values for 4106:
+
+ARCHIVE.DAT			58 c4 04 00 cd 00 3e 00
+new game			89 00 04 00 40 00 42 00 89 00 04 00 40 00 42 00
++ configuration		86 01 04 00 40 00 42 00 86 01 04 00 40 00 42 00
++ movement			4f 02 04 00 40 00 42 00 4f 02 04 00 40 00 42 00
 	
 	* Chunk xx07, the texture list
 
