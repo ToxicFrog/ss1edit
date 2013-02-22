@@ -18,6 +18,18 @@ local typenames = {
 
 -- decompress a compressed chunk
 local function decompress(data, unpacksize)
+	local words = coroutine.wrap(function()
+		for char in data:gmatch(".") do
+			word = bit32.bor(bit32.lshift(word, 8), char:byte())
+			nbits = nbits + 8
+
+			if nbits >= 14 then
+				nbits = nbits - 14
+				coroutine.yield(bit32.band(bit32.rshift(word, nbits), 0x3FFF))
+			end
+		end
+	end)
+
 	local offs_token,len_token,org_token = {},{},{}
 
 	local unpacked = ""
@@ -28,19 +40,16 @@ local function decompress(data, unpacksize)
 		org_token[i] = -1
 	end
 
-	local nbits,word,byteptr,exptr = 0,0,0,0
+	local word,nbits,byteptr,exptr = 0,0,0,0
 	while #unpacked < unpacksize do
 		while nbits < 14 do
-			eprintf("MORE BITS (have %d : %08x)\n", nbits, word)
 			word = bit32.bor(bit32.lshift(word, 8), data:sub(byteptr+1,byteptr+1):byte())
 			nbits = nbits + 8
 			byteptr = byteptr + 1
-			eprintf("MORE BITS (got %d : %08x)\n", nbits, word)
 		end
 
 		nbits = nbits - 14
 		local val = bit32.band(bit32.rshift(word, nbits), 0x3FFF)
-		eprintf("BITS: %04x\n", val)
 		if val == 0x3FFF then
 			eprintf("WARNING: unpack break early after %d/%d bytes due to STOP marker\n", #unpacked, unpacksize)
 			break
@@ -48,7 +57,6 @@ local function decompress(data, unpacksize)
 
 		if val == 0x3FFE then
 			ntokens = 0
-			eprintf("UNPACK resetting dictionary\n")
 			for i=0,16383 do
 				len_token[i] = 1
 				org_token[i] = -1
@@ -57,7 +65,6 @@ local function decompress(data, unpacksize)
 		end
 
 		if ntokens < 16384 then
-			eprintf("UNPACK recording unpack offset of token %d as %d\n", ntokens, exptr)
 			offs_token[ntokens] = exptr
 			if val >= 0x100 then
 				org_token[ntokens] = val - 0x100
@@ -66,12 +73,10 @@ local function decompress(data, unpacksize)
 		end
 
 		if val < 0x100 then
-			eprintf("UNPACK writing literal %02x\n", val)
 			exptr = exptr + 1
 			unpacked = unpacked .. string.char(val)
 		else
 			val = val - 0x100
-			eprintf("UNPACK expanding compressed word %d (orig=%d, length=%d)\n", val, org_token[val], len_token[val])
 
 			if len_token[val] == 1 then
 				if org_token[val] ~= -1 then
@@ -81,13 +86,24 @@ local function decompress(data, unpacksize)
 				end
 			end
 
-			unpacked = unpacked .. data:sub(offs_token[val]+1, offs_token[val] + len_token[val])
+			local testbuf = unpacked:sub(offs_token[val] + 1, offs_token[val] + len_token[val])
+			if #testbuf < len_token[val] then
+				testbuf = testbuf .. string.char(0):rep(len_token[val] - #testbuf)
+			end
+
+			for i=1,len_token[val] do
+				unpacked = unpacked .. unpacked:sub(offs_token[val] + i, offs_token[val] + i)
+			end
 			exptr = exptr + len_token[val]
+
+			assert(#testbuf == len_token[val], "fencepost error")
+			--assert(testbuf == unpacked:sub(-#testbuf), "unpack boundary error")
 		end
 
 		::continue::
 	end
 
+	assert(#unpacked == unpacksize, "buffer size mismatch: %d != %d" % { #unpacked, unpacksize })
 	return unpacked
 end
 
@@ -117,8 +133,6 @@ function res.load(filename)
     	if chunk.compressed and chunk.dir then
     		eprintf("WARNING: skipping compressed chunk directory %05d (%04x)\n", chunk.id, chunk.id)
 		elseif chunk.compressed then
-			eprintf("DECOMPRESS %d %d->%d\n", chunk.id, chunk.packed_size, chunk.size)
-			eprintf("%s\n", chunk.packed_data:sub(1,20):gsub(".", f "c => string.format('%02x ', c:byte())"))
 			chunk.data = decompress(chunk.packed_data, chunk.size)
     	else
     		chunk.data = chunk.packed_data
