@@ -1,0 +1,56 @@
+#!/usr/bin/env lua5.2
+-- :mode=lua: --
+
+require "util"
+local res = require "res"
+local map = require "map"
+
+local HELP_TEXT = [[
+Usage: map <archive> <prefix> [levels...]
+
+    <archive> is the path to ARCHIVE.DAT.
+    <prefix> is the prefix for the generated map files; the map for
+    level N will be named prefixNN.html.
+    <levels> is a list of level numbers, from 0 to 15; if omitted,
+    all levels will be mapped. (Level 0 is Deck R; levels 1-9 are
+   	the corresponding decks, and 10-15 are cyberspace and groves)
+]]
+
+local icons = {
+	[0] = "#", " ", -- solid, open
+	"/", "\\", "/", "\\", -- diagonal
+	"V", "<", "^", ">", -- straight slopes
+	".", ".", ".", ".", ".", ".", ".", "." -- diagonal slopes
+}
+
+local function main(archive, prefix, ...)
+	local levels = {...}
+
+	if not prefix then
+		print(HELP_TEXT)
+		return
+	end
+
+	if #levels == 0 then
+		levels = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 }
+	end
+
+	print("Loading ARCHIVE.DAT...")
+	local rf = res.load(archive)
+
+	for _,level in ipairs(levels) do
+		level = tonumber(level)
+		assert(level and level >= 0 and level <= 15, "invalid level index")
+
+		level = map.load(rf, level)
+
+		for y=0,level.info.height-1 do
+			for x=0,level.info.width-1 do
+				printf(icons[level:tile(x,y).shape])
+			end
+			print()
+		end
+	end
+end
+
+return main(...)

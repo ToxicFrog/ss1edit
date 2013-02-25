@@ -119,6 +119,7 @@ function res.load(filename)
     
     -- read the entire TOC into memory
     self.toc = struct.unpack(RES_TOCENTRY % self.count, fd, false)
+    self.byid = {}
 
     -- prepare to unpack the chunk data
     fd:seek("set", chunk_offs)
@@ -135,6 +136,7 @@ function res.load(filename)
     	end
 
     	chunk.typename = typenames[chunk.type] or "unknown"
+    	self.byid[chunk.id] = chunk
     end
 
     -- sort the TOC by ID
@@ -149,6 +151,10 @@ function res:chunks()
 			coroutine.yield(chunk.id, chunk)
 		end
 	end)
+end
+
+function res:get(id)
+	return self.byid[id]
 end
 
 return res
