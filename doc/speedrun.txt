@@ -1,0 +1,16 @@
+	DECK 1
+
+- go to cyberspace terminal
+- get pulser, skip first fight, flip switch and escape
+- get magpulse
+- kill hopper
+- northwest office has sparq and D'Arcy's access card
+- northeast has stungun
+- go into center room, destroy nodes, open laser grid
+- revive point is behind "HERE" sign but we shouldn't need it
+- head south from there to reach elevator
+- onwards to deck 2
+
+
+	DECK 2
+
