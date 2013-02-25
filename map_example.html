@@ -1,0 +1,91 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <style>
+      body {
+        margin: 0px;
+        padding: 0px;
+      }
+
+      /*
+      #map {
+         width: 1024px;
+         text-align: center;
+         display: inline;
+      } 
+      */   
+  </style>
+  </head>
+  <body>
+    <div id="map"></div>
+    <script src="http://d3lp1msu2r81bx.cloudfront.net/kjs/js/lib/kinetic-v4.3.3.min.js"></script>
+    <script>
+      function writeMessage(messageLayer, message) {
+        var context = messageLayer.getContext();
+        messageLayer.clear();
+        context.font = '18pt Calibri';
+        context.fillStyle = 'black';
+        context.fillText(message, messageLayer.getX() + 10, messageLayer.getY() + 25);
+      }
+
+      var stage = new Kinetic.Stage({
+        container: 'map',
+        width: 64*14 + 256,
+        height: 64*14
+      });
+
+      var mapLayer = new Kinetic.Layer({ x: 0, width: 64*14 }); // level geometry
+      var objLayer = new Kinetic.Layer({ x: 0, width: 64*14 }); // objects
+      var hitLayer = new Kinetic.Layer({ x: 0, width: 64*14, opacity: 0 });  // mouse event trap
+      var msgLayer = new Kinetic.Layer({ x: 64*14, width: 256 });
+
+      hitLayer.add(new Kinetic.Rect({x:0, y:0, width:64*14, height:64*14}));
+      hitLayer.on('mousemove', function(evt) {
+        writeMessage(msgLayer, "Tile: (" + Math.floor(evt.x/14) + ", " + Math.floor(evt.y/14) + ")");
+      });
+
+      var background = new Kinetic.Rect({
+        x: 0, y: 0,
+        width: 64*14, height: 64*14,
+        fill: 'black',
+      })
+      mapLayer.add(background);
+
+      function line(x1, y1, x2, y2, colour) {
+        mapLayer.add(new Kinetic.Line({
+          points: [x1*14, y1*14, x2*14, y2*14],
+          stroke: colour,
+        }));
+      }
+
+      function addTile(x, y, type) {
+        var tile = new Kinetic.Rect({
+          x: x*14,
+          y: y*14,
+          width: 14, height: 14,
+          stroke: "lime",
+        })
+
+        mapLayer.add(tile);
+      }
+    </script>
+
+    <script>
+      line(32, 33, 33, 32, "#00FF00");
+      line(33, 32, 34, 32, "#FFFF00");
+      line(34, 32, 35, 33, "#00FF00");
+      line(35, 33, 34, 34, "#00FF00");
+      line(34, 34, 33, 34, "#00FF00");
+      line(33, 34, 32, 33, "#00FF00");
+
+      line(32, 33, 33, 33, "#006000");
+      line(33, 33, 34, 33, "#006000");
+      line(34, 33, 35, 33, "#006000");
+
+      stage.add(mapLayer);
+      stage.add(objLayer);
+      stage.add(hitLayer);
+      stage.add(msgLayer);
+    </script>
+  </body>
+</html>
