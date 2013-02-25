@@ -66,8 +66,9 @@ determined.
 	
 	This chunk contains the the actual level geometry. It is always compressed,
 and once unpacked has size 0x10000, 16*64*64. It is a 64x64 grid, packed bottom
-to top, left to right (and thus starting in the lower left). Each tile consists
-of a 16-byte record formatted thusly:
+to top, left to right, in row-major order (and thus starting in the lower left -
+the first $width tile records in the chunk are the southermost row of the map). 
+Each tile consists of a 16-byte record formatted thusly:
 
 0000	uint8		tile shape.
 			00			solid
