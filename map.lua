@@ -88,6 +88,55 @@ end
 			0000 001F	vertical texture offset adjustment
 ]]
 
+-- table of cell shapes indicating which directions they are solid in
+local walls = {
+	[0] = { n = true, s = true, e = true, w = true },	-- solid space
+	{},							-- open space
+	{ w = true, n = true },		-- diagonal open SE
+	{ e = true, n = true },		-- SW
+	{ e = true, s = true },		-- NW
+	{ w = true, s = true },		-- NE
+	{}, {}, {}, {},				-- flat slopes
+	{}, {}, {}, {},				-- valleys
+	{}, {}, {}, {},				-- ridges
+}
+
+function map:walls(x, y)
+	return walls[self:tile(x,y).shape]
+end
+
+-- reports the change in height between two cells
+-- 0 means there is no height change, >0 means there is a height
+-- change of that many map height units; infinity means that there
+-- is no connection between cells (i.e. a wall).
+-- does not support slopes yet, so it may report incorrect values
+-- when one of the cells is sloped
+function map:ledgeHeight(x1, y1, x2, y2)
+	assert(x1 == x2 or y1 == y2, "tiles must be adjacent")
+
+	-- t1 should be to the left/above t2
+	if x1 > x2 or y1 > y2 then
+		x1,y1,x2,y2 = x2,y2,x1,y1
+	end
+
+	local t1,t2 = self:tile(x1,y1),self:tile(x2,y2)
+	local w1,w2 = self:walls(x1,y1),self:walls(x2,y2)
+
+	if x1 < x2 then -- t1 is west of t2
+		w1,w2 = w1.e,w2.w
+	else -- t1 is north of t2
+		w1,w2 = w1.s,w2.n
+	end
+
+	if w1 ~= w2 then
+		return math.huge -- one tile has a solid face, the other doesn't
+	elseif w1 then
+		return 0 -- both tiles have solid faces
+	end
+
+	-- now we need to check heghts, but for now we just assume no walls
+	return 0
+end
 
 
 return map
