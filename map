@@ -64,7 +64,6 @@ end
 
 local function main(archive, prefix, ...)
 	local levels = {...}
-	local lines = {}
 
 	if not prefix then
 		print(HELP_TEXT)
@@ -82,6 +81,7 @@ local function main(archive, prefix, ...)
 	local rf = res.load(archive)
 
 	for _,level in ipairs(levels) do
+		local lines = {}
 		level = tonumber(level)
 		assert(level and level >= 0 and level <= 15, "invalid level index")
 

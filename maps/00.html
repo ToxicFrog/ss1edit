@@ -17,7 +17,25 @@
   </style>
   </head>
   <body>
-    <div id="map"></div>
+    <table>
+      <tr>
+        <td style="width: 10px">
+          <div style="text-align: center">Layers</div>
+          <button type="button" style="width: 100%">Enemies</button>
+          <button type="button" style="width: 100%">Cameras</button>
+          <button type="button" style="width: 100%">Weapons</button>
+          <button type="button" style="width: 100%">Ammo</button>
+          <button type="button" style="width: 100%">Explosives</button>
+          <button type="button" style="width: 100%">Hardware</button>
+          <button type="button" style="width: 100%">Software</button>
+          <button type="button" style="width: 100%">Switches</button>
+          <button type="button" style="width: 100%">Misc</button>
+        </td>
+        <td>
+          <div id="map"></div>
+        </td>
+      </tr>
+    </table>
     <script src="http://d3lp1msu2r81bx.cloudfront.net/kjs/js/lib/kinetic-v4.3.3.min.js"></script>
     <script>
       function writeMessage(messageLayer, message) {
