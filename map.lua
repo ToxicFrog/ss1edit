@@ -136,7 +136,19 @@ function map:ledgeHeight(x1, y1, x2, y2)
 	end
 
 	-- now we need to check relative heights
-	-- FIXME: if max(floors) >= min(ceils) there is a wall
+	-- first we check for inferred walls, where the ceiling of one tile is <= the
+	-- floor of the other
+	-- ceiling is in units down from the top of the map, so we take the *highest*
+	-- ceiling value and then subtract it from 32 (the maximum height value)
+	if 32 - math.max(t1.ceiling.height, t2.ceiling.height) <= math.max(t1.floor.height, t2.floor.height) then
+		return math.huge
+	end
+
+	-- if there is no inferred wall, just return the difference between the two floor
+	-- heights for now (i.e. without taking slope into account). The length of a height
+	-- unit varies from map to map, so we convert it to world units first; the resulting
+	-- value will be somewhere between 1/32 (one height unit with the smallest possible
+	-- value) and 31 (31 height units with the greatest possible value).
 	return math.abs(t1.floor.height - t2.floor.height) * (1/2^self.info.step_power)
 end
 
