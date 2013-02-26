@@ -16,28 +16,50 @@ Usage: map <archive> <prefix> [levels...]
    	the corresponding decks, and 10-15 are cyberspace and groves)
 ]]
 
-local icons = {
-	[0] = "#", " ", -- solid, open
-	"/", "\\", "/", "\\", -- diagonal
-	"V", "<", "^", ">", -- straight slopes
-	".", ".", ".", ".", ".", ".", ".", "." -- diagonal slopes
+-- table of cell shapes indicating which directions they are solid in
+local walls = {
+	[0] = { n = true, s = true, e = true, w = true },	-- solid space
+	{},							-- open space
+	{ w = true, n = true },		-- diagonal open SE
+	{ e = true, n = true },		-- SW
+	{ e = true, s = true },		-- NW
+	{ w = true, s = true },		-- NE
+	{}, {}, {}, {},				-- flat slopes
+	{}, {}, {}, {},				-- valleys
+	{}, {}, {}, {},				-- ridges
 }
 
-local function getWalls(shape)
-	if shape == 1 or shape >= 6 then -- open space, slopes
-		return {}
-	elseif shape == 0 then -- solid matter
-		return { n = true, s = true, w = true, e = true }
-	elseif shape == 2 then -- diagonal southeast
-		return { w = true, n = true }
-	elseif shape == 3 then -- diagonal southwest
-		return { e = true, n = true }
-	elseif shape == 4 then -- diagonal northwest
-		return { e = true, s = true }
-	elseif shape == 5 then -- diagonal northeast
-		return { w = true, s = true }
+-- reports the change in height between two cells
+-- 0 means there is no height change, >0 means there is a height
+-- change of that many map height units; infinity means that there
+-- is no connection between cells (i.e. a wall).
+-- does not support slopes yet, so it may report incorrect values
+-- when one of the cells is sloped
+local function ledgeHeight(map, x1, y1, x2, y2)
+	assert(x1 == x2 or y1 == y2, "tiles must be adjacent")
+
+	-- t1 should be to the left/above t2
+	if x1 > x2 or y1 > y2 then
+		x1,y1,x2,y2 = x2,y2,x1,y1
 	end
-	error("unknown tile shape")
+
+	local t1,t2 = map:tile(x1,y1),map:tile(x2,y2)
+	local w1,w2 = walls[t1.shape],walls[t2.shape]
+
+	if x1 < x2 then -- t1 is west of t2
+		w1,w2 = w1.e,w2.w
+	else -- t1 is north of t2
+		w1,w2 = w1.s,w2.n
+	end
+
+	if w1 ~= w2 then
+		return math.huge -- one tile has a solid face, the other doesn't
+	elseif w1 then
+		return 0 -- both tiles have solid faces
+	end
+
+	-- now we need to check heghts, but for now we just assume no walls
+	return 0
 end
 
 local function emitTile(lines, map, x, y)
@@ -49,14 +71,10 @@ local function emitTile(lines, map, x, y)
 	end
 
 	if x > 0 and y > 0 then
-		local walls = getWalls(tile.shape)
-		local wallsW = getWalls(map:tile(x-1, y).shape)
-		local wallsN = getWalls(map:tile(x, y-1).shape)
-
-		if walls.w ~= wallsW.e then
+		if ledgeHeight(map, x, y, x-1, y) > 0 then
 			table.insert(lines, "      line(%d, %d, %d, %d, '#00FF00');\n" % { x, y, x, y+1 })
 		end
-		if walls.n ~= wallsN.s then
+		if ledgeHeight(map, x, y, x, y-1) > 0 then
 			table.insert(lines, "      line(%d, %d, %d, %d, '#00FF00');\n" % { x, y, x+1, y })
 		end
 	end
