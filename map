@@ -27,10 +27,12 @@ local function emitTile(lines, map, x, y)
 
 	if x > 0 and y > 0 then
 		if map:ledgeHeight(x, y, x-1, y) > 0 then
-			table.insert(lines, "      line(%d, %d, %d, %d, '#00FF00');\n" % { x, y, x, y+1 })
+			local shade = math.min(0xFF, 0x40 + map:ledgeHeight(x, y, x-1, y) * 0x60)
+			table.insert(lines, "      line(%d, %d, %d, %d, '#00%02X00');\n" % { x, y, x, y+1, shade })
 		end
 		if map:ledgeHeight(x, y, x, y-1) > 0 then
-			table.insert(lines, "      line(%d, %d, %d, %d, '#00FF00');\n" % { x, y, x+1, y })
+			local shade = math.min(0xFF, 0x40 + map:ledgeHeight(x, y, x, y-1) * 0x60)
+			table.insert(lines, "      line(%d, %d, %d, %d, '#00%02X00');\n" % { x, y, x+1, y, shade })
 		end
 	end
 end

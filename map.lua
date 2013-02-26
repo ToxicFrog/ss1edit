@@ -135,8 +135,9 @@ function map:ledgeHeight(x1, y1, x2, y2)
 		return 0 -- both tiles have solid faces
 	end
 
-	-- now we need to check heghts, but for now we just assume no walls
-	return 0
+	-- now we need to check relative heights
+	-- FIXME: if max(floors) >= min(ceils) there is a wall
+	return math.abs(t1.floor.height - t2.floor.height) * (1/2^self.info.step_power)
 end
 
 
