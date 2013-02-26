@@ -149,6 +149,8 @@ function map:ledgeHeight(x1, y1, x2, y2)
 	-- unit varies from map to map, so we convert it to world units first; the resulting
 	-- value will be somewhere between 1/32 (one height unit with the smallest possible
 	-- value) and 31 (31 height units with the greatest possible value).
+	-- FIXME: we need to understand and handle slopes, which will mean the height of the
+	-- tile will be different depending on which edge you're measuring. Ick.
 	return math.abs(t1.floor.height - t2.floor.height) * (1/2^self.info.step_power)
 end
 
