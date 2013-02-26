@@ -7,6 +7,7 @@ function chunkid(level, type)
 	local ids = {
 		info = 4;
 		tiles = 5;
+		objects = 8;
 	}
 
 	return 4000 + 100*level + ids[type]
@@ -36,12 +37,39 @@ function map.load(rf, index)
 			magic:u4
 		}
 	]]
+	local MAP_OBJECTS = [[
+		%d * {
+			used:b1
+			class:u1
+			subclass:u1
+			info_index:u2
+			xref_index:u2
+			prev:u2
+			next:u2
+			x:u2
+			y:u2
+			z_maybe:u1
+			roll_maybe:u1
+			pitch_maybe:u1
+			yaw_maybe:u1
+			ai_maybe:u1
+			type:u1
+			hp_maybe:u2
+			state:u1
+			unknown:s3
+		}
+	]]
+
 
 	-- for now we just load the world geometry
 	local self = { index = index }
 
 	self.info = struct.unpack(MAP_INFO, rf:get(chunkid(index, "info")).data)
 	self.tiles = struct.unpack(MAP_TILES % {self.info.width, self.info.height}, rf:get(chunkid(index, "tiles")).data)
+
+	local objbuf = rf:get(chunkid(index, "objects")).data
+	assert(#objbuf % 27 == 0, "confusing object table length")
+	self.objects = struct.unpack(MAP_OBJECTS % (#objbuf/27), objbuf)
 
 	return setmetatable(self, mt)
 end

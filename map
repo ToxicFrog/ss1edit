@@ -71,6 +71,13 @@ local function main(archive, prefix, ...)
 			--print()
 		end
 
+
+		for _,obj in ipairs(map.objects) do
+			if obj.used then
+				table.insert(lines, "      point(%f, %f, '#FF0000');\n" % { obj.x/256, 64 - obj.y/256 })
+			end
+		end
+
 		local fd = assert(io.open(prefix .. ("%02d" % level) .. ".html", "w"))
 		fd:write((html:gsub("${WALLS}", table.concat(lines, ""))))
 		fd:close()

@@ -76,6 +76,16 @@
         }));
       }
 
+      function point(x, y, colour) {
+        objLayer.add(new Kinetic.Circle({
+          x: x*14,
+          y: y*14,
+          radius: 2,
+          stroke: colour,
+          fill: colour,
+        }));
+      }
+
       function addTile(x, y, type) {
         var tile = new Kinetic.Rect({
           x: x*14,

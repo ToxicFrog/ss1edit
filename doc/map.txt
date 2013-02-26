@@ -202,7 +202,7 @@ This resides in chunks 4008, 4108 etc. and contains an entry for everything in
 0014	int8	object type
 0015	int16	Hitpoints? Initial values tend to be round decimal numbers
 0017	int8	State (sprite frame)
-
+0018	byte[3]	unknown
 
 3.2.2 The object cross-reference table
 
