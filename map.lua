@@ -25,12 +25,13 @@ function map.load(rf, index)
 		%d * %d * {
 			shape:u1
 			ceiling:{} floor:{}
-			[1|radiation:b1 ceiling.dir:u2 ceiling.height:u5]
 			[1|biohazard:b1 floor.dir:u2 floor.height:u5]
+			[1|radiation:b1 ceiling.dir:u2 ceiling.height:u5]
 			slope:u1
 			xref:u2
-			texture:{}
-			[2|floor:u5 ceiling:u5 wall:u6]
+			texture:{
+				[2|floor:u5 ceiling:u5 wall:u6]
+			}
 			flags:u4
 			magic:u4
 		}
