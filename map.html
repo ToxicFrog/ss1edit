@@ -59,7 +59,9 @@
 
       hitLayer.add(new Kinetic.Rect({x:0, y:0, width:64*14, height:64*14}));
       hitLayer.on('mousemove', function(evt) {
-        writeMessage(msgLayer, "Tile: (" + Math.floor(evt.x/14) + ", " + Math.floor(evt.y/14) + ")");
+        var xy = stage.getUserPosition();
+        writeMessage(msgLayer, "Tile: (" + Math.floor(xy.x/14) + ", " + Math.floor(xy.y/14) + ")");
+        console.log(evt);
       });
 
       var background = new Kinetic.Rect({
