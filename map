@@ -23,8 +23,48 @@ local icons = {
 	".", ".", ".", ".", ".", ".", ".", "." -- diagonal slopes
 }
 
+local function getWalls(shape)
+	if shape == 1 or shape >= 6 then -- open space, slopes
+		return {}
+	elseif shape == 0 then -- solid matter
+		return { n = true, s = true, w = true, e = true }
+	elseif shape == 2 then -- diagonal southeast
+		return { w = true, n = true }
+	elseif shape == 3 then -- diagonal southwest
+		return { e = true, n = true }
+	elseif shape == 4 then -- diagonal northwest
+		return { e = true, s = true }
+	elseif shape == 5 then -- diagonal northeast
+		return { w = true, s = true }
+	end
+	error("unknown tile shape")
+end
+
+local function emitTile(lines, map, x, y)
+	local tile = map:tile(x,y)
+	if tile.shape == 2 or tile.shape == 4 then -- / diagonal
+		table.insert(lines, "      line(%d, %d, %d, %d, '#00FF00');\n" % { x+1, y, x, y+1 })
+	elseif tile.shape == 3 or tile.shape == 5 then -- \ diagonal
+		table.insert(lines, "      line(%d, %d, %d, %d, '#00FF00');\n" % { x, y, x+1, y+1 })
+	end
+
+	if x > 0 and y > 0 then
+		local walls = getWalls(tile.shape)
+		local wallsW = getWalls(map:tile(x-1, y).shape)
+		local wallsN = getWalls(map:tile(x, y-1).shape)
+
+		if walls.w ~= wallsW.e then
+			table.insert(lines, "      line(%d, %d, %d, %d, '#00FF00');\n" % { x, y, x, y+1 })
+		end
+		if walls.n ~= wallsN.s then
+			table.insert(lines, "      line(%d, %d, %d, %d, '#00FF00');\n" % { x, y, x+1, y })
+		end
+	end
+end
+
 local function main(archive, prefix, ...)
 	local levels = {...}
+	local lines = {}
 
 	if not prefix then
 		print(HELP_TEXT)
@@ -35,6 +75,9 @@ local function main(archive, prefix, ...)
 		levels = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 }
 	end
 
+	print("Loading template...")
+	local html = io.open("map.html"):read("*a")
+
 	print("Loading ARCHIVE.DAT...")
 	local rf = res.load(archive)
 
@@ -42,14 +85,20 @@ local function main(archive, prefix, ...)
 		level = tonumber(level)
 		assert(level and level >= 0 and level <= 15, "invalid level index")
 
-		level = map.load(rf, level)
+		print("Writing level " .. level)
+		map = map.load(rf, level)
 
-		for y=0,level.info.height-1 do
-			for x=0,level.info.width-1 do
-				printf(icons[level:tile(x,y).shape])
+		for y=0,map.info.height-1 do
+			for x=0,map.info.width-1 do
+				emitTile(lines, map, x, y)
+				--printf(icons[level:tile(x,y).shape])
 			end
-			print()
+			--print()
 		end
+
+		local fd = assert(io.open(prefix .. ("%02d" % level) .. ".html", "w"))
+		fd:write((html:gsub("${WALLS}", table.concat(lines, ""))))
+		fd:close()
 	end
 end
 
