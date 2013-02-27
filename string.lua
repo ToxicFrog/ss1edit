@@ -71,7 +71,7 @@ function string.count(s, pattern)
 	return count
 end
 
--- string.interpolate - take a string with $(...) interpolation expressions in it,
+-- string.interpolate - take a string with ${...} interpolation expressions in it,
 -- and a table of stuff to resolve them in terms of
 function string.interpolate(str, data, seeall)
 	local oldmt
@@ -88,16 +88,16 @@ function string.interpolate(str, data, seeall)
 		end
 		local sfn = "return "..key
 		sfn = sfn:interpolate(data)
-		local fn = setfenv(assert(loadstring(sfn)), data)
+		local fn = assert(load(sfn, "generated interpolator", "t", data))
 		if format then
-			return regex:format(fn())
+			return format:format(fn())
 		end
 		return tostring(fn())
 	end
 
 	local count
 	repeat
-		str,count = str:gsub('%$(%b())', do_interp)
+		str,count = str:gsub('%$(%b{})', do_interp)
 	until count == 0
 	
 	if seeall then
