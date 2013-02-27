@@ -16,24 +16,54 @@ Usage: map <archive> <prefix> [levels...]
    	the corresponding decks, and 10-15 are cyberspace and groves)
 ]]
 
+local output = {}
+
+local function point(x, y, colour, name)
+	table.insert(output, "      point(%f, %f, '%s', '%s');\n" % {
+		x, y, colour, name })
+end
+
+local function line(x1, y1, x2, y2, colour)
+	table.insert(output, "      line(%f, %f, %f, %f, '%s');\n" % {
+		x1, y1, x2, y2, colour })
+end
+
+local function commit()
+	local buf = table.concat(output, "")
+	output = {}
+	return buf
+end
 
 local function emitTile(lines, map, x, y)
 	local tile = map:tile(x,y)
-	if tile.shape == 2 or tile.shape == 4 then -- / diagonal
-		table.insert(lines, "      line(%d, %d, %d, %d, '#00FF00');\n" % { x+1, y, x, y+1 })
-	elseif tile.shape == 3 or tile.shape == 5 then -- \ diagonal
-		table.insert(lines, "      line(%d, %d, %d, %d, '#00FF00');\n" % { x, y, x+1, y+1 })
-	end
 
 	if x > 0 and y > 0 then
-		if map:ledgeHeight(x, y, x-1, y) > 0 then
-			local shade = math.min(0xFF, 0x40 + map:ledgeHeight(x, y, x-1, y) * 4)
-			table.insert(lines, "      line(%d, %d, %d, %d, '#00%02X00');\n" % { x, y, x, y+1, shade })
+		-- draw ledges first
+		for x2,y2 in pairs { [x] = y-1, [x-1] = y } do
+			local delta = map:ledgeHeight(x, y, x2, y2)
+
+			if delta > 0 and delta < math.huge then
+				local shade = 0x40 + delta * 4
+				line(x, y, x2+1, y2+1, "#00%02X00" % shade)
+			end
 		end
-		if map:ledgeHeight(x, y, x, y-1) > 0 then
-			local shade = math.min(0xFF, 0x40 + map:ledgeHeight(x, y, x, y-1) * 4)
-			table.insert(lines, "      line(%d, %d, %d, %d, '#00%02X00');\n" % { x, y, x+1, y, shade })
+
+		-- then draw walls
+		for x2,y2 in pairs { [x] = y-1, [x-1] = y } do
+			local delta = map:ledgeHeight(x, y, x2, y2)
+
+			if delta == math.huge then
+				local shade = 0x40 + delta * 4
+				line(x, y, x2+1, y2+1, "#00FF30" % shade)
+			end
 		end
+	end
+
+	-- diagonal walls don't need a ledge check
+	if tile.shape == 2 or tile.shape == 4 then -- / diagonal
+		line(x+1, y, x, y+1, "#00FF30")
+	elseif tile.shape == 3 or tile.shape == 5 then -- \ diagonal
+		line(x, y, x+1, y+1, "#00FF30")
 	end
 end
 
@@ -56,7 +86,6 @@ local function main(archive, prefix, ...)
 	local rf = res.load(archive)
 
 	for _,level in ipairs(levels) do
-		local lines = {}
 		level = tonumber(level)
 		assert(level and level >= 0 and level <= 15, "invalid level index")
 
@@ -81,16 +110,6 @@ local function main(archive, prefix, ...)
 			"#800080" -- enemies
 		}
 
-		local function point(x, y, colour, name)
-			table.insert(lines, "      point(%f, %f, '%s', '%s');\n" % {
-				x, y, colour, name })
-		end
-
-		local function line(x1, y1, x2, y2, colour)
-			table.insert(lines, "      line(%f, %f, %f, %f, '%s');\n" % {
-				x1, y1, x2, y2, colour })
-		end
-
 		for _,obj in ipairs(map.objects) do
 			if obj.used and colours[obj.class+1] then
 				point(obj.x/256, 64 - obj.y/256, colours[obj.class+1], "%d/%d/%d" % { obj.class, obj.subclass, obj.type })
@@ -114,7 +133,7 @@ local function main(archive, prefix, ...)
 			WIDTH = map.info.width;
 			HEIGHT = map.info.height;
 			SCALE = 16;
-			WALLS = table.concat(lines, "");
+			WALLS = commit();
 		}
 		fd:write(html:interpolate(data))
 		fd:close()
