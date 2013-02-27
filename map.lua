@@ -13,63 +13,76 @@ function chunkid(level, type)
 	return 4000 + 100*level + ids[type]
 end
 
-function map.load(rf, index)
-	local MAP_INFO = [[
-		width:u4 height:u4
-		log2w:u4 log2h:u4
-		step_power:u4
-		map_pointer:u4
-		cyberspace:b4
-		magic:s30
-	]]
-	local MAP_TILES = [[
-		%d * %d * {
-			shape:u1
-			ceiling:{} floor:{}
-			[1|biohazard:b1 floor.dir:u2 floor.height:u5]
-			[1|radiation:b1 ceiling.dir:u2 ceiling.height:u5]
-			slope:u1
-			xref:u2
-			texture:{
-				[2|floor:u5 ceiling:u5 wall:u6]
-			}
-			flags:u4
-			magic:u4
-		}
-	]]
-	local MAP_OBJECTS = [[
-		%d * {
-			used:b1
-			class:u1
-			subclass:u1
-			info_index:u2
-			xref_index:u2
-			prev:u2
-			next:u2
-			x:u2
-			y:u2
-			z_maybe:u1
-			roll_maybe:u1
-			pitch_maybe:u1
-			yaw_maybe:u1
-			ai_maybe:u1
-			type:u1
-			hp_maybe:u2
-			state:u1
-			unknown:s3
-		}
-	]]
 
+function map.load(rf, index)
+	local function loadinfo(self)
+		local MAP_INFO = [[
+			width:u4 height:u4
+			log2w:u4 log2h:u4
+			step_power:u4
+			map_pointer:u4
+			cyberspace:b4
+			magic:s30
+		]]
+
+		self.info = struct.unpack(MAP_INFO, rf:get(chunkid(index, "info")).data)
+	end
+
+	local function loadtiles(self)
+		local MAP_TILES = [[
+			%d * %d * {
+				shape:u1
+				ceiling:{} floor:{}
+				[1|biohazard:b1 floor.dir:u2 floor.height:u5]
+				[1|radiation:b1 ceiling.dir:u2 ceiling.height:u5]
+				slope:u1
+				xref:u2
+				texture:{
+					[2|floor:u5 ceiling:u5 wall:u6]
+				}
+				flags:u4
+				magic:u4
+			}
+		]]
+
+		self.tiles = struct.unpack(MAP_TILES % {self.info.width, self.info.height}, rf:get(chunkid(index, "tiles")).data)
+	end
+
+	local function loadobjects(self)
+		local MAP_OBJECTS = [[
+			%d * {
+				used:b1
+				class:u1
+				subclass:u1
+				info_index:u2
+				xref_index:u2
+				prev:u2
+				next:u2
+				x:u2
+				y:u2
+				z_maybe:u1
+				pitch:u1
+				yaw:u1
+				roll:u1
+				ai_maybe:u1
+				type:u1
+				hp_maybe:u2
+				state:u1
+				unknown:s3
+			}
+		]]
+
+		local objbuf = rf:get(chunkid(index, "objects")).data
+		assert(#objbuf % 27 == 0, "confusing object table length")
+		self.objects = struct.unpack(MAP_OBJECTS % (#objbuf/27), objbuf)
+	end
 
 	-- for now we just load the world geometry
-	local self = { index = index }
+	local self = { index = index, res = rf }
 
-	self.info = struct.unpack(MAP_INFO, rf:get(chunkid(index, "info")).data)
-	self.tiles = struct.unpack(MAP_TILES % {self.info.width, self.info.height}, rf:get(chunkid(index, "tiles")).data)
-
-	local objbuf = rf:get(chunkid(index, "objects")).data
-	assert(#objbuf % 27 == 0, "confusing object table length")
-	self.objects = struct.unpack(MAP_OBJECTS % (#objbuf/27), objbuf)
+	loadinfo(self)
+	loadtiles(self)
+	loadobjects(self)
 
 	return setmetatable(self, mt)
 end

@@ -71,10 +71,41 @@ local function main(archive, prefix, ...)
 			--print()
 		end
 
+		local colours = {
+			"#FF0000", "#FF8080", false, "#FF0080", -- weapons, ammo, projectiles, and explosives
+			"#00FFFF", -- patches
+			"#0000FF", "#0000FF", -- hardware and software
+			false, false, -- scenery and trash
+			"#808000", false, -- switches and doors
+			false, false, "#A0A0A0", -- decorations, traps and containers
+			"#800080" -- enemies
+		}
+
+		local function point(x, y, colour, name)
+			table.insert(lines, "      point(%f, %f, '%s', '%s');\n" % {
+				x, y, colour, name })
+		end
+
+		local function line(x1, y1, x2, y2, colour)
+			table.insert(lines, "      line(%f, %f, %f, %f, '%s');\n" % {
+				x1, y1, x2, y2, colour })
+		end
 
 		for _,obj in ipairs(map.objects) do
-			if obj.used then
-				table.insert(lines, "      point(%f, %f, '#FF0000');\n" % { obj.x/256, 64 - obj.y/256 })
+			if obj.used and colours[obj.class+1] then
+				point(obj.x/256, 64 - obj.y/256, colours[obj.class+1], "%d/%d/%d" % { obj.class, obj.subclass, obj.type })
+			end
+
+			if obj.used and obj.class == 10 and obj.subclass ~= 1 then -- openable doors
+				if obj.pitch == 0 then
+					if obj.yaw % 128 == 64 then
+						line(obj.x/256, 64 - obj.y/256 - 0.5, obj.x/256, 64 - obj.y/256 + 0.5, "#FFFF00")
+					else
+						line(obj.x/256 - 0.5, 64 - obj.y/256, obj.x/256 + 0.5, 64 - obj.y/256, "#FFFF00")
+					end
+				else
+					point(obj.x/256, 64 - obj.y/256, '#FFFF00', "%d/%d/%d" % { obj.class, obj.subclass, obj.type })
+				end
 			end
 		end
 

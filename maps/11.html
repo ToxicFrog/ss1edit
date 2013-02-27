@@ -38,6 +38,10 @@
     </table>
     <script src="http://d3lp1msu2r81bx.cloudfront.net/kjs/js/lib/kinetic-v4.3.3.min.js"></script>
     <script>
+      var SCALE=16; /* pixels per map tile */
+      var WIDTH=64;
+      var HEIGHT=64;
+
       function writeMessage(messageLayer, message) {
         var context = messageLayer.getContext();
         messageLayer.clear();
@@ -48,55 +52,48 @@
 
       var stage = new Kinetic.Stage({
         container: 'map',
-        width: 64*14 + 256,
-        height: 64*14
+        width: WIDTH*SCALE + 256,
+        height: HEIGHT*SCALE
       });
 
-      var mapLayer = new Kinetic.Layer({ x: 0, width: 64*14 }); // level geometry
-      var objLayer = new Kinetic.Layer({ x: 0, width: 64*14 }); // objects
-      var hitLayer = new Kinetic.Layer({ x: 0, width: 64*14, opacity: 0 });  // mouse event trap
-      var msgLayer = new Kinetic.Layer({ x: 64*14, width: 256 });
+      var mapLayer = new Kinetic.Layer({ x: 0, width: WIDTH*SCALE }); // level geometry
+      var objLayer = new Kinetic.Layer({ x: 0, width: WIDTH*SCALE }); // objects
+      var hitLayer = new Kinetic.Layer({ x: 0, width: WIDTH*SCALE, opacity: 0 });  // mouse event trap
+      var msgLayer = new Kinetic.Layer({ x: WIDTH*SCALE, width: 256 });
 
-      hitLayer.add(new Kinetic.Rect({x:0, y:0, width:64*14, height:64*14}));
+      hitLayer.add(new Kinetic.Rect({x:0, y:0, width:WIDTH*SCALE, height:HEIGHT*SCALE}));
       hitLayer.on('mousemove', function(evt) {
         var xy = stage.getUserPosition();
-        writeMessage(msgLayer, "Tile: (" + Math.floor(xy.x/14) + ", " + Math.floor(xy.y/14) + ")");
+        writeMessage(msgLayer, "Tile: (" + Math.floor(xy.x/SCALE) + ", " + Math.floor(xy.y/SCALE) + ")");
         console.log(evt);
       });
 
       var background = new Kinetic.Rect({
         x: 0, y: 0,
-        width: 64*14, height: 64*14,
+        width: WIDTH*SCALE, height: HEIGHT*SCALE,
         fill: 'black',
       })
       mapLayer.add(background);
 
       function line(x1, y1, x2, y2, colour) {
         mapLayer.add(new Kinetic.Line({
-          points: [x1*14, y1*14, x2*14, y2*14],
+          points: [x1*SCALE, y1*SCALE, x2*SCALE, y2*SCALE],
           stroke: colour,
         }));
       }
 
-      function point(x, y, colour) {
-        objLayer.add(new Kinetic.Circle({
-          x: x*14,
-          y: y*14,
-          radius: 2,
+      function point(x, y, colour, name) {
+        var obj = new Kinetic.Circle({
+          x: x*SCALE,
+          y: y*SCALE,
+          radius: SCALE/4,
           stroke: colour,
           fill: colour,
-        }));
-      }
-
-      function addTile(x, y, type) {
-        var tile = new Kinetic.Rect({
-          x: x*14,
-          y: y*14,
-          width: 14, height: 14,
-          stroke: "lime",
-        })
-
-        mapLayer.add(tile);
+        });
+        obj.on('mouseover', function() {
+          writeMessage(msgLayer, name);
+        });
+        objLayer.add(obj);
       }
     </script>
 
@@ -401,117 +398,56 @@
       line(38, 42, 39, 42, '#00FF00');
       line(39, 42, 40, 42, '#00FF00');
       line(32, 43, 33, 43, '#00FF00');
-      point(32.500000, 41.003906, '#FF0000');
-      point(32.500000, 42.003906, '#FF0000');
-      point(34.902344, 39.535156, '#FF0000');
-      point(25.433594, 34.000000, '#FF0000');
-      point(29.000000, 32.500000, '#FF0000');
-      point(25.500000, 29.000000, '#FF0000');
-      point(35.500000, 33.500000, '#FF0000');
-      point(35.500000, 32.500000, '#FF0000');
-      point(34.500000, 32.500000, '#FF0000');
-      point(32.500000, 29.500000, '#FF0000');
-      point(32.500000, 30.500000, '#FF0000');
-      point(30.433594, 29.128906, '#FF0000');
-      point(29.652344, 30.660156, '#FF0000');
-      point(31.371094, 31.347656, '#FF0000');
-      point(26.746094, 38.316406, '#FF0000');
-      point(26.746094, 35.878906, '#FF0000');
-      point(38.589844, 24.847656, '#FF0000');
-      point(31.339844, 32.660156, '#FF0000');
-      point(31.500000, 34.500000, '#FF0000');
-      point(37.500000, 25.500000, '#FF0000');
-      point(35.500000, 30.500000, '#FF0000');
-      point(31.500000, 30.500000, '#FF0000');
-      point(27.500000, 26.500000, '#FF0000');
-      point(25.808594, 35.722656, '#FF0000');
-      point(41.500000, 29.500000, '#FF0000');
-      point(32.500000, 24.500000, '#FF0000');
-      point(39.500000, 32.500000, '#FF0000');
-      point(31.496094, 36.000000, '#FF0000');
-      point(38.464844, 40.285156, '#FF0000');
-      point(36.000000, 36.566406, '#FF0000');
-      point(32.500000, 34.500000, '#FF0000');
-      point(31.496094, 40.472656, '#FF0000');
-      point(31.496094, 36.000000, '#FF0000');
-      point(25.089844, 34.000000, '#FF0000');
-      point(25.500000, 32.500000, '#FF0000');
-      point(25.871094, 34.000000, '#FF0000');
-      point(40.371094, 34.222656, '#FF0000');
-      point(40.339844, 34.535156, '#FF0000');
-      point(40.496094, 34.597656, '#FF0000');
-      point(36.000000, 25.566406, '#FF0000');
-      point(37.277344, 41.660156, '#FF0000');
-      point(37.308594, 41.285156, '#FF0000');
-      point(37.000000, 41.816406, '#FF0000');
-      point(37.402344, 41.785156, '#FF0000');
-      point(43.371094, 35.472656, '#FF0000');
-      point(32.000000, 41.503906, '#FF0000');
-      point(45.714844, 35.316406, '#FF0000');
-      point(31.496094, 40.472656, '#FF0000');
-      point(45.621094, 35.472656, '#FF0000');
-      point(45.714844, 35.410156, '#FF0000');
-      point(45.839844, 35.191406, '#FF0000');
-      point(45.777344, 35.160156, '#FF0000');
-      point(40.500000, 34.500000, '#FF0000');
-      point(45.214844, 35.660156, '#FF0000');
-      point(37.183594, 41.503906, '#FF0000');
-      point(38.808594, 40.160156, '#FF0000');
-      point(38.652344, 40.128906, '#FF0000');
-      point(38.277344, 40.222656, '#FF0000');
-      point(40.277344, 35.878906, '#FF0000');
-      point(40.500000, 28.500000, '#FF0000');
-      point(41.996094, 29.503906, '#FF0000');
-      point(38.500000, 26.500000, '#FF0000');
-      point(33.683594, 32.816406, '#FF0000');
-      point(35.500000, 36.500000, '#FF0000');
-      point(35.308594, 36.660156, '#FF0000');
-      point(35.496094, 36.472656, '#FF0000');
-      point(35.558594, 37.000000, '#FF0000');
-      point(27.500000, 29.500000, '#FF0000');
-      point(27.371094, 29.253906, '#FF0000');
-      point(27.683594, 29.441406, '#FF0000');
-      point(27.808594, 29.628906, '#FF0000');
-      point(44.464844, 33.972656, '#FF0000');
-      point(38.058594, 38.097656, '#FF0000');
-      point(32.500000, 43.500000, '#FF0000');
-      point(32.500000, 43.500000, '#FF0000');
-      point(32.500000, 43.500000, '#FF0000');
-      point(37.714844, 26.878906, '#FF0000');
-      point(37.652344, 27.597656, '#FF0000');
-      point(37.214844, 26.128906, '#FF0000');
-      point(38.496094, 26.503906, '#FF0000');
-      point(36.277344, 25.597656, '#FF0000');
-      point(29.558594, 29.691406, '#FF0000');
-      point(29.000000, 29.972656, '#FF0000');
-      point(30.714844, 29.000000, '#FF0000');
-      point(31.500000, 38.500000, '#FF0000');
-      point(33.500000, 38.500000, '#FF0000');
-      point(26.152344, 36.160156, '#FF0000');
-      point(25.500000, 32.500000, '#FF0000');
-      point(43.214844, 35.472656, '#FF0000');
-      point(39.433594, 31.160156, '#FF0000');
-      point(35.152344, 24.128906, '#FF0000');
-      point(26.589844, 26.472656, '#FF0000');
-      point(32.500000, 23.500000, '#FF0000');
-      point(32.808594, 23.347656, '#FF0000');
-      point(32.500000, 24.003906, '#FF0000');
-      point(32.500000, 22.500000, '#FF0000');
-      point(32.500000, 22.500000, '#FF0000');
-      point(32.500000, 22.500000, '#FF0000');
-      point(33.500000, 24.500000, '#FF0000');
-      point(25.500000, 40.500000, '#FF0000');
-      point(41.500000, 24.500000, '#FF0000');
-      point(25.500000, 40.500000, '#FF0000');
-      point(30.500000, 28.500000, '#FF0000');
-      point(38.714844, 38.628906, '#FF0000');
-      point(38.500000, 38.500000, '#FF0000');
-      point(38.500000, 38.500000, '#FF0000');
+      line(32.000000, 41.003906, 33.000000, 41.003906, '#FFFF00');
+      line(32.000000, 42.003906, 33.000000, 42.003906, '#FFFF00');
+      point(34.902344, 39.535156, '#800080', '14/0/4');
+      point(25.433594, 34.000000, '#808000', '9/0/6');
+      line(29.000000, 32.000000, 29.000000, 33.000000, '#FFFF00');
+      line(25.000000, 29.000000, 26.000000, 29.000000, '#FFFF00');
+      point(37.500000, 25.500000, '#800080', '14/0/4');
+      point(35.500000, 30.500000, '#800080', '14/0/4');
+      point(31.500000, 30.500000, '#800080', '14/0/4');
+      point(27.500000, 26.500000, '#800080', '14/0/4');
+      point(25.808594, 35.722656, '#800080', '14/0/4');
+      point(41.500000, 29.500000, '#800080', '14/0/4');
+      point(32.500000, 24.500000, '#800080', '14/0/1');
+      point(39.500000, 32.500000, '#800080', '14/0/1');
+      point(38.464844, 40.285156, '#800080', '14/1/6');
+      point(36.000000, 36.566406, '#800080', '14/0/4');
+      point(32.500000, 34.500000, '#800080', '14/0/4');
+      point(40.371094, 34.222656, '#00FFFF', '4/0/2');
+      point(40.339844, 34.535156, '#00FFFF', '4/0/3');
+      point(40.496094, 34.597656, '#00FFFF', '4/0/1');
+      point(37.277344, 41.660156, '#FF8080', '1/0/0');
+      point(37.308594, 41.285156, '#FF8080', '1/0/2');
+      point(37.402344, 41.785156, '#FF0000', '0/0/1');
+      point(32.000000, 41.503906, '#808000', '9/3/6');
+      point(45.714844, 35.316406, '#FF0000', '0/0/0');
+      point(45.621094, 35.472656, '#FF8080', '1/2/2');
+      point(45.714844, 35.410156, '#FF8080', '1/0/2');
+      point(45.839844, 35.191406, '#00FFFF', '4/0/3');
+      point(45.777344, 35.160156, '#00FFFF', '4/0/3');
+      point(40.500000, 34.500000, '#00FFFF', '4/0/3');
+      point(37.183594, 41.503906, '#FF0080', '3/0/2');
+      point(38.808594, 40.160156, '#FF0080', '3/0/0');
+      point(38.652344, 40.128906, '#FF8080', '1/4/2');
+      point(38.277344, 40.222656, '#FF8080', '1/0/1');
+      point(40.277344, 35.878906, '#00FFFF', '4/0/5');
+      point(35.558594, 37.000000, '#FF8080', '1/4/1');
+      point(27.371094, 29.253906, '#FF0000', '0/0/0');
+      point(27.683594, 29.441406, '#FF8080', '1/0/0');
+      point(27.808594, 29.628906, '#FF8080', '1/0/0');
+      point(44.464844, 33.972656, '#FF8080', '1/6/0');
+      point(38.058594, 38.097656, '#FF8080', '1/6/0');
+      point(32.500000, 23.500000, '#808000', '9/2/1');
+      point(32.808594, 23.347656, '#0000FF', '5/1/2');
+      line(32.000000, 24.003906, 33.000000, 24.003906, '#FFFF00');
+      point(33.500000, 24.500000, '#808000', '9/0/3');
 
 
       stage.add(mapLayer);
-      stage.add(objLayer);
       stage.add(hitLayer);
+      stage.add(objLayer);
       stage.add(msgLayer);
     </script>
   </body>
