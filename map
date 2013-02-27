@@ -34,36 +34,41 @@ local function commit()
 	return buf
 end
 
-local function emitTile(lines, map, x, y)
-	local tile = map:tile(x,y)
+local function drawLedges(map)
+	for y=1,map.info.height-1 do
+		for x=1,map.info.width-1 do
+			for x2,y2 in pairs { [x] = y-1, [x-1] = y } do
+				local delta = map:ledgeHeight(x, y, x2, y2)
 
-	if x > 0 and y > 0 then
-		-- draw ledges first
-		for x2,y2 in pairs { [x] = y-1, [x-1] = y } do
-			local delta = map:ledgeHeight(x, y, x2, y2)
-
-			if delta > 0 and delta < math.huge then
-				local shade = 0x40 + delta * 4
-				line(x, y, x2+1, y2+1, "#00%02X00" % shade)
-			end
-		end
-
-		-- then draw walls
-		for x2,y2 in pairs { [x] = y-1, [x-1] = y } do
-			local delta = map:ledgeHeight(x, y, x2, y2)
-
-			if delta == math.huge then
-				local shade = 0x40 + delta * 4
-				line(x, y, x2+1, y2+1, "#00FF30" % shade)
+				if delta > 0 and delta < math.huge then
+					local shade = 0x40 + delta * 4
+					line(x, y, x2+1, y2+1, "#00%02X00" % shade)
+				end
 			end
 		end
 	end
+end
 
-	-- diagonal walls don't need a ledge check
-	if tile.shape == 2 or tile.shape == 4 then -- / diagonal
-		line(x+1, y, x, y+1, "#00FF30")
-	elseif tile.shape == 3 or tile.shape == 5 then -- \ diagonal
-		line(x, y, x+1, y+1, "#00FF30")
+local function drawWalls(map)
+	for y=1,map.info.height-1 do
+		for x=1,map.info.width-1 do
+			for x2,y2 in pairs { [x] = y-1, [x-1] = y } do
+				local delta = map:ledgeHeight(x, y, x2, y2)
+
+				if delta == math.huge then
+					local shade = 0x40 + delta * 4
+					line(x, y, x2+1, y2+1, "#00FF30" % shade)
+				end
+			end
+
+			-- diagonal walls don't need a ledge check
+			local tile = map:tile(x,y)
+			if tile.shape == 2 or tile.shape == 4 then -- / diagonal
+				line(x+1, y, x, y+1, "#00FF30")
+			elseif tile.shape == 3 or tile.shape == 5 then -- \ diagonal
+				line(x, y, x+1, y+1, "#00FF30")
+			end
+		end
 	end
 end
 
@@ -92,13 +97,8 @@ local function main(archive, prefix, ...)
 		print("Writing level " .. level)
 		map = map.load(rf, level)
 
-		for y=0,map.info.height-1 do
-			for x=0,map.info.width-1 do
-				emitTile(lines, map, x, y)
-				--printf(icons[level:tile(x,y).shape])
-			end
-			--print()
-		end
+		drawLedges(map)
+		drawWalls(map)
 
 		local colours = {
 			"#FF0000", "#FF8080", false, "#FF0080", -- weapons, ammo, projectiles, and explosives
