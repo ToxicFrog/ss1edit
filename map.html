@@ -38,6 +38,10 @@
     </table>
     <script src="http://d3lp1msu2r81bx.cloudfront.net/kjs/js/lib/kinetic-v4.3.3.min.js"></script>
     <script>
+      var SCALE=${SCALE}; /* pixels per map tile */
+      var WIDTH=${WIDTH};
+      var HEIGHT=${HEIGHT};
+
       function writeMessage(messageLayer, message) {
         var context = messageLayer.getContext();
         messageLayer.clear();
@@ -48,55 +52,48 @@
 
       var stage = new Kinetic.Stage({
         container: 'map',
-        width: 64*14 + 256,
-        height: 64*14
+        width: WIDTH*SCALE + 256,
+        height: HEIGHT*SCALE
       });
 
-      var mapLayer = new Kinetic.Layer({ x: 0, width: 64*14 }); // level geometry
-      var objLayer = new Kinetic.Layer({ x: 0, width: 64*14 }); // objects
-      var hitLayer = new Kinetic.Layer({ x: 0, width: 64*14, opacity: 0 });  // mouse event trap
-      var msgLayer = new Kinetic.Layer({ x: 64*14, width: 256 });
+      var mapLayer = new Kinetic.Layer({ x: 0, width: WIDTH*SCALE }); // level geometry
+      var objLayer = new Kinetic.Layer({ x: 0, width: WIDTH*SCALE }); // objects
+      var hitLayer = new Kinetic.Layer({ x: 0, width: WIDTH*SCALE, opacity: 0 });  // mouse event trap
+      var msgLayer = new Kinetic.Layer({ x: WIDTH*SCALE, width: 256 });
 
-      hitLayer.add(new Kinetic.Rect({x:0, y:0, width:64*14, height:64*14}));
+      hitLayer.add(new Kinetic.Rect({x:0, y:0, width:WIDTH*SCALE, height:HEIGHT*SCALE}));
       hitLayer.on('mousemove', function(evt) {
         var xy = stage.getUserPosition();
-        writeMessage(msgLayer, "Tile: (" + Math.floor(xy.x/14) + ", " + Math.floor(xy.y/14) + ")");
+        writeMessage(msgLayer, "Tile: (" + Math.floor(xy.x/SCALE) + ", " + Math.floor(xy.y/SCALE) + ")");
         console.log(evt);
       });
 
       var background = new Kinetic.Rect({
         x: 0, y: 0,
-        width: 64*14, height: 64*14,
+        width: WIDTH*SCALE, height: HEIGHT*SCALE,
         fill: 'black',
       })
       mapLayer.add(background);
 
       function line(x1, y1, x2, y2, colour) {
         mapLayer.add(new Kinetic.Line({
-          points: [x1*14, y1*14, x2*14, y2*14],
+          points: [x1*SCALE, y1*SCALE, x2*SCALE, y2*SCALE],
           stroke: colour,
         }));
       }
 
-      function point(x, y, colour) {
-        objLayer.add(new Kinetic.Circle({
-          x: x*14,
-          y: y*14,
-          radius: 2,
+      function point(x, y, colour, name) {
+        var obj = new Kinetic.Circle({
+          x: x*SCALE,
+          y: y*SCALE,
+          radius: SCALE/4,
           stroke: colour,
           fill: colour,
-        }));
-      }
-
-      function addTile(x, y, type) {
-        var tile = new Kinetic.Rect({
-          x: x*14,
-          y: y*14,
-          width: 14, height: 14,
-          stroke: "lime",
-        })
-
-        mapLayer.add(tile);
+        });
+        obj.on('mouseover', function() {
+          writeMessage(msgLayer, name);
+        });
+        objLayer.add(obj);
       }
     </script>
 
@@ -104,8 +101,8 @@
       ${WALLS}
 
       stage.add(mapLayer);
-      stage.add(objLayer);
       stage.add(hitLayer);
+      stage.add(objLayer);
       stage.add(msgLayer);
     </script>
   </body>

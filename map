@@ -79,7 +79,13 @@ local function main(archive, prefix, ...)
 		end
 
 		local fd = assert(io.open(prefix .. ("%02d" % level) .. ".html", "w"))
-		fd:write((html:gsub("${WALLS}", table.concat(lines, ""))))
+		local data = {
+			WIDTH = map.info.width;
+			HEIGHT = map.info.height;
+			SCALE = 16;
+			WALLS = table.concat(lines, "");
+		}
+		fd:write(html:interpolate(data))
 		fd:close()
 	end
 end
