@@ -115,7 +115,8 @@ local function main(archive, prefix, ...)
 				point(obj.x/256, 64 - obj.y/256, colours[obj.class+1], "%d/%d/%d" % { obj.class, obj.subclass, obj.type })
 			end
 
-			if obj.used and obj.class == 10 and obj.subclass ~= 1 then -- openable doors
+			-- FIXME is there a specific subclass for non-openable gratings and stuff?
+			if obj.used and obj.class == 10 then -- openable doors
 				if obj.pitch == 0 then
 					if obj.yaw % 128 == 64 then
 						line(obj.x/256, 64 - obj.y/256 - 0.5, obj.x/256, 64 - obj.y/256 + 0.5, "#FFFF00")
