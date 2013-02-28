@@ -125,6 +125,7 @@ function res.load(filename)
     fd:seek("set", chunk_offs)
     
     for i,chunk in ipairs(self.toc) do
+    	print(fd:seek("cur", 0), chunk.id, chunk.packed_size, chunk.size)
     	chunk.packed_data = struct.unpack("a4 s%d" % chunk.packed_size, fd, true)
 
     	if chunk.compressed and chunk.dir then
@@ -143,6 +144,39 @@ function res.load(filename)
     list.sort(self.toc, function(x,y) return x.id < y.id end)
     
     return setmetatable(self, mt)
+end
+
+function res:save(filename)
+	local RES_TOCENTRY = [[%d * { id:u2 size:u3 [1|x6 dir:b1 compressed:b1] packed_size:u3 type:u1 }]]
+    local toc_offs,chunk_offs
+
+	local fd,err = io.open(filename, "wb")
+	if not fd then return nil,err end
+
+    -- write the header. write 0 for offset to TOC, we'll fill that in later.
+    struct.pack("z124 u4", fd, { self.comment, 0 })
+
+    -- write chunk data
+    for i,chunk in ipairs(self.toc) do
+    	-- resolve chunk information
+    	chunk.compressed = false
+    	chunk.size = #chunk.data
+    	chunk.packed_size = chunk.size
+
+    	struct.pack("a4 s%d" % chunk.size, fd, { chunk.data })
+    end
+
+    -- write TOC
+    struct.pack("a4", fd, {})
+    local toc_offs = fd:seek("cur", 0)
+    struct.pack("u2 u4", fd, { #self.toc, 128 })
+    struct.pack(RES_TOCENTRY % #self.toc, fd, self.toc)
+
+    -- write TOC pointer
+    struct.pack("@124 u4", fd, { toc_offs })
+    
+    -- commit
+    fd:close()
 end
 
 function res:chunks()

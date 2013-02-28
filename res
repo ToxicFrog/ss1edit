@@ -7,9 +7,17 @@ local res = require "res"
 local HELP_TEXT = [[
 Usage: res <mode> <args>
 Modes:
-    l <file>        list file contents
-    x <file>        extract file contents
-    c <file> <dir>  pack contents of dir into file
+    l <file>             
+    		list file contents
+    x <file> <prefix> [chunk...]
+    		extract file contents to prefix/<chunk id>
+    		if no chunks specified, unpack entire file
+    c (not implemented) 
+    		pack chunks into new file
+    u <file> <prefix> [chunk...] 
+    	update chunks already present in file
+    	read chunks from prefix/<chunk id>
+    	if no chunks specified, try to update every chunk
 ]]
 
 local mode = {}
@@ -50,8 +58,24 @@ function mode.x(file, prefix, ...)
 end
 
 -- Create
-function mode.c(...)
+function mode.c(file, chunks)
 	error "creation is not yet implemented"
+end
+
+-- Update
+function mode.u(infile, outfile, prefix, ...)
+	local rf = res.load(infile)
+
+	for _,id in ipairs(list.map({...}, tonumber)) do
+		if rf:get(id) then
+			local data = assert(io.open(prefix .. "/" .. tostring(id), "rb")):read("*a")
+			rf:get(id).data = data
+		else
+			error("Attempted to add chunk "..id.." that does not exist in file!")
+		end
+	end
+
+	rf:save(outfile)
 end
 
 local function main(...)
