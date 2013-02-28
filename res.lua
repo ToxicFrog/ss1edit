@@ -125,7 +125,6 @@ function res.load(filename)
     fd:seek("set", chunk_offs)
     
     for i,chunk in ipairs(self.toc) do
-    	print(fd:seek("cur", 0), chunk.id, chunk.packed_size, chunk.size)
     	chunk.packed_data = struct.unpack("a4 s%d" % chunk.packed_size, fd, true)
 
     	if chunk.compressed and chunk.dir then
