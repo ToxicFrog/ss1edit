@@ -17,7 +17,7 @@ Modes:
     u <file> <prefix> [chunk...] 
     	update chunks already present in file
     	read chunks from prefix/<chunk id>
-    	if no chunks specified, try to update every chunk
+    	if no chunks specified, is a no-op! FIXME
 ]]
 
 local mode = {}
