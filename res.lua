@@ -161,6 +161,7 @@ function res:save(filename)
     	chunk.compressed = false
     	chunk.size = #chunk.data
     	chunk.packed_size = chunk.size
+    	chunk.packed_data = chunk.data
 
     	struct.pack("a4 s%d" % chunk.size, fd, { chunk.data })
     end
