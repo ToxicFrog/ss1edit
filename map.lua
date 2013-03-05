@@ -166,8 +166,8 @@ function map:ledgeHeight(x1, y1, x2, y2)
 
 	if x1 < x2 then -- t1 is west of t2
 		w1,w2 = w1.e,w2.w
-	else -- t1 is north of t2
-		w1,w2 = w1.s,w2.n
+	else -- t1 is south of t2
+		w1,w2 = w1.n,w2.s
 	end
 
 	if w1 ~= w2 then
