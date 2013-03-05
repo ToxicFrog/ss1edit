@@ -31,6 +31,33 @@ terminated string and nothing else. In ARCHIVE.DAT, it contains the text
 "Starting Game" followed by 114 bytes of additional data, the purpose of which
 is as yet unknown.
 
+4001 looks like it might be player state information? It starts wtih the player's
+name. I should look in here for game settings and player coordinate information.
+
+Player position is stored at offset 0x006E in chunk 4001:
+
+006e	uint16		player X
+0070	uint16		player Y
+
+As with object positions in the master object table, the high byte is the tile
+coordinate and the low byte is the sub-tile coordinate.
+
+Resolution might be at 15A - it's 0 at 320x240 and 3 at 640x480 - and fullscreen
+flag at 196 - it's 0 in halfscreen and 2 in fullscreen. There's also 498, which
+is 0 in halfscreen and 1 in fullscreen.
+
+Question: where is starting position, etc stored in ARCHIVE.DAT? In a savegame
+it's in chunk 4001, but in the archive that chunk is all 00.
+
+Starting player position is
+	00 00 01 00 | 80 1e 80 16 | 67 00 c0 00
+Including four bytes on either side of the obvious x,y coordinates
+
+There are no chunks in archive.dat containing the sequence 80 1e 80 16.
+
+590 and 591 look like they change slightly when the shields are activated. If
+game flags aren't in 4001 they might be here.
+
 	----------------
 	Level Map Format
 	----------------
