@@ -112,19 +112,19 @@ local function main(archive, prefix, ...)
 
 		for _,obj in ipairs(map.objects) do
 			if obj.used and colours[obj.class+1] then
-				point(obj.x/256, 64 - obj.y/256, colours[obj.class+1], "%d/%d/%d" % { obj.class, obj.subclass, obj.type })
+				point(obj.x/256, obj.y/256, colours[obj.class+1], "%d/%d/%d" % { obj.class, obj.subclass, obj.type })
 			end
 
 			-- FIXME is there a specific subclass for non-openable gratings and stuff?
 			if obj.used and obj.class == 10 then -- openable doors
 				if obj.pitch == 0 then
 					if obj.yaw % 128 == 64 then
-						line(obj.x/256, 64 - obj.y/256 - 0.5, obj.x/256, 64 - obj.y/256 + 0.5, "#FFFF00")
+						line(obj.x/256, obj.y/256 - 0.5, obj.x/256, obj.y/256 + 0.5, "#FFFF00")
 					else
-						line(obj.x/256 - 0.5, 64 - obj.y/256, obj.x/256 + 0.5, 64 - obj.y/256, "#FFFF00")
+						line(obj.x/256 - 0.5, obj.y/256, obj.x/256 + 0.5, obj.y/256, "#FFFF00")
 					end
 				else
-					point(obj.x/256, 64 - obj.y/256, '#FFFF00', "%d/%d/%d" % { obj.class, obj.subclass, obj.type })
+					point(obj.x/256, obj.y/256, '#FFFF00', "%d/%d/%d" % { obj.class, obj.subclass, obj.type })
 				end
 			end
 		end

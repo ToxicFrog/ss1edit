@@ -93,7 +93,7 @@ function map:tile(x,y)
 
 	--print(w*h, x, y, (h - y - 1)*w + x + 1)
 
-	return self.tiles[(h - y - 1)*w + x + 1]
+	return self.tiles[y*w + x + 1]
 end
 
 --[[

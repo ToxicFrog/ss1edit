@@ -36,7 +36,7 @@
         </td>
       </tr>
     </table>
-    <script src="http://d3lp1msu2r81bx.cloudfront.net/kjs/js/lib/kinetic-v4.3.3.min.js"></script>
+    <script src="./kinetic.js"></script>
     <script>
       var SCALE=${SCALE}; /* pixels per map tile */
       var WIDTH=${WIDTH};
@@ -71,13 +71,13 @@
       var background = new Kinetic.Rect({
         x: 0, y: 0,
         width: WIDTH*SCALE, height: HEIGHT*SCALE,
-        fill: 'black',
+        fill: '#000000',
       })
       mapLayer.add(background);
 
       function line(x1, y1, x2, y2, colour) {
         mapLayer.add(new Kinetic.Line({
-          points: [x1*SCALE, y1*SCALE, x2*SCALE, y2*SCALE],
+          points: [x1*SCALE, (HEIGHT-y1)*SCALE, x2*SCALE, (HEIGHT-y2)*SCALE],
           stroke: colour,
         }));
       }
@@ -85,7 +85,7 @@
       function point(x, y, colour, name) {
         var obj = new Kinetic.Circle({
           x: x*SCALE,
-          y: y*SCALE,
+          y: (HEIGHT-y)*SCALE,
           radius: SCALE/4,
           stroke: colour,
           fill: colour,
