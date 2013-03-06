@@ -2,7 +2,7 @@
 -- :mode=lua: --
 
 require "util"
-local res = require "res"
+local res = require "ss1.res"
 
 local HELP_TEXT = [[
 Usage: res <mode> <args>
@@ -17,7 +17,7 @@ Modes:
     u <file> <prefix> [chunk...] 
     	update chunks already present in file
     	read chunks from prefix/<chunk id>
-    	if no chunks specified, is a no-op! FIXME
+    	if no chunks specified, is a no-op! FIXME..
 ]]
 
 local mode = {}

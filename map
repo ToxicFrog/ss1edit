@@ -2,8 +2,8 @@
 -- :mode=lua: --
 
 require "util"
-local res = require "res"
-local map = require "map"
+local res = require "ss1.res"
+local map = require "ss1.map"
 
 local HELP_TEXT = [[
 Usage: map <archive> <prefix> [levels...]
