@@ -57,9 +57,13 @@
       });
 
       var mapLayer = new Kinetic.Layer({ x: 0, width: WIDTH*SCALE }); // level geometry
-      var objLayer = new Kinetic.Layer({ x: 0, width: WIDTH*SCALE }); // objects
       var hitLayer = new Kinetic.Layer({ x: 0, width: WIDTH*SCALE, opacity: 0 });  // mouse event trap
       var msgLayer = new Kinetic.Layer({ x: WIDTH*SCALE, width: 256 });
+
+      var objLayers = {}; // objects, by object class
+      for (var i = 0; i < 16; ++i) {
+        objLayers[i] = new Kinetic.Layer({ x: 0, width: WIDTH*SCALE });
+      }
 
       hitLayer.add(new Kinetic.Rect({x:0, y:0, width:WIDTH*SCALE, height:HEIGHT*SCALE}));
       hitLayer.on('mousemove', function(evt) {
@@ -93,7 +97,7 @@
         obj.on('mouseover', function() {
           writeMessage(msgLayer, name);
         });
-        objLayer.add(obj);
+        objLayers[0].add(obj);
       }
     </script>
 
@@ -102,7 +106,9 @@
 
       stage.add(mapLayer);
       stage.add(hitLayer);
-      stage.add(objLayer);
+      for (var i = 0; i < 16; ++i) {
+        stage.add(objLayers[i]);
+      }
       stage.add(msgLayer);
     </script>
   </body>
