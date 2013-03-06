@@ -18,9 +18,9 @@ Usage: map <archive> <prefix> [levels...]
 
 local output = {}
 
-local function point(x, y, colour, name)
-	table.insert(output, "      point(%f, %f, '%s', '%s');\n" % {
-		x, y, colour, name })
+local function point(layer, x, y, colour, name)
+	table.insert(output, "      point(%s, %f, %f, '%s', '%s');\n" % {
+		layer, x, y, colour, name })
 end
 
 local function line(x1, y1, x2, y2, colour)
@@ -111,7 +111,7 @@ local function main(archive, prefix, ...)
 
 		for _,obj in ipairs(map.objects) do
 			if obj.used and colours[obj.class+1] then
-				point(obj.x/256, obj.y/256, colours[obj.class+1], "%d/%d/%d" % { obj.class, obj.subclass, obj.type })
+				point('objLayers[%d]' % obj.class, obj.x/256, obj.y/256, colours[obj.class+1], "%d/%d/%d" % { obj.class, obj.subclass, obj.type })
 			end
 
 			-- FIXME is there a specific subclass for non-openable gratings and stuff?
@@ -123,7 +123,7 @@ local function main(archive, prefix, ...)
 						line(obj.x/256 - 0.5, obj.y/256, obj.x/256 + 0.5, obj.y/256, "#FFFF00")
 					end
 				else
-					point(obj.x/256, obj.y/256, '#FFFF00', "%d/%d/%d" % { obj.class, obj.subclass, obj.type })
+					point('objLayers[%d]' % obj.class, obj.x/256, obj.y/256, '#FFFF00', "%d/%d/%d" % { obj.class, obj.subclass, obj.type })
 				end
 			end
 		end

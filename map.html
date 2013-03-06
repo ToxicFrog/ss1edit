@@ -86,7 +86,7 @@
         }));
       }
 
-      function point(x, y, colour, name) {
+      function point(layer, x, y, colour, name) {
         var obj = new Kinetic.Circle({
           x: x*SCALE,
           y: (HEIGHT-y)*SCALE,
@@ -97,7 +97,7 @@
         obj.on('mouseover', function() {
           writeMessage(msgLayer, name);
         });
-        objLayers[0].add(obj);
+        layer.add(obj);
       }
     </script>
 
