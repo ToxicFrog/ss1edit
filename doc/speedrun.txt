@@ -14,3 +14,10 @@
 
 	DECK 2
 
+	SKIPS
+- most of deck 1, using the death camera glitch
+	? can we read the code off the screen through the camera,
+	  or do we need to guess in the reactor?
+? half of deck R by entering through the back of the reactor
+? the escape pods and second diego fight by going straight to 8
+? all of deck 8, using batteries and jumpjets
