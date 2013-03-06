@@ -24,17 +24,17 @@
           <!-- nil -->
           <label><input type="checkbox" checked="true" onchange="toggleLayer(0);">0 - Weapons</label><br>
           <label><input type="checkbox" checked="true" onchange="toggleLayer(1);">1 - Ammo</label><br>
-          <label><input type="checkbox" checked="false" onchange="toggleLayer(2);">2 - Projectiles</label><br>
+          <label><input type="checkbox"                onchange="toggleLayer(2);">2 - Projectiles</label><br>
           <label><input type="checkbox" checked="true" onchange="toggleLayer(3);">3 - Explosives</label><br>
           <label><input type="checkbox" checked="true" onchange="toggleLayer(4);">4 - Dermal Patches</label><br>
           <label><input type="checkbox" checked="true" onchange="toggleLayer(5);">5 - Implants</label><br>
           <label><input type="checkbox" checked="true" onchange="toggleLayer(6);">6 - Software</label><br>
-          <label><input type="checkbox" checked="false" onchange="toggleLayer(7);">7 - Fixtures</label><br>
-          <label><input type="checkbox" checked="false" onchange="toggleLayer(8);">8 - Items</label><br>
+          <label><input type="checkbox"                onchange="toggleLayer(7);">7 - Fixtures</label><br>
+          <label><input type="checkbox"                onchange="toggleLayer(8);">8 - Items</label><br>
           <label><input type="checkbox" checked="true" onchange="toggleLayer(9);">9 - Switches and Panels</label><br>
           <label><input type="checkbox" checked="true" onchange="toggleLayer(10);">10 - Doors and Gratings</label><br>
-          <label><input type="checkbox" checked="false" onchange="toggleLayer(11);">11 - Animations</label><br>
-          <label><input type="checkbox" checked="false" onchange="toggleLayer(12);">12 - Traps and Triggers</label><br>
+          <label><input type="checkbox"                onchange="toggleLayer(11);">11 - Animations</label><br>
+          <label><input type="checkbox"                onchange="toggleLayer(12);">12 - Traps and Triggers</label><br>
           <label><input type="checkbox" checked="true" onchange="toggleLayer(13);">13 - Containers</label><br>
           <label><input type="checkbox" checked="true" onchange="toggleLayer(14);">14 - Critters</label><br>
         </td>
@@ -103,7 +103,7 @@
           y: (HEIGHT-y)*SCALE,
           radius: SCALE/4,
           stroke: colour,
-          fill: colour,
+          //fill: colour,
         });
         obj.on('mouseover', function() {
           writeMessage(msgLayer, name);
@@ -1236,50 +1236,170 @@
       line(56.000000, 61.000000, 57.000000, 61.000000, '#00FF30');
       line(57.000000, 61.000000, 58.000000, 61.000000, '#00FF30');
       line(58.000000, 61.000000, 59.000000, 61.000000, '#00FF30');
+      point(objLayers[8], 8.496094, 45.996094, '#FFFFFF', '8/5/7');
+      point(objLayers[7], 10.500000, 53.500000, '#FFFFFF', '7/3/2');
+      point(objLayers[8], 6.500000, 49.500000, '#FFFFFF', '8/5/1');
+      point(objLayers[8], 13.500000, 58.500000, '#FFFFFF', '8/5/2');
+      point(objLayers[8], 18.500000, 58.500000, '#FFFFFF', '8/5/2');
       point(objLayers[14], 35.500000, 58.500000, '#800080', '14/3/0');
+      point(objLayers[8], 22.496094, 58.996094, '#FFFFFF', '8/5/11');
       point(objLayers[6], 35.500000, 58.500000, '#0000FF', '6/4/1');
+      point(objLayers[8], 29.500000, 58.500000, '#FFFFFF', '8/5/1');
+      point(objLayers[8], 31.500000, 60.500000, '#FFFFFF', '8/5/2');
+      point(objLayers[8], 34.500000, 59.500000, '#FFFFFF', '8/5/2');
+      point(objLayers[8], 10.500000, 49.500000, '#FFFFFF', '8/5/1');
       point(objLayers[9], 15.500000, 38.500000, '#808000', '9/5/0');
+      point(objLayers[8], 15.996094, 38.464844, '#FFFFFF', '8/5/2');
+      point(objLayers[8], 15.808594, 37.527344, '#FFFFFF', '8/5/2');
+      point(objLayers[8], 15.527344, 39.433594, '#FFFFFF', '8/5/2');
       point(objLayers[14], 14.500000, 38.500000, '#800080', '14/3/1');
+      point(objLayers[8], 14.527344, 37.996094, '#FFFFFF', '8/5/7');
+      point(objLayers[7], 59.500000, 48.500000, '#FFFFFF', '7/3/2');
+      point(objLayers[8], 15.500000, 35.500000, '#FFFFFF', '8/5/2');
+      point(objLayers[8], 17.500000, 35.500000, '#FFFFFF', '8/5/2');
+      point(objLayers[8], 18.500000, 39.500000, '#FFFFFF', '8/5/1');
+      point(objLayers[8], 18.500000, 36.500000, '#FFFFFF', '8/5/1');
       point(objLayers[14], 49.500000, 21.500000, '#800080', '14/3/4');
+      point(objLayers[8], 24.500000, 54.500000, '#FFFFFF', '8/5/2');
+      point(objLayers[8], 8.500000, 49.500000, '#FFFFFF', '8/5/1');
+      point(objLayers[8], 52.500000, 38.500000, '#FFFFFF', '8/5/1');
+      point(objLayers[8], 52.500000, 35.500000, '#FFFFFF', '8/5/1');
+      point(objLayers[8], 42.500000, 38.500000, '#FFFFFF', '8/5/1');
+      point(objLayers[8], 42.500000, 35.500000, '#FFFFFF', '8/5/1');
+      point(objLayers[7], 16.500000, 34.500000, '#FFFFFF', '7/3/2');
+      point(objLayers[8], 47.500000, 24.500000, '#FFFFFF', '8/5/2');
+      point(objLayers[8], 49.527344, 17.000000, '#FFFFFF', '8/5/7');
       point(objLayers[6], 25.500000, 7.500000, '#0000FF', '6/0/4');
       point(objLayers[14], 29.500000, 7.500000, '#800080', '14/3/0');
+      point(objLayers[8], 45.500000, 6.500000, '#FFFFFF', '8/5/2');
       point(objLayers[6], 37.839844, 44.839844, '#0000FF', '6/0/4');
+      point(objLayers[8], 24.500000, 23.500000, '#FFFFFF', '8/5/2');
+      point(objLayers[8], 25.500000, 17.500000, '#FFFFFF', '8/5/2');
+      point(objLayers[7], 36.500000, 16.500000, '#FFFFFF', '7/3/2');
+      point(objLayers[8], 30.500000, 6.500000, '#FFFFFF', '8/5/1');
+      point(objLayers[8], 37.500000, 7.500000, '#FFFFFF', '8/5/2');
+      point(objLayers[8], 30.500000, 8.500000, '#FFFFFF', '8/5/1');
+      point(objLayers[8], 28.777344, 36.339844, '#FFFFFF', '8/5/11');
+      point(objLayers[8], 36.500000, 21.500000, '#FFFFFF', '8/5/2');
+      point(objLayers[8], 51.500000, 14.500000, '#FFFFFF', '8/5/1');
       point(objLayers[14], 36.500000, 21.500000, '#800080', '14/3/2');
+      point(objLayers[8], 47.500000, 14.500000, '#FFFFFF', '8/5/1');
+      point(objLayers[7], 58.500000, 36.500000, '#FFFFFF', '7/3/2');
+      point(objLayers[7], 49.500000, 14.500000, '#FFFFFF', '7/3/2');
+      point(objLayers[8], 37.500000, 21.500000, '#FFFFFF', '8/5/2');
       point(objLayers[9], 36.527344, 21.433594, '#808000', '9/5/0');
+      point(objLayers[8], 36.527344, 21.433594, '#FFFFFF', '8/5/6');
+      point(objLayers[8], 8.500000, 54.500000, '#FFFFFF', '8/5/11');
       point(objLayers[6], 47.500000, 40.500000, '#0000FF', '6/4/1');
       point(objLayers[14], 44.500000, 33.500000, '#800080', '14/3/6');
+      point(objLayers[8], 36.500000, 22.500000, '#FFFFFF', '8/5/7');
+      point(objLayers[8], 14.683594, 36.496094, '#FFFFFF', '8/5/8');
+      point(objLayers[8], 8.500000, 50.500000, '#FFFFFF', '8/5/8');
+      point(objLayers[8], 24.214844, 31.277344, '#FFFFFF', '8/5/8');
       point(objLayers[14], 23.500000, 30.500000, '#800080', '14/3/6');
       point(objLayers[14], 23.500000, 30.500000, '#800080', '14/3/6');
+      point(objLayers[8], 25.000000, 28.527344, '#FFFFFF', '8/5/2');
+      point(objLayers[8], 55.777344, 45.871094, '#FFFFFF', '8/5/11');
       point(objLayers[14], 47.500000, 40.500000, '#800080', '14/3/6');
+      point(objLayers[8], 15.500000, 38.500000, '#FFFFFF', '8/5/6');
+      point(objLayers[8], 4.500000, 13.500000, '#FFFFFF', '8/5/7');
+      point(objLayers[8], 17.527344, 8.964844, '#FFFFFF', '8/5/2');
+      point(objLayers[8], 27.464844, 7.527344, '#FFFFFF', '8/5/8');
       point(objLayers[14], 57.500000, 49.500000, '#800080', '14/3/1');
+      point(objLayers[8], 50.500000, 58.500000, '#FFFFFF', '8/5/2');
+      point(objLayers[8], 52.500000, 57.500000, '#FFFFFF', '8/5/2');
       point(objLayers[6], 10.500000, 13.500000, '#0000FF', '6/1/0');
+      point(objLayers[8], 9.500000, 13.500000, '#FFFFFF', '8/5/2');
+      point(objLayers[8], 9.027344, 9.996094, '#FFFFFF', '8/5/1');
       point(objLayers[14], 55.402344, 58.402344, '#800080', '14/3/1');
       point(objLayers[14], 14.500000, 14.500000, '#800080', '14/3/0');
       point(objLayers[14], 29.500000, 7.500000, '#800080', '14/3/1');
+      point(objLayers[7], 3.500000, 13.500000, '#FFFFFF', '7/3/2');
+      point(objLayers[8], 31.500000, 28.500000, '#FFFFFF', '8/5/2');
       point(objLayers[14], 31.000000, 27.464844, '#800080', '14/3/6');
       point(objLayers[14], 31.000000, 34.464844, '#800080', '14/3/6');
+      point(objLayers[8], 30.996094, 27.496094, '#FFFFFF', '8/5/11');
+      point(objLayers[8], 53.589844, 55.000000, '#FFFFFF', '8/5/11');
+      point(objLayers[8], 24.996094, 27.496094, '#FFFFFF', '8/5/11');
+      point(objLayers[8], 35.500000, 21.500000, '#FFFFFF', '8/5/2');
+      point(objLayers[8], 58.500000, 21.500000, '#FFFFFF', '8/5/9');
+      point(objLayers[8], 57.500000, 30.500000, '#FFFFFF', '8/5/9');
+      point(objLayers[8], 57.558594, 31.933594, '#FFFFFF', '8/5/1');
       point(objLayers[14], 56.500000, 48.500000, '#800080', '14/3/1');
       point(objLayers[6], 57.500000, 47.500000, '#0000FF', '6/0/0');
+      point(objLayers[8], 17.433594, 7.433594, '#FFFFFF', '8/5/11');
       point(objLayers[6], 44.500000, 51.500000, '#0000FF', '6/4/1');
       point(objLayers[14], 44.500000, 50.500000, '#800080', '14/3/0');
       point(objLayers[14], 43.500000, 51.500000, '#800080', '14/3/0');
       point(objLayers[14], 44.500000, 52.500000, '#800080', '14/3/0');
       point(objLayers[14], 45.500000, 51.500000, '#800080', '14/3/0');
+      point(objLayers[8], 24.000000, 7.464844, '#FFFFFF', '8/5/11');
+      point(objLayers[8], 48.500000, 56.500000, '#FFFFFF', '8/5/1');
+      point(objLayers[8], 54.589844, 29.496094, '#FFFFFF', '8/5/2');
+      point(objLayers[8], 55.558594, 21.527344, '#FFFFFF', '8/5/2');
+      point(objLayers[8], 54.500000, 14.500000, '#FFFFFF', '8/5/2');
+      point(objLayers[8], 33.527344, 3.996094, '#FFFFFF', '8/5/7');
       point(objLayers[6], 8.500000, 53.500000, '#0000FF', '6/4/1');
       point(objLayers[14], 55.500000, 57.500000, '#800080', '14/3/0');
       point(objLayers[14], 55.496094, 56.683594, '#800080', '14/3/1');
+      point(objLayers[8], 16.500000, 28.500000, '#FFFFFF', '8/5/4');
+      point(objLayers[8], 48.500000, 59.500000, '#FFFFFF', '8/5/8');
+      point(objLayers[7], 32.308594, 28.683594, '#FFFFFF', '7/3/2');
+      point(objLayers[8], 25.500000, 8.500000, '#FFFFFF', '8/5/2');
+      point(objLayers[7], 6.500000, 53.500000, '#FFFFFF', '7/3/2');
+      point(objLayers[8], 28.500000, 58.500000, '#FFFFFF', '8/5/11');
+      point(objLayers[8], 32.000000, 56.714844, '#FFFFFF', '8/5/11');
+      point(objLayers[7], 32.500000, 58.500000, '#FFFFFF', '7/3/2');
+      point(objLayers[8], 9.027344, 17.000000, '#FFFFFF', '8/5/1');
+      point(objLayers[7], 34.714844, 60.000000, '#FFFFFF', '7/3/2');
+      point(objLayers[8], 48.500000, 57.500000, '#FFFFFF', '8/5/11');
       point(objLayers[14], 57.500000, 47.500000, '#800080', '14/3/1');
       point(objLayers[14], 58.500000, 48.500000, '#800080', '14/3/1');
+      point(objLayers[8], 57.500000, 48.500000, '#FFFFFF', '8/5/1');
+      point(objLayers[8], 44.496094, 55.714844, '#FFFFFF', '8/5/11');
+      point(objLayers[8], 44.527344, 48.214844, '#FFFFFF', '8/5/11');
+      point(objLayers[8], 53.527344, 55.777344, '#FFFFFF', '8/5/11');
+      point(objLayers[8], 30.402344, 7.527344, '#FFFFFF', '8/5/11');
+      point(objLayers[8], 58.500000, 57.500000, '#FFFFFF', '8/5/1');
+      point(objLayers[8], 50.500000, 57.500000, '#FFFFFF', '8/5/1');
+      point(objLayers[8], 14.500000, 13.500000, '#FFFFFF', '8/5/11');
       point(objLayers[14], 14.500000, 12.500000, '#800080', '14/3/0');
       point(objLayers[6], 53.500000, 57.500000, '#0000FF', '6/1/0');
       point(objLayers[6], 43.777344, 36.996094, '#0000FF', '6/4/1');
+      point(objLayers[8], 18.652344, 38.558594, '#FFFFFF', '8/5/11');
+      point(objLayers[8], 27.214844, 36.433594, '#FFFFFF', '8/5/11');
+      point(objLayers[7], 25.000000, 29.558594, '#FFFFFF', '7/3/2');
+      point(objLayers[8], 31.500000, 30.500000, '#FFFFFF', '8/5/2');
+      point(objLayers[8], 25.500000, 6.500000, '#FFFFFF', '8/5/2');
+      point(objLayers[8], 49.500000, 21.500000, '#FFFFFF', '8/5/11');
       point(objLayers[9], 49.500000, 21.500000, '#808000', '9/5/0');
+      point(objLayers[8], 21.496094, 58.996094, '#FFFFFF', '8/5/11');
       point(objLayers[6], 55.527344, 59.121094, '#0000FF', '6/4/1');
       point(objLayers[6], 49.500000, 16.500000, '#0000FF', '6/4/1');
       point(objLayers[6], 27.500000, 47.500000, '#0000FF', '6/1/0');
+      point(objLayers[7], 55.500000, 48.500000, '#FFFFFF', '7/3/2');
+      point(objLayers[8], 57.500000, 48.500000, '#FFFFFF', '8/5/3');
+      point(objLayers[8], 57.500000, 46.500000, '#FFFFFF', '8/5/11');
+      point(objLayers[8], 57.500000, 42.500000, '#FFFFFF', '8/5/11');
+      point(objLayers[8], 35.500000, 17.500000, '#FFFFFF', '8/5/1');
+      point(objLayers[8], 37.500000, 17.500000, '#FFFFFF', '8/5/1');
+      point(objLayers[7], 36.500000, 16.500000, '#FFFFFF', '7/3/2');
+      point(objLayers[8], 49.500000, 21.500000, '#FFFFFF', '8/5/2');
       point(objLayers[14], 49.500000, 17.500000, '#800080', '14/3/6');
+      point(objLayers[7], 49.500000, 12.500000, '#FFFFFF', '7/3/2');
+      point(objLayers[8], 49.500000, 21.500000, '#FFFFFF', '8/5/6');
+      point(objLayers[8], 47.500000, 32.500000, '#FFFFFF', '8/5/11');
       point(objLayers[6], 47.500000, 40.500000, '#0000FF', '6/1/0');
+      point(objLayers[8], 45.496094, 36.996094, '#FFFFFF', '8/5/2');
+      point(objLayers[8], 49.496094, 36.996094, '#FFFFFF', '8/5/2');
+      point(objLayers[8], 46.527344, 36.996094, '#FFFFFF', '8/5/1');
       point(objLayers[6], 34.371094, 56.902344, '#0000FF', '6/3/0');
+      point(objLayers[8], 48.496094, 36.996094, '#FFFFFF', '8/5/1');
+      point(objLayers[8], 47.496094, 36.996094, '#FFFFFF', '8/5/2');
+      point(objLayers[8], 46.500000, 40.500000, '#FFFFFF', '8/5/2');
+      point(objLayers[8], 48.500000, 40.500000, '#FFFFFF', '8/5/2');
+      point(objLayers[8], 42.058594, 36.433594, '#FFFFFF', '8/5/11');
+      point(objLayers[8], 32.500000, 29.500000, '#FFFFFF', '8/5/2');
 
 
       stage.add(mapLayer);
@@ -1288,6 +1408,12 @@
         stage.add(objLayers[i]);
       }
       stage.add(msgLayer);
+
+      toggleLayer(2);
+      toggleLayer(7);
+      toggleLayer(8);
+      toggleLayer(11);
+      toggleLayer(12);
     </script>
   </body>
 </html>

@@ -100,12 +100,12 @@ local function main(archive, prefix, ...)
 		drawWalls(map)
 
 		local colours = {
-			"#FF0000", "#FF8080", false, "#FF0080", -- weapons, ammo, projectiles, and explosives
+			"#FF0000", "#FF8080", "#FFFFFF", "#FF0080", -- weapons, ammo, projectiles, and explosives
 			"#00FFFF", -- patches
 			"#0000FF", "#0000FF", -- hardware and software
-			false, false, -- scenery and trash
-			"#808000", false, -- switches and doors
-			false, false, "#A0A0A0", -- decorations, traps and containers
+			"#FFFFFF", "#FFFFFF", -- scenery and trash
+			"#808000", "#FFFF00", -- switches and doors
+			"#FFFFFF", "#FFFFFF", "#A0A0A0", -- decorations, traps and containers
 			"#800080" -- enemies
 		}
 

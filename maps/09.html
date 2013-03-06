@@ -24,17 +24,17 @@
           <!-- nil -->
           <label><input type="checkbox" checked="true" onchange="toggleLayer(0);">0 - Weapons</label><br>
           <label><input type="checkbox" checked="true" onchange="toggleLayer(1);">1 - Ammo</label><br>
-          <label><input type="checkbox" checked="false" onchange="toggleLayer(2);">2 - Projectiles</label><br>
+          <label><input type="checkbox"                onchange="toggleLayer(2);">2 - Projectiles</label><br>
           <label><input type="checkbox" checked="true" onchange="toggleLayer(3);">3 - Explosives</label><br>
           <label><input type="checkbox" checked="true" onchange="toggleLayer(4);">4 - Dermal Patches</label><br>
           <label><input type="checkbox" checked="true" onchange="toggleLayer(5);">5 - Implants</label><br>
           <label><input type="checkbox" checked="true" onchange="toggleLayer(6);">6 - Software</label><br>
-          <label><input type="checkbox" checked="false" onchange="toggleLayer(7);">7 - Fixtures</label><br>
-          <label><input type="checkbox" checked="false" onchange="toggleLayer(8);">8 - Items</label><br>
+          <label><input type="checkbox"                onchange="toggleLayer(7);">7 - Fixtures</label><br>
+          <label><input type="checkbox"                onchange="toggleLayer(8);">8 - Items</label><br>
           <label><input type="checkbox" checked="true" onchange="toggleLayer(9);">9 - Switches and Panels</label><br>
           <label><input type="checkbox" checked="true" onchange="toggleLayer(10);">10 - Doors and Gratings</label><br>
-          <label><input type="checkbox" checked="false" onchange="toggleLayer(11);">11 - Animations</label><br>
-          <label><input type="checkbox" checked="false" onchange="toggleLayer(12);">12 - Traps and Triggers</label><br>
+          <label><input type="checkbox"                onchange="toggleLayer(11);">11 - Animations</label><br>
+          <label><input type="checkbox"                onchange="toggleLayer(12);">12 - Traps and Triggers</label><br>
           <label><input type="checkbox" checked="true" onchange="toggleLayer(13);">13 - Containers</label><br>
           <label><input type="checkbox" checked="true" onchange="toggleLayer(14);">14 - Critters</label><br>
         </td>
@@ -103,7 +103,7 @@
           y: (HEIGHT-y)*SCALE,
           radius: SCALE/4,
           stroke: colour,
-          fill: colour,
+          //fill: colour,
         });
         obj.on('mouseover', function() {
           writeMessage(msgLayer, name);
@@ -1438,34 +1438,69 @@
       line(22.000000, 54.000000, 23.000000, 54.000000, '#00FF30');
       line(24.000000, 54.000000, 25.000000, 54.000000, '#00FF30');
       point(objLayers[14], 48.500000, 7.500000, '#800080', '14/1/8');
+      point(objLayers[8], 20.500000, 28.500000, '#FFFFFF', '8/2/5');
+      point(objLayers[10], 35.500000, 42.000000, '#FFFF00', '10/3/2');
       line(35.000000, 42.000000, 36.000000, 42.000000, '#FFFF00');
       point(objLayers[9], 35.000000, 42.496094, '#808000', '9/3/5');
+      point(objLayers[10], 17.000000, 24.500000, '#FFFF00', '10/2/2');
       line(17.000000, 24.000000, 17.000000, 25.000000, '#FFFF00');
+      point(objLayers[10], 18.000000, 24.500000, '#FFFF00', '10/2/2');
       line(18.000000, 24.000000, 18.000000, 25.000000, '#FFFF00');
       point(objLayers[9], 45.000000, 20.433594, '#808000', '9/3/2');
+      point(objLayers[10], 19.000000, 24.500000, '#FFFF00', '10/2/2');
       line(19.000000, 24.000000, 19.000000, 25.000000, '#FFFF00');
       point(objLayers[9], 30.714844, 32.496094, '#808000', '9/2/0');
       point(objLayers[1], 9.714844, 44.621094, '#FF8080', '1/3/1');
       point(objLayers[14], 39.500000, 3.500000, '#800080', '14/1/8');
       point(objLayers[3], 5.500000, 4.500000, '#FF0080', '3/0/3');
+      point(objLayers[12], 20.500000, 33.500000, '#FFFFFF', '12/0/0');
+      point(objLayers[12], 33.500000, 13.500000, '#FFFFFF', '12/0/1');
       point(objLayers[13], 8.500000, 40.500000, '#A0A0A0', '13/0/1');
       point(objLayers[1], 9.500000, 39.500000, '#FF8080', '1/6/0');
       point(objLayers[1], 9.652344, 39.746094, '#FF8080', '1/6/0');
       point(objLayers[14], 43.500000, 14.500000, '#800080', '14/1/8');
+      point(objLayers[12], 33.500000, 13.500000, '#FFFFFF', '12/0/1');
       point(objLayers[4], 10.746094, 42.808594, '#00FFFF', '4/0/3');
+      point(objLayers[8], 20.500000, 31.500000, '#FFFFFF', '8/2/11');
       point(objLayers[14], 34.500000, 7.500000, '#800080', '14/1/8');
+      point(objLayers[12], 36.500000, 13.500000, '#FFFFFF', '12/0/1');
       point(objLayers[1], 9.277344, 44.683594, '#FF8080', '1/6/1');
+      point(objLayers[12], 36.500000, 12.500000, '#FFFFFF', '12/0/7');
+      point(objLayers[12], 35.500000, 12.500000, '#FFFFFF', '12/0/7');
+      point(objLayers[12], 34.500000, 12.500000, '#FFFFFF', '12/0/7');
+      point(objLayers[7], 36.500000, 10.500000, '#FFFFFF', '7/7/8');
+      point(objLayers[12], 19.500000, 43.500000, '#FFFFFF', '12/0/1');
+      point(objLayers[12], 33.500000, 13.500000, '#FFFFFF', '12/0/1');
+      point(objLayers[12], 33.500000, 14.500000, '#FFFFFF', '12/0/1');
       point(objLayers[14], 44.500000, 10.500000, '#800080', '14/1/8');
+      point(objLayers[10], 35.500000, 11.996094, '#FFFF00', '10/2/0');
       line(35.000000, 11.996094, 36.000000, 11.996094, '#FFFF00');
+      point(objLayers[7], 11.500000, 29.500000, '#FFFFFF', '7/5/6');
       point(objLayers[9], 11.500000, 31.996094, '#808000', '9/1/1');
+      point(objLayers[12], 19.500000, 43.500000, '#FFFFFF', '12/0/1');
+      point(objLayers[12], 11.500000, 32.500000, '#FFFFFF', '12/0/1');
       point(objLayers[1], 9.183594, 39.621094, '#FF8080', '1/6/0');
       point(objLayers[1], 9.683594, 39.402344, '#FF8080', '1/6/0');
       point(objLayers[1], 9.277344, 44.183594, '#FF8080', '1/3/1');
+      point(objLayers[7], 36.500000, 11.500000, '#FFFFFF', '7/7/8');
       point(objLayers[1], 9.500000, 44.500000, '#FF8080', '1/6/1');
+      point(objLayers[12], 48.500000, 8.500000, '#FFFFFF', '12/0/0');
       point(objLayers[14], 18.500000, 34.500000, '#800080', '14/1/7');
+      point(objLayers[7], 15.500000, 29.500000, '#FFFFFF', '7/5/6');
       point(objLayers[14], 35.500000, 5.500000, '#800080', '14/1/8');
+      point(objLayers[7], 11.500000, 25.500000, '#FFFFFF', '7/5/6');
       point(objLayers[9], 23.339844, 49.496094, '#808000', '9/3/2');
+      point(objLayers[12], 22.500000, 52.500000, '#FFFFFF', '12/0/1');
+      point(objLayers[12], 10.500000, 32.500000, '#FFFFFF', '12/0/1');
+      point(objLayers[12], 12.500000, 32.500000, '#FFFFFF', '12/0/1');
+      point(objLayers[12], 44.500000, 20.500000, '#FFFFFF', '12/0/1');
+      point(objLayers[7], 36.500000, 14.500000, '#FFFFFF', '7/7/8');
+      point(objLayers[12], 47.500000, 19.500000, '#FFFFFF', '12/0/1');
+      point(objLayers[7], 36.500000, 15.500000, '#FFFFFF', '7/7/8');
+      point(objLayers[12], 33.500000, 13.500000, '#FFFFFF', '12/0/1');
+      point(objLayers[12], 36.500000, 13.500000, '#FFFFFF', '12/0/1');
       point(objLayers[4], 10.589844, 42.527344, '#00FFFF', '4/0/4');
+      point(objLayers[12], 48.500000, 38.500000, '#FFFFFF', '12/0/1');
       point(objLayers[14], 44.500000, 3.500000, '#800080', '14/1/8');
       point(objLayers[1], 5.500000, 4.500000, '#FF8080', '1/5/1');
       point(objLayers[14], 41.500000, 9.500000, '#800080', '14/1/8');
@@ -1474,9 +1509,15 @@
       point(objLayers[1], 5.500000, 4.500000, '#FF8080', '1/5/0');
       point(objLayers[14], 47.500000, 14.500000, '#800080', '14/1/8');
       point(objLayers[14], 41.500000, 6.500000, '#800080', '14/1/8');
+      point(objLayers[12], 19.500000, 43.500000, '#FFFFFF', '12/0/1');
       point(objLayers[9], 46.000000, 38.746094, '#808000', '9/3/2');
+      point(objLayers[12], 19.500000, 43.500000, '#FFFFFF', '12/0/1');
       point(objLayers[14], 45.500000, 17.500000, '#800080', '14/1/8');
       point(objLayers[14], 44.500000, 7.500000, '#800080', '14/1/8');
+      point(objLayers[12], 37.500000, 12.500000, '#FFFFFF', '12/0/7');
+      point(objLayers[12], 39.500000, 12.500000, '#FFFFFF', '12/0/7');
+      point(objLayers[12], 38.500000, 12.500000, '#FFFFFF', '12/0/7');
+      point(objLayers[12], 33.500000, 12.500000, '#FFFFFF', '12/0/7');
       point(objLayers[14], 45.500000, 5.500000, '#800080', '14/1/8');
       point(objLayers[14], 27.496094, 35.496094, '#800080', '14/2/4');
       point(objLayers[14], 28.527344, 34.496094, '#800080', '14/2/4');
@@ -1488,56 +1529,186 @@
       point(objLayers[14], 30.371094, 30.621094, '#800080', '14/2/4');
       point(objLayers[14], 30.500000, 43.500000, '#800080', '14/2/2');
       point(objLayers[14], 38.500000, 7.500000, '#800080', '14/1/8');
+      point(objLayers[8], 5.500000, 4.500000, '#FFFFFF', '8/3/3');
+      point(objLayers[8], 5.500000, 4.500000, '#FFFFFF', '8/3/3');
       point(objLayers[1], 5.500000, 4.500000, '#FF8080', '1/5/1');
       point(objLayers[13], 7.871094, 41.464844, '#A0A0A0', '13/0/1');
+      point(objLayers[8], 5.500000, 4.500000, '#FFFFFF', '8/3/3');
+      point(objLayers[8], 5.500000, 4.500000, '#FFFFFF', '8/3/3');
+      point(objLayers[8], 27.500000, 35.500000, '#FFFFFF', '8/3/3');
       point(objLayers[14], 39.500000, 35.500000, '#800080', '14/2/2');
+      point(objLayers[7], 15.371094, 41.496094, '#FFFFFF', '7/2/1');
       point(objLayers[4], 10.777344, 24.433594, '#00FFFF', '4/0/3');
       point(objLayers[4], 10.464844, 24.871094, '#00FFFF', '4/0/3');
+      point(objLayers[8], 30.500000, 28.500000, '#FFFFFF', '8/3/3');
       point(objLayers[4], 10.308594, 42.652344, '#00FFFF', '4/0/4');
       point(objLayers[3], 5.500000, 4.500000, '#FF0080', '3/0/3');
       point(objLayers[0], 39.464844, 22.808594, '#FF0000', '0/2/1');
       point(objLayers[1], 39.839844, 23.183594, '#FF8080', '1/6/1');
       point(objLayers[1], 35.308594, 23.683594, '#FF8080', '1/6/1');
+      point(objLayers[12], 38.500000, 12.500000, '#FFFFFF', '12/0/7');
+      point(objLayers[12], 33.500000, 14.500000, '#FFFFFF', '12/0/1');
       point(objLayers[4], 32.589844, 47.277344, '#00FFFF', '4/0/4');
       point(objLayers[9], 28.000000, 4.496094, '#808000', '9/0/2');
       point(objLayers[14], 28.500000, 4.500000, '#800080', '14/2/6');
+      point(objLayers[8], 32.500000, 48.500000, '#FFFFFF', '8/3/3');
+      point(objLayers[8], 46.500000, 30.500000, '#FFFFFF', '8/3/3');
+      point(objLayers[8], 27.500000, 33.500000, '#FFFFFF', '8/3/3');
+      point(objLayers[8], 27.558594, 33.683594, '#FFFFFF', '8/2/5');
       point(objLayers[4], 18.500000, 28.500000, '#00FFFF', '4/0/3');
       point(objLayers[4], 18.339844, 27.433594, '#00FFFF', '4/0/3');
+      point(objLayers[8], 37.277344, 23.121094, '#FFFFFF', '8/2/5');
+      point(objLayers[8], 37.500000, 22.500000, '#FFFFFF', '8/3/3');
       point(objLayers[9], 28.621094, 44.433594, '#808000', '9/2/1');
+      point(objLayers[12], 31.500000, 3.500000, '#FFFFFF', '12/0/11');
+      point(objLayers[12], 36.500000, 11.500000, '#FFFFFF', '12/0/0');
       point(objLayers[4], 10.402344, 42.652344, '#00FFFF', '4/0/3');
       point(objLayers[14], 46.500000, 8.500000, '#800080', '14/1/8');
+      point(objLayers[12], 36.500000, 13.500000, '#FFFFFF', '12/0/1');
+      point(objLayers[12], 40.500000, 9.500000, '#FFFFFF', '12/0/11');
+      point(objLayers[12], 37.500000, 12.500000, '#FFFFFF', '12/0/7');
       point(objLayers[9], 38.500000, 16.500000, '#808000', '9/2/1');
       point(objLayers[3], 33.500000, 14.500000, '#FF0080', '3/0/4');
+      point(objLayers[12], 44.500000, 20.500000, '#FFFFFF', '12/0/1');
+      point(objLayers[12], 44.500000, 20.500000, '#FFFFFF', '12/0/1');
+      point(objLayers[8], 24.500000, 24.500000, '#FFFFFF', '8/2/11');
+      point(objLayers[8], 31.996094, 23.996094, '#FFFFFF', '8/2/11');
+      point(objLayers[8], 35.000000, 25.000000, '#FFFFFF', '8/2/9');
+      point(objLayers[8], 37.714844, 30.000000, '#FFFFFF', '8/2/11');
+      point(objLayers[8], 23.500000, 16.500000, '#FFFFFF', '8/3/3');
+      point(objLayers[11], 35.187500, 5.484375, '#FFFFFF', '11/1/5');
+      point(objLayers[8], 10.500000, 24.500000, '#FFFFFF', '8/2/5');
       point(objLayers[4], 10.808594, 24.277344, '#00FFFF', '4/0/3');
       point(objLayers[4], 10.746094, 42.433594, '#00FFFF', '4/0/3');
       point(objLayers[14], 45.500000, 15.500000, '#800080', '14/1/8');
+      point(objLayers[12], 33.500000, 14.500000, '#FFFFFF', '12/0/1');
+      point(objLayers[10], 38.500000, 11.996094, '#FFFF00', '10/2/0');
       line(38.000000, 11.996094, 39.000000, 11.996094, '#FFFF00');
       point(objLayers[4], 31.871094, 48.433594, '#00FFFF', '4/0/3');
+      point(objLayers[11], 35.214844, 5.398438, '#FFFFFF', '11/1/5');
       point(objLayers[4], 10.246094, 42.683594, '#00FFFF', '4/0/3');
+      point(objLayers[8], 19.500000, 36.500000, '#FFFFFF', '8/2/11');
+      point(objLayers[12], 36.500000, 15.500000, '#FFFFFF', '12/0/0');
       point(objLayers[14], 33.500000, 12.500000, '#800080', '14/2/6');
       point(objLayers[14], 42.500000, 16.500000, '#800080', '14/1/8');
       point(objLayers[4], 30.500000, 48.500000, '#00FFFF', '4/0/3');
+      point(objLayers[11], 35.222656, 5.382812, '#FFFFFF', '11/1/5');
+      point(objLayers[10], 34.500000, 11.996094, '#FFFF00', '10/2/0');
       line(34.000000, 11.996094, 35.000000, 11.996094, '#FFFF00');
+      point(objLayers[10], 29.500000, 8.996094, '#FFFF00', '10/0/0');
       line(29.000000, 8.996094, 30.000000, 8.996094, '#FFFF00');
+      point(objLayers[10], 29.500000, 4.000000, '#FFFF00', '10/0/0');
       line(29.000000, 4.000000, 30.000000, 4.000000, '#FFFF00');
+      point(objLayers[12], 36.500000, 42.500000, '#FFFFFF', '12/0/1');
+      point(objLayers[10], 35.996094, 12.500000, '#FFFF00', '10/2/0');
       line(35.996094, 12.000000, 35.996094, 13.000000, '#FFFF00');
+      point(objLayers[12], 36.500000, 16.500000, '#FFFFFF', '12/0/0');
+      point(objLayers[12], 36.500000, 13.500000, '#FFFFFF', '12/0/1');
+      point(objLayers[10], 29.500000, 10.996094, '#FFFF00', '10/0/0');
       line(29.000000, 10.996094, 30.000000, 10.996094, '#FFFF00');
       point(objLayers[14], 29.496094, 10.121094, '#800080', '14/2/4');
+      point(objLayers[12], 36.500000, 12.500000, '#FFFFFF', '12/0/7');
+      point(objLayers[12], 33.500000, 14.500000, '#FFFFFF', '12/0/1');
+      point(objLayers[12], 36.500000, 13.500000, '#FFFFFF', '12/0/0');
+      point(objLayers[10], 29.500000, 9.996094, '#FFFF00', '10/0/0');
       line(29.000000, 9.996094, 30.000000, 9.996094, '#FFFF00');
+      point(objLayers[12], 36.500000, 14.500000, '#FFFFFF', '12/0/0');
+      point(objLayers[10], 37.500000, 11.996094, '#FFFF00', '10/2/0');
       line(37.000000, 11.996094, 38.000000, 11.996094, '#FFFF00');
+      point(objLayers[10], 37.000000, 12.500000, '#FFFF00', '10/2/0');
       line(37.000000, 12.000000, 37.000000, 13.000000, '#FFFF00');
+      point(objLayers[12], 33.500000, 13.500000, '#FFFFFF', '12/0/1');
       point(objLayers[14], 29.496094, 9.121094, '#800080', '14/2/4');
+      point(objLayers[7], 11.183594, 31.996094, '#FFFFFF', '7/2/3');
+      point(objLayers[7], 11.558594, 31.996094, '#FFFFFF', '7/2/3');
+      point(objLayers[7], 11.871094, 31.996094, '#FFFFFF', '7/2/3');
+      point(objLayers[12], 22.500000, 52.500000, '#FFFFFF', '12/0/1');
+      point(objLayers[12], 22.500000, 52.500000, '#FFFFFF', '12/0/1');
+      point(objLayers[12], 48.500000, 38.500000, '#FFFFFF', '12/0/1');
+      point(objLayers[12], 48.500000, 38.500000, '#FFFFFF', '12/0/1');
+      point(objLayers[10], 36.496094, 13.000000, '#FFFF00', '10/2/0');
       line(35.996094, 13.000000, 36.996094, 13.000000, '#FFFF00');
+      point(objLayers[10], 36.500000, 11.996094, '#FFFF00', '10/2/0');
       line(36.000000, 11.996094, 37.000000, 11.996094, '#FFFF00');
+      point(objLayers[10], 45.500000, 29.996094, '#FFFF00', '10/1/4');
       line(45.000000, 29.996094, 46.000000, 29.996094, '#FFFF00');
+      point(objLayers[10], 46.000000, 30.500000, '#FFFF00', '10/1/4');
       line(46.000000, 30.000000, 46.000000, 31.000000, '#FFFF00');
+      point(objLayers[10], 44.996094, 30.500000, '#FFFF00', '10/1/4');
       line(44.996094, 30.000000, 44.996094, 31.000000, '#FFFF00');
+      point(objLayers[10], 45.500000, 31.000000, '#FFFF00', '10/1/4');
       line(45.000000, 31.000000, 46.000000, 31.000000, '#FFFF00');
+      point(objLayers[10], 43.996094, 29.500000, '#FFFF00', '10/1/7');
       line(43.996094, 29.000000, 43.996094, 30.000000, '#FFFF00');
+      point(objLayers[8], 45.777344, 30.308594, '#FFFFFF', '8/7/1');
+      point(objLayers[8], 45.500000, 30.500000, '#FFFFFF', '8/2/9');
       point(objLayers[9], 45.496094, 30.839844, '#808000', '9/0/6');
       point(objLayers[9], 43.558594, 29.000000, '#808000', '9/0/6');
+      point(objLayers[12], 35.500000, 41.500000, '#FFFFFF', '12/0/0');
       point(objLayers[3], 5.500000, 4.500000, '#FF0080', '3/0/3');
+      point(objLayers[7], 43.500000, 41.500000, '#FFFFFF', '7/7/7');
+      point(objLayers[7], 43.500000, 42.500000, '#FFFFFF', '7/7/7');
+      point(objLayers[7], 43.500000, 40.500000, '#FFFFFF', '7/7/7');
+      point(objLayers[7], 44.500000, 40.500000, '#FFFFFF', '7/7/7');
+      point(objLayers[7], 44.500000, 43.500000, '#FFFFFF', '7/7/7');
+      point(objLayers[7], 43.500000, 43.500000, '#FFFFFF', '7/7/7');
+      point(objLayers[7], 43.500000, 39.500000, '#FFFFFF', '7/7/7');
+      point(objLayers[7], 43.500000, 38.500000, '#FFFFFF', '7/7/7');
+      point(objLayers[7], 43.500000, 37.500000, '#FFFFFF', '7/7/7');
+      point(objLayers[7], 43.500000, 36.500000, '#FFFFFF', '7/7/7');
+      point(objLayers[7], 44.500000, 36.500000, '#FFFFFF', '7/7/7');
+      point(objLayers[7], 45.500000, 36.500000, '#FFFFFF', '7/7/7');
+      point(objLayers[7], 47.500000, 36.500000, '#FFFFFF', '7/7/7');
+      point(objLayers[7], 47.500000, 37.500000, '#FFFFFF', '7/7/7');
+      point(objLayers[7], 47.500000, 38.500000, '#FFFFFF', '7/7/7');
+      point(objLayers[7], 48.500000, 39.500000, '#FFFFFF', '7/7/7');
+      point(objLayers[7], 48.500000, 40.500000, '#FFFFFF', '7/7/7');
+      point(objLayers[7], 47.500000, 39.500000, '#FFFFFF', '7/7/7');
+      point(objLayers[7], 46.500000, 39.500000, '#FFFFFF', '7/7/7');
+      point(objLayers[7], 45.500000, 39.500000, '#FFFFFF', '7/7/7');
+      point(objLayers[7], 49.500000, 40.500000, '#FFFFFF', '7/7/7');
+      point(objLayers[7], 48.500000, 36.500000, '#FFFFFF', '7/7/7');
+      point(objLayers[7], 49.500000, 36.500000, '#FFFFFF', '7/7/7');
+      point(objLayers[7], 49.500000, 37.500000, '#FFFFFF', '7/7/7');
+      point(objLayers[7], 49.500000, 38.500000, '#FFFFFF', '7/7/7');
+      point(objLayers[7], 50.500000, 39.500000, '#FFFFFF', '7/7/7');
+      point(objLayers[7], 47.500000, 41.500000, '#FFFFFF', '7/7/7');
+      point(objLayers[7], 47.500000, 42.500000, '#FFFFFF', '7/7/7');
+      point(objLayers[7], 48.500000, 42.500000, '#FFFFFF', '7/7/7');
+      point(objLayers[7], 49.500000, 42.500000, '#FFFFFF', '7/7/7');
+      point(objLayers[7], 45.500000, 42.500000, '#FFFFFF', '7/7/7');
+      point(objLayers[7], 47.500000, 43.500000, '#FFFFFF', '7/7/7');
+      point(objLayers[7], 47.500000, 44.500000, '#FFFFFF', '7/7/7');
+      point(objLayers[7], 47.500000, 45.500000, '#FFFFFF', '7/7/7');
+      point(objLayers[7], 46.500000, 45.500000, '#FFFFFF', '7/7/7');
+      point(objLayers[7], 45.500000, 45.500000, '#FFFFFF', '7/7/7');
+      point(objLayers[7], 44.500000, 45.500000, '#FFFFFF', '7/7/7');
+      point(objLayers[7], 43.500000, 45.500000, '#FFFFFF', '7/7/7');
+      point(objLayers[7], 49.500000, 45.500000, '#FFFFFF', '7/7/7');
+      point(objLayers[7], 50.500000, 45.500000, '#FFFFFF', '7/7/7');
+      point(objLayers[7], 49.500000, 44.500000, '#FFFFFF', '7/7/7');
+      point(objLayers[7], 49.500000, 43.500000, '#FFFFFF', '7/7/7');
+      point(objLayers[7], 51.500000, 45.500000, '#FFFFFF', '7/7/7');
+      point(objLayers[7], 52.500000, 45.500000, '#FFFFFF', '7/7/7');
+      point(objLayers[7], 53.500000, 45.500000, '#FFFFFF', '7/7/7');
+      point(objLayers[7], 54.500000, 45.500000, '#FFFFFF', '7/7/7');
+      point(objLayers[7], 51.500000, 42.500000, '#FFFFFF', '7/7/7');
+      point(objLayers[7], 52.500000, 43.500000, '#FFFFFF', '7/7/7');
+      point(objLayers[7], 53.500000, 43.500000, '#FFFFFF', '7/7/7');
+      point(objLayers[7], 53.500000, 42.500000, '#FFFFFF', '7/7/7');
+      point(objLayers[7], 53.500000, 41.500000, '#FFFFFF', '7/7/7');
+      point(objLayers[7], 53.500000, 40.500000, '#FFFFFF', '7/7/7');
+      point(objLayers[7], 52.500000, 40.500000, '#FFFFFF', '7/7/7');
+      point(objLayers[7], 52.500000, 39.500000, '#FFFFFF', '7/7/7');
+      point(objLayers[7], 53.500000, 38.500000, '#FFFFFF', '7/7/7');
+      point(objLayers[7], 53.500000, 37.500000, '#FFFFFF', '7/7/7');
+      point(objLayers[7], 53.500000, 36.500000, '#FFFFFF', '7/7/7');
+      point(objLayers[7], 52.500000, 36.500000, '#FFFFFF', '7/7/7');
+      point(objLayers[7], 51.500000, 36.500000, '#FFFFFF', '7/7/7');
       point(objLayers[9], 45.527344, 45.996094, '#808000', '9/0/3');
+      point(objLayers[12], 45.500000, 46.500000, '#FFFFFF', '12/0/1');
+      point(objLayers[12], 45.500000, 46.500000, '#FFFFFF', '12/0/1');
+      point(objLayers[12], 43.500000, 41.500000, '#FFFFFF', '12/0/10');
       point(objLayers[14], 49.500000, 34.500000, '#800080', '14/1/7');
       point(objLayers[14], 55.500000, 40.500000, '#800080', '14/1/7');
       point(objLayers[14], 55.500000, 43.500000, '#800080', '14/1/7');
@@ -1547,16 +1718,32 @@
       point(objLayers[14], 55.500000, 36.500000, '#800080', '14/1/7');
       point(objLayers[14], 43.500000, 43.500000, '#800080', '14/1/7');
       point(objLayers[9], 27.339844, 50.000000, '#808000', '9/0/3');
+      point(objLayers[12], 21.500000, 53.500000, '#FFFFFF', '12/0/1');
+      point(objLayers[12], 21.500000, 53.500000, '#FFFFFF', '12/0/1');
+      point(objLayers[12], 21.500000, 53.500000, '#FFFFFF', '12/0/1');
+      point(objLayers[12], 21.500000, 53.500000, '#FFFFFF', '12/0/1');
+      point(objLayers[12], 21.500000, 54.500000, '#FFFFFF', '12/0/1');
+      point(objLayers[12], 21.500000, 54.500000, '#FFFFFF', '12/0/1');
+      point(objLayers[12], 21.500000, 54.500000, '#FFFFFF', '12/0/1');
+      point(objLayers[12], 21.500000, 54.500000, '#FFFFFF', '12/0/1');
+      point(objLayers[12], 20.500000, 53.500000, '#FFFFFF', '12/0/1');
+      point(objLayers[12], 20.500000, 53.500000, '#FFFFFF', '12/0/1');
+      point(objLayers[7], 25.500000, 50.500000, '#FFFFFF', '7/7/8');
+      point(objLayers[12], 20.500000, 53.500000, '#FFFFFF', '12/0/1');
       point(objLayers[9], 19.500000, 50.996094, '#808000', '9/0/3');
       point(objLayers[14], 22.500000, 53.500000, '#800080', '14/1/7');
       point(objLayers[9], 24.996094, 53.496094, '#808000', '9/0/3');
       point(objLayers[9], 27.527344, 48.000000, '#808000', '9/0/3');
       point(objLayers[9], 24.000000, 45.558594, '#808000', '9/0/3');
+      point(objLayers[12], 24.500000, 50.500000, '#FFFFFF', '12/0/0');
+      point(objLayers[12], 19.500000, 49.500000, '#FFFFFF', '12/0/1');
+      point(objLayers[12], 19.500000, 49.500000, '#FFFFFF', '12/0/1');
       point(objLayers[14], 24.500000, 53.500000, '#800080', '14/1/7');
       point(objLayers[14], 27.500000, 50.500000, '#800080', '14/1/7');
       point(objLayers[14], 27.500000, 48.500000, '#800080', '14/1/7');
       point(objLayers[14], 24.500000, 45.500000, '#800080', '14/1/7');
       point(objLayers[14], 22.500000, 45.500000, '#800080', '14/1/7');
+      point(objLayers[10], 30.500000, 46.996094, '#FFFF00', '10/0/6');
       line(30.000000, 46.996094, 31.000000, 46.996094, '#FFFF00');
       point(objLayers[5], 32.339844, 48.121094, '#0000FF', '5/1/2');
       point(objLayers[5], 27.777344, 50.214844, '#0000FF', '5/0/2');
@@ -1569,11 +1756,13 @@
       point(objLayers[3], 5.500000, 4.500000, '#FF0080', '3/0/1');
       point(objLayers[13], 8.808594, 43.246094, '#A0A0A0', '13/0/0');
       point(objLayers[3], 5.500000, 4.500000, '#FF0080', '3/0/1');
+      point(objLayers[10], 15.000000, 33.500000, '#FFFF00', '10/0/7');
       line(15.000000, 33.000000, 15.000000, 34.000000, '#FFFF00');
       point(objLayers[13], 12.500000, 33.500000, '#A0A0A0', '13/1/0');
       point(objLayers[13], 12.500000, 34.500000, '#A0A0A0', '13/1/0');
       point(objLayers[13], 12.527344, 35.527344, '#A0A0A0', '13/0/1');
       point(objLayers[13], 13.746094, 35.652344, '#A0A0A0', '13/1/0');
+      point(objLayers[12], 36.500000, 41.500000, '#FFFFFF', '12/0/1');
       point(objLayers[13], 14.500000, 34.500000, '#A0A0A0', '13/1/0');
       point(objLayers[13], 13.152344, 35.496094, '#A0A0A0', '13/0/0');
       point(objLayers[1], 10.500000, 33.500000, '#FF8080', '1/6/1');
@@ -1583,11 +1772,37 @@
       point(objLayers[3], 10.500000, 33.500000, '#FF0080', '3/0/3');
       point(objLayers[3], 10.500000, 33.500000, '#FF0080', '3/0/3');
       point(objLayers[3], 10.500000, 33.500000, '#FF0080', '3/0/3');
+      point(objLayers[7], 26.500000, 50.500000, '#FFFFFF', '7/7/8');
+      point(objLayers[10], 24.500000, 20.000000, '#FFFF00', '10/0/1');
       line(24.000000, 20.000000, 25.000000, 20.000000, '#FFFF00');
+      point(objLayers[12], 20.500000, 53.500000, '#FFFFFF', '12/0/1');
+      point(objLayers[7], 15.402344, 24.121094, '#FFFFFF', '7/5/4');
+      point(objLayers[7], 23.714844, 49.496094, '#FFFFFF', '7/2/9');
+      point(objLayers[7], 45.496094, 20.996094, '#FFFFFF', '7/2/9');
+      point(objLayers[7], 46.496094, 38.496094, '#FFFFFF', '7/2/9');
+      point(objLayers[12], 43.500000, 29.500000, '#FFFFFF', '12/0/1');
+      point(objLayers[12], 13.500000, 31.500000, '#FFFFFF', '12/0/1');
+      point(objLayers[12], 15.871094, 24.121094, '#FFFFFF', '12/0/1');
+      point(objLayers[12], 43.500000, 29.500000, '#FFFFFF', '12/0/1');
+      point(objLayers[12], 36.500000, 34.500000, '#FFFFFF', '12/0/1');
+      point(objLayers[8], 10.500000, 40.500000, '#FFFFFF', '8/1/4');
+      point(objLayers[12], 13.500000, 32.500000, '#FFFFFF', '12/0/1');
+      point(objLayers[12], 21.500000, 35.500000, '#FFFFFF', '12/0/1');
+      point(objLayers[12], 45.500000, 30.500000, '#FFFFFF', '12/0/1');
+      point(objLayers[12], 36.500000, 42.500000, '#FFFFFF', '12/0/1');
+      point(objLayers[10], 19.000000, 41.500000, '#FFFF00', '10/4/6');
       line(19.000000, 41.000000, 19.000000, 42.000000, '#FFFF00');
+      point(objLayers[12], 14.500000, 41.500000, '#FFFFFF', '12/0/0');
+      point(objLayers[12], 36.500000, 10.500000, '#FFFFFF', '12/0/0');
+      point(objLayers[7], 36.500000, 13.500000, '#FFFFFF', '7/7/8');
+      point(objLayers[12], 33.500000, 14.500000, '#FFFFFF', '12/0/1');
       point(objLayers[14], 41.500000, 12.500000, '#800080', '14/1/8');
+      point(objLayers[12], 35.500000, 12.500000, '#FFFFFF', '12/0/7');
+      point(objLayers[12], 34.500000, 12.500000, '#FFFFFF', '12/0/7');
       point(objLayers[14], 21.500000, 38.500000, '#800080', '14/2/6');
+      point(objLayers[7], 37.121094, 29.902344, '#FFFFFF', '7/5/4');
       point(objLayers[14], 25.500000, 24.500000, '#800080', '14/1/7');
+      point(objLayers[7], 20.121094, 27.902344, '#FFFFFF', '7/5/4');
       point(objLayers[14], 24.500000, 17.500000, '#800080', '14/2/5');
       point(objLayers[1], 31.652344, 9.652344, '#FF8080', '1/6/1');
       point(objLayers[1], 31.308594, 9.652344, '#FF8080', '1/6/1');
@@ -1595,20 +1810,29 @@
       point(objLayers[1], 24.683594, 14.652344, '#FF8080', '1/6/0');
       point(objLayers[1], 24.308594, 14.683594, '#FF8080', '1/6/0');
       point(objLayers[1], 24.500000, 14.500000, '#FF8080', '1/6/0');
+      point(objLayers[8], 27.500000, 17.500000, '#FFFFFF', '8/3/3');
+      point(objLayers[8], 21.500000, 17.500000, '#FFFFFF', '8/3/3');
       point(objLayers[5], 25.500000, 16.500000, '#0000FF', '5/0/1');
       point(objLayers[5], 31.500000, 9.500000, '#0000FF', '5/1/7');
       point(objLayers[5], 25.152344, 16.589844, '#0000FF', '5/1/6');
       point(objLayers[5], 55.500000, 37.500000, '#0000FF', '5/1/8');
       point(objLayers[9], 12.500000, 24.500000, '#808000', '9/2/1');
       point(objLayers[14], 43.500000, 32.500000, '#800080', '14/2/6');
+      point(objLayers[7], 44.871094, 32.871094, '#FFFFFF', '7/5/4');
+      point(objLayers[7], 43.121094, 30.371094, '#FFFFFF', '7/5/4');
+      point(objLayers[7], 37.121094, 33.902344, '#FFFFFF', '7/5/4');
+      point(objLayers[10], 14.500000, 41.500000, '#FFFF00', '10/4/2');
       point(objLayers[10], 14.500000, 41.500000, '#FFFF00', '10/4/2');
       point(objLayers[1], 38.308594, 37.621094, '#FF8080', '1/5/1');
       point(objLayers[1], 38.500000, 37.500000, '#FF8080', '1/4/1');
+      point(objLayers[7], 31.152344, 42.839844, '#FFFFFF', '7/5/4');
       point(objLayers[3], 5.500000, 4.500000, '#FF0080', '3/0/3');
       point(objLayers[14], 20.500000, 35.500000, '#800080', '14/2/6');
+      point(objLayers[7], 20.902344, 32.183594, '#FFFFFF', '7/5/4');
       point(objLayers[14], 33.500000, 36.500000, '#800080', '14/2/4');
       point(objLayers[14], 24.500000, 29.500000, '#800080', '14/2/4');
       point(objLayers[9], 44.500000, 29.500000, '#808000', '9/2/1');
+      point(objLayers[12], 45.500000, 30.500000, '#FFFFFF', '12/0/1');
 
 
       stage.add(mapLayer);
@@ -1617,6 +1841,12 @@
         stage.add(objLayers[i]);
       }
       stage.add(msgLayer);
+
+      toggleLayer(2);
+      toggleLayer(7);
+      toggleLayer(8);
+      toggleLayer(11);
+      toggleLayer(12);
     </script>
   </body>
 </html>
