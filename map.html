@@ -64,7 +64,7 @@
       hitLayer.add(new Kinetic.Rect({x:0, y:0, width:WIDTH*SCALE, height:HEIGHT*SCALE}));
       hitLayer.on('mousemove', function(evt) {
         var xy = stage.getUserPosition();
-        writeMessage(msgLayer, "Tile: (" + Math.floor(xy.x/SCALE) + ", " + Math.floor(xy.y/SCALE) + ")");
+        writeMessage(msgLayer, "Tile: (" + Math.floor(xy.x/SCALE) + ", " + Math.floor(HEIGHT - xy.y/SCALE) + ")");
         console.log(evt);
       });
 
