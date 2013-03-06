@@ -19,17 +19,24 @@
   <body>
     <table>
       <tr>
-        <td style="width: 10px">
+        <td>
           <div style="text-align: center">Layers</div>
-          <button type="button" style="width: 100%">Enemies</button>
-          <button type="button" style="width: 100%">Cameras</button>
-          <button type="button" style="width: 100%">Weapons</button>
-          <button type="button" style="width: 100%">Ammo</button>
-          <button type="button" style="width: 100%">Explosives</button>
-          <button type="button" style="width: 100%">Hardware</button>
-          <button type="button" style="width: 100%">Software</button>
-          <button type="button" style="width: 100%">Switches</button>
-          <button type="button" style="width: 100%">Misc</button>
+          <!-- nil -->
+          <label><input type="checkbox" checked="true" onchange="toggleLayer(0);">0 - Weapons</label><br>
+          <label><input type="checkbox" checked="true" onchange="toggleLayer(1);">1 - Ammo</label><br>
+          <label><input type="checkbox" checked="false" onchange="toggleLayer(2);">2 - Projectiles</label><br>
+          <label><input type="checkbox" checked="true" onchange="toggleLayer(3);">3 - Explosives</label><br>
+          <label><input type="checkbox" checked="true" onchange="toggleLayer(4);">4 - Dermal Patches</label><br>
+          <label><input type="checkbox" checked="true" onchange="toggleLayer(5);">5 - Implants</label><br>
+          <label><input type="checkbox" checked="true" onchange="toggleLayer(6);">6 - Software</label><br>
+          <label><input type="checkbox" checked="false" onchange="toggleLayer(7);">7 - Fixtures</label><br>
+          <label><input type="checkbox" checked="false" onchange="toggleLayer(8);">8 - Items</label><br>
+          <label><input type="checkbox" checked="true" onchange="toggleLayer(9);">9 - Switches and Panels</label><br>
+          <label><input type="checkbox" checked="true" onchange="toggleLayer(10);">10 - Doors and Gratings</label><br>
+          <label><input type="checkbox" checked="false" onchange="toggleLayer(11);">11 - Animations</label><br>
+          <label><input type="checkbox" checked="false" onchange="toggleLayer(12);">12 - Traps and Triggers</label><br>
+          <label><input type="checkbox" checked="true" onchange="toggleLayer(13);">13 - Containers</label><br>
+          <label><input type="checkbox" checked="true" onchange="toggleLayer(14);">14 - Critters</label><br>
         </td>
         <td>
           <div id="map"></div>
@@ -61,8 +68,12 @@
       var msgLayer = new Kinetic.Layer({ x: WIDTH*SCALE, width: 256 });
 
       var objLayers = {}; // objects, by object class
-      for (var i = 0; i < 16; ++i) {
+      for (var i = 0; i < 15 ; ++i) {
         objLayers[i] = new Kinetic.Layer({ x: 0, width: WIDTH*SCALE });
+      }
+
+      function toggleLayer(index) {
+        objLayers[index].setVisible(!objLayers[index].getVisible());
       }
 
       hitLayer.add(new Kinetic.Rect({x:0, y:0, width:WIDTH*SCALE, height:HEIGHT*SCALE}));
@@ -1258,7 +1269,7 @@
 
       stage.add(mapLayer);
       stage.add(hitLayer);
-      for (var i = 0; i < 16; ++i) {
+      for (var i = 0; i < 15; ++i) {
         stage.add(objLayers[i]);
       }
       stage.add(msgLayer);
