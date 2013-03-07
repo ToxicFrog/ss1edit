@@ -22,21 +22,21 @@ local sizes = {
 	{ n=1, 1; }; -- LAST_CLASS
 }
 local catnames = {
-	{ name = "Weapons"; "Semi-Automatic", "Automatic", "Projectile", "Melee", "Beam", "Energy" };
-	{ name = "Ammo"; "Pistol", "Dartgun", "Magnum & Riotgun", "Assault Rifle", "Flechette Rifle", "Skorpion", "Magpulse & Railgun" };
-	{ name = "Projectiles"; "Tracers", "Projectiles", "Seekers?" };
-	{ name = "Explosives"; "Grenades", "Explosives" };
-	{ name = "Patches"; "Patches" };
-	{ name = "Hardware"; "Vision Modes", "Implants" };
-	{ name = "Software"; "Weapons", "Defences", "Utilities", "Non-C/Space", "Information", "??? FIXME ???" };
-	{ name = "Fixtures"; "Electronics", "Furniture", "Text & Screens", "Lights", "??? FIXME 1 ???", "??? FIXME 2 ???", "Plants", "Terrain" };
-	{ name = "Items"; "Junk", "Debris", "Corpses & Body Parts", "Inventory Items", "Access Cards", "C/Space Objects", "Stains & Decals", "Plot Items" };
-	{ name = "Switches"; "Switches", "Receptacles", "Terminals", "Panels", "Vending Machines", "Cybertoggles" };
-	{ name = "Doors"; "Heavy Doors", "Doorways", "Energy Doors", "Elevator Doors", "Other Doors" };
-	{ name = "Animations"; "??? FIXME ???" };
-	{ name = "Triggers"; "Triggers", "Tripbeams", "Marks" };
-	{ name = "Containers"; "Crates", "Hazards", "Lab Equipment", "Corpses", "Destroyed Bots", "Destroyed Cyborgs", "Destroyed Programs" };
-	{ name = "Critters"; "Mutants", "Robots", "Cyborgs", "Programs", "Bosses" };
+	{ name = "WEAPONS"; "SEMI-AUTOMATIC", "AUTOMATIC", "PROJECTILE", "MELEE", "BEAM", "ENERGY" };
+	{ name = "AMMO"; "PISTOL", "DARTGUN", "MAGNUM & RIOTGUN", "ASSAULT RIFLE", "FLECHETTE RIFLE", "SKORPION", "MAGPULSE & RAILGUN" };
+	{ name = "PROJECTILES"; "TRACERS", "PROJECTILES", "SEEKERS?" };
+	{ name = "EXPLOSIVES"; "GRENADES", "EXPLOSIVES" };
+	{ name = "PATCHES"; "PATCHES" };
+	{ name = "HARDWARE"; "VISION MODES", "IMPLANTS" };
+	{ name = "SOFTWARE"; "WEAPONS", "DEFENCES", "UTILITIES", "NON-C/SPACE", "INFORMATION", "??? FIXME ???" };
+	{ name = "FIXTURES"; "ELECTRONICS", "FURNITURE", "TEXT & SCREENS", "LIGHTS", "??? FIXME 1 ???", "??? FIXME 2 ???", "PLANTS", "TERRAIN" };
+	{ name = "ITEMS"; "JUNK", "DEBRIS", "CORPSES & BODY PARTS", "INVENTORY ITEMS", "ACCESS CARDS", "C/SPACE OBJECTS", "STAINS & DECALS", "PLOT ITEMS" };
+	{ name = "SWITCHES"; "SWITCHES", "RECEPTACLES", "TERMINALS", "PANELS", "VENDING MACHINES", "CYBERTOGGLES" };
+	{ name = "DOORS"; "HEAVY DOORS", "DOORWAYS", "ENERGY DOORS", "ELEVATOR DOORS", "OTHER DOORS" };
+	{ name = "ANIMATIONS"; "??? FIXME ???" };
+	{ name = "TRIGGERS"; "TRIGGERS", "TRIPBEAMS", "MARKS" };
+	{ name = "CONTAINERS"; "CRATES", "HAZARDS", "LAB EQUIPMENT", "CORPSES", "DESTROYED BOTS", "DESTROYED CYBORGS", "DESTROYED PROGRAMS" };
+	{ name = "CRITTERS"; "MUTANTS", "ROBOTS", "CYBORGS", "PROGRAMS", "BOSSES" };
 	{ name = "LAST_CATEGORY"; "LAST_SUBCATEGORY" };
 }
 
