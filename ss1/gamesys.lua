@@ -1,7 +1,7 @@
-local names = require "ss1.names"
 
 local gamesys = {}
 
+local names = require "ss1.names"
 local sizes = {
 	n=16;
 	{ n=6, 5,2,2,2,3,2; }; -- weapons			16	16
@@ -21,7 +21,24 @@ local sizes = {
 	{ n=5, 9,12,7,7,2 }; -- critters
 	{ n=1, 1; }; -- LAST_CLASS
 }
-
+local catnames = {
+	{ name = "Weapons"; "Semi-Automatic", "Automatic", "Projectile", "Melee", "Beam", "Energy" };
+	{ name = "Ammo"; "Pistol", "Dartgun", "Magnum & Riotgun", "Assault Rifle", "Flechette Rifle", "Skorpion", "Magpulse & Railgun" };
+	{ name = "Projectiles"; "Tracers", "Projectiles", "Seekers?" };
+	{ name = "Explosives"; "Grenades", "Explosives" };
+	{ name = "Patches"; "Patches" };
+	{ name = "Hardware"; "Vision Modes", "Implants" };
+	{ name = "Software"; "Weapons", "Defences", "Utilities", "Non-C/Space", "Information", "??? FIXME ???" };
+	{ name = "Fixtures"; "Electronics", "Furniture", "Text & Screens", "Lights", "??? FIXME 1 ???", "??? FIXME 2 ???", "Plants", "Terrain" };
+	{ name = "Items"; "Junk", "Debris", "Corpses & Body Parts", "Inventory Items", "Access Cards", "C/Space Objects", "Stains & Decals", "Plot Items" };
+	{ name = "Switches"; "Switches", "Receptacles", "Terminals", "Panels", "Vending Machines", "Cybertoggles" };
+	{ name = "Doors"; "Heavy Doors", "Doorways", "Energy Doors", "Elevator Doors", "Other Doors" };
+	{ name = "Animations"; "??? FIXME ???" };
+	{ name = "Triggers"; "Triggers", "Tripbeams", "Marks" };
+	{ name = "Containers"; "Crates", "Hazards", "Lab Equipment", "Corpses", "Destroyed Bots", "Destroyed Cyborgs", "Destroyed Programs" };
+	{ name = "Critters"; "Mutants", "Robots", "Cyborgs", "Programs", "Bosses" };
+	{ name = "LAST_CATEGORY"; "LAST_SUBCATEGORY" };
+}
 
 -- given a (c,sc,k) triple, return the index of that object kind
 -- e.g. 0/2/1 (WEAPONS, KINETIC PROJECTILE, RAILGUN) has index 8
@@ -48,13 +65,15 @@ end
 function gamesys.index2id(index)
 end
 
--- given an index or id, return the name of the object
-function gamesys.name(index, subcat, kind)
-	if subcat and kind then
-		return gamesys.name(gamesys.id2index(index, subcat, kind))
+-- given an id, return the name of the cat/subclass/kind
+function gamesys.name(cat, subcat, kind)
+	if kind then
+		return names[gamesys.id2index(cat, subcat, kind)]
+	elseif subcat then
+		return catnames[cat+1][subcat+1]
+	else
+		return catnames[cat+1].name
 	end
-
-	return names[index]
 end
 
 return gamesys

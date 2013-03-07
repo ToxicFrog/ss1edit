@@ -76,8 +76,8 @@ local function infobox(obj)
 	local template = [[
 		<table>\
 			<tr><th>ID</th><td>%d/%d/%d</td></tr>\
-			<tr><th>Category</th><td>FIXME</td></tr>\
-			<tr><th>Subcategory</th><td>FIXME</td></tr>\
+			<tr><th>Category</th><td>%s</td></tr>\
+			<tr><th>Subcategory</th><td>%s</td></tr>\
 			<tr><th>Name</th><td>%s</td></tr>\
 			<tr><th>Position</th><td>(%.2f, %.2f, %.2f)</td></tr>\
 			<tr><th>Rotation</th><td>(%d, %d, %d)</td></tr>\
@@ -88,6 +88,8 @@ local function infobox(obj)
 
 	return template % {
 		obj.class, obj.subclass, obj.type,
+		gamesys.name(obj.class),
+		gamesys.name(obj.class, obj.subclass),
 		gamesys.name(obj.class, obj.subclass, obj.type),
 		obj.x/256, obj.y/256, obj.z/256,
 		obj.pitch, obj.yaw, obj.roll,
