@@ -52,8 +52,14 @@
       var WIDTH=64;
       var HEIGHT=64;
 
+      var messageLocked = false
       function writeMessage(message) {
-        info = document.getElementById("info").innerHTML = message
+        if (!messageLocked) {
+          info = document.getElementById("info").innerHTML = message
+        }
+      }
+      function lockMessage(lock) {
+        messageLocked = lock
       }
 
       var stage = new Kinetic.Stage({
@@ -80,6 +86,7 @@
         writeMessage("Tile: (" + Math.floor(xy.x/SCALE) + ", " + Math.floor(HEIGHT - xy.y/SCALE) + ")");
         console.log(evt);
       });
+      hitLayer.on('mousedown', function() { lockMessage(false); })
 
       var background = new Kinetic.Rect({
         x: 0, y: 0,
@@ -106,6 +113,7 @@
         obj.on('mouseover', function() {
           writeMessage(name);
         });
+        obj.on('mousedown', function() { lockMessage(false); writeMessage(name); lockMessage(true); })
         layer.add(obj);
       }
     </script>
