@@ -41,6 +41,9 @@
         <td>
           <div id="map"></div>
         </td>
+        <td>
+          <div id="info"></div>
+        </td>
       </tr>
     </table>
     <script src="./kinetic.js"></script>
@@ -49,23 +52,18 @@
       var WIDTH=64;
       var HEIGHT=64;
 
-      function writeMessage(messageLayer, message) {
-        var context = messageLayer.getContext();
-        messageLayer.clear();
-        context.font = '18pt Calibri';
-        context.fillStyle = 'black';
-        context.fillText(message, messageLayer.getX() + 10, messageLayer.getY() + 25);
+      function writeMessage(message) {
+        info = document.getElementById("info").innerHTML = message
       }
 
       var stage = new Kinetic.Stage({
         container: 'map',
-        width: WIDTH*SCALE + 256,
+        width: WIDTH*SCALE,
         height: HEIGHT*SCALE
       });
 
       var mapLayer = new Kinetic.Layer({ x: 0, width: WIDTH*SCALE }); // level geometry
       var hitLayer = new Kinetic.Layer({ x: 0, width: WIDTH*SCALE, opacity: 0 });  // mouse event trap
-      var msgLayer = new Kinetic.Layer({ x: WIDTH*SCALE, width: 256 });
 
       var objLayers = {}; // objects, by object class
       for (var i = 0; i < 15 ; ++i) {
@@ -79,7 +77,7 @@
       hitLayer.add(new Kinetic.Rect({x:0, y:0, width:WIDTH*SCALE, height:HEIGHT*SCALE}));
       hitLayer.on('mousemove', function(evt) {
         var xy = stage.getUserPosition();
-        writeMessage(msgLayer, "Tile: (" + Math.floor(xy.x/SCALE) + ", " + Math.floor(HEIGHT - xy.y/SCALE) + ")");
+        writeMessage("Tile: (" + Math.floor(xy.x/SCALE) + ", " + Math.floor(HEIGHT - xy.y/SCALE) + ")");
         console.log(evt);
       });
 
@@ -106,7 +104,7 @@
           //fill: colour,
         });
         obj.on('mouseover', function() {
-          writeMessage(msgLayer, name);
+          writeMessage(name);
         });
         layer.add(obj);
       }
@@ -535,129 +533,1319 @@
       line(35.000000, 47.000000, 36.000000, 47.000000, '#00FF30');
       line(36.000000, 47.000000, 37.000000, 47.000000, '#00FF30');
       line(37.000000, 47.000000, 38.000000, 47.000000, '#00FF30');
-      point(objLayers[10], 23.996094, 34.500000, '#FFFF00', '10/3/2');
+      point(objLayers[10], 23.996094, 34.500000, '#FFFF00', '		<table>\
+			<tr><th>ID</th><td>10/3/2</td></tr>\
+			<tr><th>Category</th><td>FIXME</td></tr>\
+			<tr><th>Subcategory</th><td>FIXME</td></tr>\
+			<tr><th>Name</th><td>ELEVATOR DOOR</td></tr>\
+			<tr><th>Position</th><td>(24.00, 34.50, 0.38)</td></tr>\
+			<tr><th>Rotation</th><td>(0, 64, 0)</td></tr>\
+			<tr><th>AI Index?</th><td>255</td></tr>\
+			<tr><th>HP?</th><td>250</td></tr>\
+		</table>\
+	');
       line(23.996094, 34.000000, 23.996094, 35.000000, '#FFFF00');
-      point(objLayers[10], 24.996094, 34.500000, '#FFFF00', '10/3/2');
+      point(objLayers[10], 24.996094, 34.500000, '#FFFF00', '		<table>\
+			<tr><th>ID</th><td>10/3/2</td></tr>\
+			<tr><th>Category</th><td>FIXME</td></tr>\
+			<tr><th>Subcategory</th><td>FIXME</td></tr>\
+			<tr><th>Name</th><td>ELEVATOR DOOR</td></tr>\
+			<tr><th>Position</th><td>(25.00, 34.50, 0.38)</td></tr>\
+			<tr><th>Rotation</th><td>(0, 64, 0)</td></tr>\
+			<tr><th>AI Index?</th><td>255</td></tr>\
+			<tr><th>HP?</th><td>250</td></tr>\
+		</table>\
+	');
       line(24.996094, 34.000000, 24.996094, 35.000000, '#FFFF00');
-      point(objLayers[9], 24.464844, 34.996094, '#808000', '9/3/5');
-      point(objLayers[9], 39.464844, 21.000000, '#808000', '9/0/6');
-      point(objLayers[12], 31.500000, 41.500000, '#FFFFFF', '12/0/1');
-      point(objLayers[12], 31.500000, 41.500000, '#FFFFFF', '12/0/1');
-      point(objLayers[12], 31.500000, 41.500000, '#FFFFFF', '12/0/1');
-      point(objLayers[12], 30.500000, 41.500000, '#FFFFFF', '12/0/0');
-      point(objLayers[14], 48.640625, 26.527344, '#800080', '14/1/6');
-      point(objLayers[7], 25.500000, 35.500000, '#FFFFFF', '7/2/3');
-      point(objLayers[10], 45.996094, 30.500000, '#FFFF00', '10/0/1');
+      point(objLayers[9], 24.464844, 34.996094, '#808000', '		<table>\
+			<tr><th>ID</th><td>9/3/5</td></tr>\
+			<tr><th>Category</th><td>FIXME</td></tr>\
+			<tr><th>Subcategory</th><td>FIXME</td></tr>\
+			<tr><th>Name</th><td>ELEVATOR PANEL</td></tr>\
+			<tr><th>Position</th><td>(24.46, 35.00, 0.40)</td></tr>\
+			<tr><th>Rotation</th><td>(0, 0, 0)</td></tr>\
+			<tr><th>AI Index?</th><td>255</td></tr>\
+			<tr><th>HP?</th><td>0</td></tr>\
+		</table>\
+	');
+      point(objLayers[9], 39.464844, 21.000000, '#808000', '		<table>\
+			<tr><th>ID</th><td>9/0/6</td></tr>\
+			<tr><th>Category</th><td>FIXME</td></tr>\
+			<tr><th>Subcategory</th><td>FIXME</td></tr>\
+			<tr><th>Name</th><td>LARGE BUTTON</td></tr>\
+			<tr><th>Position</th><td>(39.46, 21.00, 0.44)</td></tr>\
+			<tr><th>Rotation</th><td>(0, 128, 0)</td></tr>\
+			<tr><th>AI Index?</th><td>255</td></tr>\
+			<tr><th>HP?</th><td>0</td></tr>\
+		</table>\
+	');
+      point(objLayers[12], 31.500000, 41.500000, '#FFFFFF', '		<table>\
+			<tr><th>ID</th><td>12/0/1</td></tr>\
+			<tr><th>Category</th><td>FIXME</td></tr>\
+			<tr><th>Subcategory</th><td>FIXME</td></tr>\
+			<tr><th>Name</th><td>NULL TRIGGER</td></tr>\
+			<tr><th>Position</th><td>(31.50, 41.50, 0.12)</td></tr>\
+			<tr><th>Rotation</th><td>(0, 0, 0)</td></tr>\
+			<tr><th>AI Index?</th><td>255</td></tr>\
+			<tr><th>HP?</th><td>0</td></tr>\
+		</table>\
+	');
+      point(objLayers[12], 31.500000, 41.500000, '#FFFFFF', '		<table>\
+			<tr><th>ID</th><td>12/0/1</td></tr>\
+			<tr><th>Category</th><td>FIXME</td></tr>\
+			<tr><th>Subcategory</th><td>FIXME</td></tr>\
+			<tr><th>Name</th><td>NULL TRIGGER</td></tr>\
+			<tr><th>Position</th><td>(31.50, 41.50, 0.12)</td></tr>\
+			<tr><th>Rotation</th><td>(0, 0, 0)</td></tr>\
+			<tr><th>AI Index?</th><td>255</td></tr>\
+			<tr><th>HP?</th><td>0</td></tr>\
+		</table>\
+	');
+      point(objLayers[12], 31.500000, 41.500000, '#FFFFFF', '		<table>\
+			<tr><th>ID</th><td>12/0/1</td></tr>\
+			<tr><th>Category</th><td>FIXME</td></tr>\
+			<tr><th>Subcategory</th><td>FIXME</td></tr>\
+			<tr><th>Name</th><td>NULL TRIGGER</td></tr>\
+			<tr><th>Position</th><td>(31.50, 41.50, 0.12)</td></tr>\
+			<tr><th>Rotation</th><td>(0, 0, 0)</td></tr>\
+			<tr><th>AI Index?</th><td>255</td></tr>\
+			<tr><th>HP?</th><td>0</td></tr>\
+		</table>\
+	');
+      point(objLayers[12], 30.500000, 41.500000, '#FFFFFF', '		<table>\
+			<tr><th>ID</th><td>12/0/0</td></tr>\
+			<tr><th>Category</th><td>FIXME</td></tr>\
+			<tr><th>Subcategory</th><td>FIXME</td></tr>\
+			<tr><th>Name</th><td>ENTRY TRIGGER</td></tr>\
+			<tr><th>Position</th><td>(30.50, 41.50, 0.72)</td></tr>\
+			<tr><th>Rotation</th><td>(0, 0, 0)</td></tr>\
+			<tr><th>AI Index?</th><td>255</td></tr>\
+			<tr><th>HP?</th><td>0</td></tr>\
+		</table>\
+	');
+      point(objLayers[14], 48.640625, 26.527344, '#800080', '		<table>\
+			<tr><th>ID</th><td>14/1/6</td></tr>\
+			<tr><th>Category</th><td>FIXME</td></tr>\
+			<tr><th>Subcategory</th><td>FIXME</td></tr>\
+			<tr><th>Name</th><td>SECURITY-1 ROBOT</td></tr>\
+			<tr><th>Position</th><td>(48.64, 26.53, 0.27)</td></tr>\
+			<tr><th>Rotation</th><td>(0, 1, 0)</td></tr>\
+			<tr><th>AI Index?</th><td>2</td></tr>\
+			<tr><th>HP?</th><td>170</td></tr>\
+		</table>\
+	');
+      point(objLayers[7], 25.500000, 35.500000, '#FFFFFF', '		<table>\
+			<tr><th>ID</th><td>7/2/3</td></tr>\
+			<tr><th>Category</th><td>FIXME</td></tr>\
+			<tr><th>Subcategory</th><td>FIXME</td></tr>\
+			<tr><th>Name</th><td>WORDS</td></tr>\
+			<tr><th>Position</th><td>(25.50, 35.50, 0.38)</td></tr>\
+			<tr><th>Rotation</th><td>(0, 224, 0)</td></tr>\
+			<tr><th>AI Index?</th><td>255</td></tr>\
+			<tr><th>HP?</th><td>0</td></tr>\
+		</table>\
+	');
+      point(objLayers[10], 45.996094, 30.500000, '#FFFF00', '		<table>\
+			<tr><th>ID</th><td>10/0/1</td></tr>\
+			<tr><th>Category</th><td>FIXME</td></tr>\
+			<tr><th>Subcategory</th><td>FIXME</td></tr>\
+			<tr><th>Name</th><td>SERVICE ACCESS DOOR</td></tr>\
+			<tr><th>Position</th><td>(46.00, 30.50, 0.19)</td></tr>\
+			<tr><th>Rotation</th><td>(0, 64, 0)</td></tr>\
+			<tr><th>AI Index?</th><td>255</td></tr>\
+			<tr><th>HP?</th><td>200</td></tr>\
+		</table>\
+	');
       line(45.996094, 30.000000, 45.996094, 31.000000, '#FFFF00');
-      point(objLayers[10], 41.500000, 24.000000, '#FFFF00', '10/0/1');
+      point(objLayers[10], 41.500000, 24.000000, '#FFFF00', '		<table>\
+			<tr><th>ID</th><td>10/0/1</td></tr>\
+			<tr><th>Category</th><td>FIXME</td></tr>\
+			<tr><th>Subcategory</th><td>FIXME</td></tr>\
+			<tr><th>Name</th><td>SERVICE ACCESS DOOR</td></tr>\
+			<tr><th>Position</th><td>(41.50, 24.00, 0.50)</td></tr>\
+			<tr><th>Rotation</th><td>(0, 128, 0)</td></tr>\
+			<tr><th>AI Index?</th><td>255</td></tr>\
+			<tr><th>HP?</th><td>200</td></tr>\
+		</table>\
+	');
       line(41.000000, 24.000000, 42.000000, 24.000000, '#FFFF00');
-      point(objLayers[7], 42.500000, 31.500000, '#FFFFFF', '7/7/0');
-      point(objLayers[7], 41.500000, 33.500000, '#FFFFFF', '7/7/0');
-      point(objLayers[9], 31.246094, 42.000000, '#808000', '9/0/1');
-      point(objLayers[7], 28.500000, 36.500000, '#FFFFFF', '7/7/0');
-      point(objLayers[7], 30.500000, 35.500000, '#FFFFFF', '7/7/0');
-      point(objLayers[5], 25.183594, 28.777344, '#0000FF', '5/0/1');
-      point(objLayers[7], 28.500000, 35.500000, '#FFFFFF', '7/7/0');
-      point(objLayers[7], 43.714844, 22.000000, '#FFFFFF', '7/1/1');
-      point(objLayers[12], 23.500000, 34.500000, '#FFFFFF', '12/0/1');
-      point(objLayers[4], 45.871094, 20.214844, '#00FFFF', '4/0/2');
-      point(objLayers[1], 43.500000, 20.500000, '#FF8080', '1/0/1');
-      point(objLayers[12], 23.500000, 34.500000, '#FFFFFF', '12/0/1');
-      point(objLayers[1], 35.500000, 19.500000, '#FF8080', '1/1/0');
-      point(objLayers[4], 45.714844, 20.121094, '#00FFFF', '4/0/4');
-      point(objLayers[4], 45.777344, 20.433594, '#00FFFF', '4/0/6');
-      point(objLayers[0], 45.589844, 20.496094, '#FF0000', '0/2/0');
-      point(objLayers[7], 44.500000, 21.500000, '#FFFFFF', '7/1/6');
-      point(objLayers[14], 42.500000, 42.500000, '#800080', '14/0/3');
-      point(objLayers[7], 39.933594, 21.000000, '#FFFFFF', '7/2/3');
-      point(objLayers[14], 37.500000, 26.500000, '#800080', '14/1/6');
-      point(objLayers[14], 40.500000, 43.500000, '#800080', '14/0/3');
-      point(objLayers[14], 42.496094, 33.000000, '#800080', '14/0/4');
-      point(objLayers[9], 30.996094, 41.527344, '#808000', '9/0/1');
-      point(objLayers[1], 43.500000, 22.500000, '#FF8080', '1/2/2');
-      point(objLayers[7], 45.277344, 31.339844, '#FFFFFF', '7/6/1');
-      point(objLayers[7], 45.277344, 32.183594, '#FFFFFF', '7/6/10');
-      point(objLayers[7], 45.996094, 31.496094, '#FFFFFF', '7/2/2');
-      point(objLayers[7], 44.558594, 35.371094, '#FFFFFF', '7/6/13');
-      point(objLayers[7], 43.589844, 42.027344, '#FFFFFF', '7/6/13');
-      point(objLayers[7], 41.402344, 45.308594, '#FFFFFF', '7/6/1');
-      point(objLayers[7], 35.808594, 43.746094, '#FFFFFF', '7/6/13');
-      point(objLayers[7], 36.839844, 46.214844, '#FFFFFF', '7/6/2');
-      point(objLayers[12], 30.500000, 45.500000, '#FFFFFF', '12/0/10');
-      point(objLayers[7], 40.500000, 44.500000, '#FFFFFF', '7/6/10');
-      point(objLayers[14], 28.500000, 35.500000, '#800080', '14/0/4');
-      point(objLayers[7], 36.996094, 37.496094, '#FFFFFF', '7/6/1');
-      point(objLayers[7], 39.558594, 36.308594, '#FFFFFF', '7/6/13');
-      point(objLayers[7], 40.500000, 29.500000, '#FFFFFF', '7/6/1');
-      point(objLayers[7], 42.500000, 26.500000, '#FFFFFF', '7/6/10');
-      point(objLayers[7], 37.500000, 28.500000, '#FFFFFF', '7/1/5');
-      point(objLayers[7], 40.500000, 27.500000, '#FFFFFF', '7/1/6');
-      point(objLayers[7], 36.402344, 28.714844, '#FFFFFF', '7/6/2');
-      point(objLayers[7], 40.500000, 22.500000, '#FFFFFF', '7/1/1');
-      point(objLayers[7], 31.589844, 42.339844, '#FFFFFF', '7/4/0');
-      point(objLayers[0], 19.500000, 19.500000, '#FF0000', '0/4/2');
-      point(objLayers[8], 38.746094, 22.433594, '#FFFFFF', '8/1/1');
-      point(objLayers[8], 45.000000, 31.746094, '#FFFFFF', '8/2/1');
-      point(objLayers[8], 42.500000, 40.500000, '#FFFFFF', '8/2/13');
-      point(objLayers[8], 48.152344, 23.683594, '#FFFFFF', '8/2/7');
-      point(objLayers[8], 34.500000, 46.500000, '#FFFFFF', '8/2/3');
-      point(objLayers[14], 40.996094, 22.746094, '#800080', '14/1/6');
-      point(objLayers[12], 40.500000, 29.500000, '#FFFFFF', '12/2/4');
-      point(objLayers[14], 27.136719, 28.246094, '#800080', '14/0/8');
-      point(objLayers[14], 30.500000, 39.500000, '#800080', '14/0/4');
-      point(objLayers[12], 39.500000, 23.500000, '#FFFFFF', '12/0/1');
-      point(objLayers[7], 31.500000, 29.500000, '#FFFFFF', '7/6/1');
-      point(objLayers[7], 25.433594, 28.527344, '#FFFFFF', '7/6/13');
-      point(objLayers[7], 30.500000, 24.500000, '#FFFFFF', '7/6/10');
-      point(objLayers[7], 31.500000, 22.500000, '#FFFFFF', '7/6/13');
-      point(objLayers[14], 28.500000, 23.488281, '#800080', '14/0/4');
-      point(objLayers[14], 26.121094, 28.500000, '#800080', '14/0/4');
-      point(objLayers[14], 36.500000, 44.496094, '#800080', '14/0/3');
-      point(objLayers[7], 29.500000, 35.500000, '#FFFFFF', '7/7/0');
-      point(objLayers[4], 31.871094, 42.871094, '#00FFFF', '4/0/2');
-      point(objLayers[4], 31.777344, 42.714844, '#00FFFF', '4/0/0');
-      point(objLayers[1], 28.496094, 41.339844, '#FF8080', '1/0/0');
-      point(objLayers[1], 27.746094, 41.777344, '#FF8080', '1/2/2');
-      point(objLayers[8], 31.121094, 42.246094, '#FFFFFF', '8/0/4');
-      point(objLayers[8], 31.496094, 43.652344, '#FFFFFF', '8/0/7');
-      point(objLayers[12], 23.500000, 34.500000, '#FFFFFF', '12/0/3');
-      point(objLayers[8], 29.683594, 42.402344, '#FFFFFF', '8/2/12');
-      point(objLayers[8], 30.683594, 40.464844, '#FFFFFF', '8/2/7');
-      point(objLayers[8], 34.277344, 26.902344, '#FFFFFF', '8/2/0');
-      point(objLayers[8], 34.246094, 26.808594, '#FFFFFF', '8/6/5');
-      point(objLayers[8], 33.683594, 32.527344, '#FFFFFF', '8/2/11');
-      point(objLayers[1], 33.496094, 32.621094, '#FF8080', '1/6/0');
-      point(objLayers[1], 43.621094, 20.339844, '#FF8080', '1/0/1');
-      point(objLayers[1], 39.652344, 41.996094, '#FF8080', '1/1/0');
-      point(objLayers[1], 31.527344, 46.683594, '#FF8080', '1/1/1');
-      point(objLayers[1], 31.214844, 46.871094, '#FF8080', '1/1/1');
-      point(objLayers[7], 27.000000, 35.496094, '#FFFFFF', '7/2/9');
-      point(objLayers[12], 39.500000, 22.500000, '#FFFFFF', '12/0/1');
-      point(objLayers[7], 27.500000, 36.500000, '#FFFFFF', '7/5/6');
-      point(objLayers[7], 28.496094, 36.996094, '#FFFFFF', '7/2/9');
-      point(objLayers[7], 25.500000, 35.500000, '#FFFFFF', '7/2/3');
-      point(objLayers[12], 39.500000, 23.500000, '#FFFFFF', '12/0/8');
-      point(objLayers[12], 29.500000, 43.500000, '#FFFFFF', '12/0/1');
-      point(objLayers[12], 27.500000, 36.500000, '#FFFFFF', '12/0/1');
-      point(objLayers[12], 29.500000, 43.500000, '#FFFFFF', '12/0/1');
-      point(objLayers[7], 40.746094, 29.527344, '#FFFFFF', '7/0/3');
-      point(objLayers[7], 35.902344, 24.339844, '#FFFFFF', '7/5/4');
-      point(objLayers[7], 35.808594, 24.000000, '#FFFFFF', '7/5/4');
-      point(objLayers[7], 43.933594, 28.089844, '#FFFFFF', '7/5/4');
-      point(objLayers[7], 38.152344, 43.152344, '#FFFFFF', '7/5/4');
-      point(objLayers[7], 31.089844, 46.933594, '#FFFFFF', '7/5/4');
-      point(objLayers[7], 39.839844, 32.183594, '#FFFFFF', '7/5/4');
-      point(objLayers[7], 33.152344, 37.871094, '#FFFFFF', '7/5/4');
-      point(objLayers[7], 33.183594, 32.121094, '#FFFFFF', '7/5/4');
-      point(objLayers[12], 45.500000, 29.500000, '#FFFFFF', '12/0/1');
-      point(objLayers[12], 45.500000, 29.500000, '#FFFFFF', '12/0/1');
-      point(objLayers[12], 45.500000, 29.500000, '#FFFFFF', '12/0/1');
-      point(objLayers[9], 45.496094, 30.000000, '#808000', '9/0/3');
-      point(objLayers[7], 39.058594, 21.000000, '#FFFFFF', '7/2/3');
-      point(objLayers[12], 26.500000, 23.500000, '#FFFFFF', '12/0/11');
-      point(objLayers[12], 43.500000, 46.500000, '#FFFFFF', '12/0/1');
-      point(objLayers[14], 36.500000, 35.500000, '#800080', '14/0/1');
-      point(objLayers[12], 26.500000, 23.500000, '#FFFFFF', '12/0/11');
+      point(objLayers[7], 42.500000, 31.500000, '#FFFFFF', '		<table>\
+			<tr><th>ID</th><td>7/7/0</td></tr>\
+			<tr><th>Category</th><td>FIXME</td></tr>\
+			<tr><th>Subcategory</th><td>FIXME</td></tr>\
+			<tr><th>Name</th><td>BRIDGE</td></tr>\
+			<tr><th>Position</th><td>(42.50, 31.50, 0.43)</td></tr>\
+			<tr><th>Rotation</th><td>(0, 0, 0)</td></tr>\
+			<tr><th>AI Index?</th><td>255</td></tr>\
+			<tr><th>HP?</th><td>200</td></tr>\
+		</table>\
+	');
+      point(objLayers[7], 41.500000, 33.500000, '#FFFFFF', '		<table>\
+			<tr><th>ID</th><td>7/7/0</td></tr>\
+			<tr><th>Category</th><td>FIXME</td></tr>\
+			<tr><th>Subcategory</th><td>FIXME</td></tr>\
+			<tr><th>Name</th><td>BRIDGE</td></tr>\
+			<tr><th>Position</th><td>(41.50, 33.50, 0.38)</td></tr>\
+			<tr><th>Rotation</th><td>(0, 0, 0)</td></tr>\
+			<tr><th>AI Index?</th><td>255</td></tr>\
+			<tr><th>HP?</th><td>200</td></tr>\
+		</table>\
+	');
+      point(objLayers[9], 31.246094, 42.000000, '#808000', '		<table>\
+			<tr><th>ID</th><td>9/0/1</td></tr>\
+			<tr><th>Category</th><td>FIXME</td></tr>\
+			<tr><th>Subcategory</th><td>FIXME</td></tr>\
+			<tr><th>Name</th><td>SWITCH</td></tr>\
+			<tr><th>Position</th><td>(31.25, 42.00, 0.26)</td></tr>\
+			<tr><th>Rotation</th><td>(0, 128, 0)</td></tr>\
+			<tr><th>AI Index?</th><td>255</td></tr>\
+			<tr><th>HP?</th><td>0</td></tr>\
+		</table>\
+	');
+      point(objLayers[7], 28.500000, 36.500000, '#FFFFFF', '		<table>\
+			<tr><th>ID</th><td>7/7/0</td></tr>\
+			<tr><th>Category</th><td>FIXME</td></tr>\
+			<tr><th>Subcategory</th><td>FIXME</td></tr>\
+			<tr><th>Name</th><td>BRIDGE</td></tr>\
+			<tr><th>Position</th><td>(28.50, 36.50, 0.59)</td></tr>\
+			<tr><th>Rotation</th><td>(0, 0, 0)</td></tr>\
+			<tr><th>AI Index?</th><td>255</td></tr>\
+			<tr><th>HP?</th><td>200</td></tr>\
+		</table>\
+	');
+      point(objLayers[7], 30.500000, 35.500000, '#FFFFFF', '		<table>\
+			<tr><th>ID</th><td>7/7/0</td></tr>\
+			<tr><th>Category</th><td>FIXME</td></tr>\
+			<tr><th>Subcategory</th><td>FIXME</td></tr>\
+			<tr><th>Name</th><td>BRIDGE</td></tr>\
+			<tr><th>Position</th><td>(30.50, 35.50, 0.50)</td></tr>\
+			<tr><th>Rotation</th><td>(0, 0, 0)</td></tr>\
+			<tr><th>AI Index?</th><td>255</td></tr>\
+			<tr><th>HP?</th><td>200</td></tr>\
+		</table>\
+	');
+      point(objLayers[5], 25.183594, 28.777344, '#0000FF', '		<table>\
+			<tr><th>ID</th><td>5/0/1</td></tr>\
+			<tr><th>Category</th><td>FIXME</td></tr>\
+			<tr><th>Subcategory</th><td>FIXME</td></tr>\
+			<tr><th>Name</th><td>TARGET IDENTIFIER</td></tr>\
+			<tr><th>Position</th><td>(25.18, 28.78, 0.34)</td></tr>\
+			<tr><th>Rotation</th><td>(0, 0, 0)</td></tr>\
+			<tr><th>AI Index?</th><td>255</td></tr>\
+			<tr><th>HP?</th><td>0</td></tr>\
+		</table>\
+	');
+      point(objLayers[7], 28.500000, 35.500000, '#FFFFFF', '		<table>\
+			<tr><th>ID</th><td>7/7/0</td></tr>\
+			<tr><th>Category</th><td>FIXME</td></tr>\
+			<tr><th>Subcategory</th><td>FIXME</td></tr>\
+			<tr><th>Name</th><td>BRIDGE</td></tr>\
+			<tr><th>Position</th><td>(28.50, 35.50, 0.54)</td></tr>\
+			<tr><th>Rotation</th><td>(0, 0, 0)</td></tr>\
+			<tr><th>AI Index?</th><td>255</td></tr>\
+			<tr><th>HP?</th><td>200</td></tr>\
+		</table>\
+	');
+      point(objLayers[7], 43.714844, 22.000000, '#FFFFFF', '		<table>\
+			<tr><th>ID</th><td>7/1/1</td></tr>\
+			<tr><th>Category</th><td>FIXME</td></tr>\
+			<tr><th>Subcategory</th><td>FIXME</td></tr>\
+			<tr><th>Name</th><td>DESK</td></tr>\
+			<tr><th>Position</th><td>(43.71, 22.00, 0.41)</td></tr>\
+			<tr><th>Rotation</th><td>(0, 0, 0)</td></tr>\
+			<tr><th>AI Index?</th><td>255</td></tr>\
+			<tr><th>HP?</th><td>50</td></tr>\
+		</table>\
+	');
+      point(objLayers[12], 23.500000, 34.500000, '#FFFFFF', '		<table>\
+			<tr><th>ID</th><td>12/0/1</td></tr>\
+			<tr><th>Category</th><td>FIXME</td></tr>\
+			<tr><th>Subcategory</th><td>FIXME</td></tr>\
+			<tr><th>Name</th><td>NULL TRIGGER</td></tr>\
+			<tr><th>Position</th><td>(23.50, 34.50, 0.12)</td></tr>\
+			<tr><th>Rotation</th><td>(0, 0, 0)</td></tr>\
+			<tr><th>AI Index?</th><td>255</td></tr>\
+			<tr><th>HP?</th><td>0</td></tr>\
+		</table>\
+	');
+      point(objLayers[4], 45.871094, 20.214844, '#00FFFF', '		<table>\
+			<tr><th>ID</th><td>4/0/2</td></tr>\
+			<tr><th>Category</th><td>FIXME</td></tr>\
+			<tr><th>Subcategory</th><td>FIXME</td></tr>\
+			<tr><th>Name</th><td>BERSERK COMBAT BOOSTER</td></tr>\
+			<tr><th>Position</th><td>(45.87, 20.21, 0.44)</td></tr>\
+			<tr><th>Rotation</th><td>(0, 0, 0)</td></tr>\
+			<tr><th>AI Index?</th><td>255</td></tr>\
+			<tr><th>HP?</th><td>20</td></tr>\
+		</table>\
+	');
+      point(objLayers[1], 43.500000, 20.500000, '#FF8080', '		<table>\
+			<tr><th>ID</th><td>1/0/1</td></tr>\
+			<tr><th>Category</th><td>FIXME</td></tr>\
+			<tr><th>Subcategory</th><td>FIXME</td></tr>\
+			<tr><th>Name</th><td>ML TEFLON COATED ROUNDS</td></tr>\
+			<tr><th>Position</th><td>(43.50, 20.50, 0.43)</td></tr>\
+			<tr><th>Rotation</th><td>(0, 0, 0)</td></tr>\
+			<tr><th>AI Index?</th><td>255</td></tr>\
+			<tr><th>HP?</th><td>15</td></tr>\
+		</table>\
+	');
+      point(objLayers[12], 23.500000, 34.500000, '#FFFFFF', '		<table>\
+			<tr><th>ID</th><td>12/0/1</td></tr>\
+			<tr><th>Category</th><td>FIXME</td></tr>\
+			<tr><th>Subcategory</th><td>FIXME</td></tr>\
+			<tr><th>Name</th><td>NULL TRIGGER</td></tr>\
+			<tr><th>Position</th><td>(23.50, 34.50, 0.12)</td></tr>\
+			<tr><th>Rotation</th><td>(0, 0, 0)</td></tr>\
+			<tr><th>AI Index?</th><td>255</td></tr>\
+			<tr><th>HP?</th><td>0</td></tr>\
+		</table>\
+	');
+      point(objLayers[1], 35.500000, 19.500000, '#FF8080', '		<table>\
+			<tr><th>ID</th><td>1/1/0</td></tr>\
+			<tr><th>Category</th><td>FIXME</td></tr>\
+			<tr><th>Subcategory</th><td>FIXME</td></tr>\
+			<tr><th>Name</th><td>SV NEEDLE DARTS</td></tr>\
+			<tr><th>Position</th><td>(35.50, 19.50, 0.02)</td></tr>\
+			<tr><th>Rotation</th><td>(0, 0, 0)</td></tr>\
+			<tr><th>AI Index?</th><td>255</td></tr>\
+			<tr><th>HP?</th><td>15</td></tr>\
+		</table>\
+	');
+      point(objLayers[4], 45.714844, 20.121094, '#00FFFF', '		<table>\
+			<tr><th>ID</th><td>4/0/4</td></tr>\
+			<tr><th>Category</th><td>FIXME</td></tr>\
+			<tr><th>Subcategory</th><td>FIXME</td></tr>\
+			<tr><th>Name</th><td>REFLEX REACTION AID</td></tr>\
+			<tr><th>Position</th><td>(45.71, 20.12, 0.44)</td></tr>\
+			<tr><th>Rotation</th><td>(0, 0, 0)</td></tr>\
+			<tr><th>AI Index?</th><td>255</td></tr>\
+			<tr><th>HP?</th><td>20</td></tr>\
+		</table>\
+	');
+      point(objLayers[4], 45.777344, 20.433594, '#00FFFF', '		<table>\
+			<tr><th>ID</th><td>4/0/6</td></tr>\
+			<tr><th>Category</th><td>FIXME</td></tr>\
+			<tr><th>Subcategory</th><td>FIXME</td></tr>\
+			<tr><th>Name</th><td>DETOX UNIVERSAL ANTIDOTE</td></tr>\
+			<tr><th>Position</th><td>(45.78, 20.43, 0.44)</td></tr>\
+			<tr><th>Rotation</th><td>(0, 0, 0)</td></tr>\
+			<tr><th>AI Index?</th><td>255</td></tr>\
+			<tr><th>HP?</th><td>20</td></tr>\
+		</table>\
+	');
+      point(objLayers[0], 45.589844, 20.496094, '#FF0000', '		<table>\
+			<tr><th>ID</th><td>0/2/0</td></tr>\
+			<tr><th>Category</th><td>FIXME</td></tr>\
+			<tr><th>Subcategory</th><td>FIXME</td></tr>\
+			<tr><th>Name</th><td>SB-20 MAGPULSE</td></tr>\
+			<tr><th>Position</th><td>(45.59, 20.50, 0.47)</td></tr>\
+			<tr><th>Rotation</th><td>(0, 0, 0)</td></tr>\
+			<tr><th>AI Index?</th><td>255</td></tr>\
+			<tr><th>HP?</th><td>30</td></tr>\
+		</table>\
+	');
+      point(objLayers[7], 44.500000, 21.500000, '#FFFFFF', '		<table>\
+			<tr><th>ID</th><td>7/1/6</td></tr>\
+			<tr><th>Category</th><td>FIXME</td></tr>\
+			<tr><th>Subcategory</th><td>FIXME</td></tr>\
+			<tr><th>Name</th><td>TABLE</td></tr>\
+			<tr><th>Position</th><td>(44.50, 21.50, 0.41)</td></tr>\
+			<tr><th>Rotation</th><td>(0, 0, 0)</td></tr>\
+			<tr><th>AI Index?</th><td>255</td></tr>\
+			<tr><th>HP?</th><td>20</td></tr>\
+		</table>\
+	');
+      point(objLayers[14], 42.500000, 42.500000, '#800080', '		<table>\
+			<tr><th>ID</th><td>14/0/3</td></tr>\
+			<tr><th>Category</th><td>FIXME</td></tr>\
+			<tr><th>Subcategory</th><td>FIXME</td></tr>\
+			<tr><th>Name</th><td>AVIAN MUTANT</td></tr>\
+			<tr><th>Position</th><td>(42.50, 42.50, 0.53)</td></tr>\
+			<tr><th>Rotation</th><td>(0, 66, 0)</td></tr>\
+			<tr><th>AI Index?</th><td>3</td></tr>\
+			<tr><th>HP?</th><td>125</td></tr>\
+		</table>\
+	');
+      point(objLayers[7], 39.933594, 21.000000, '#FFFFFF', '		<table>\
+			<tr><th>ID</th><td>7/2/3</td></tr>\
+			<tr><th>Category</th><td>FIXME</td></tr>\
+			<tr><th>Subcategory</th><td>FIXME</td></tr>\
+			<tr><th>Name</th><td>WORDS</td></tr>\
+			<tr><th>Position</th><td>(39.93, 21.00, 0.50)</td></tr>\
+			<tr><th>Rotation</th><td>(0, 128, 192)</td></tr>\
+			<tr><th>AI Index?</th><td>255</td></tr>\
+			<tr><th>HP?</th><td>0</td></tr>\
+		</table>\
+	');
+      point(objLayers[14], 37.500000, 26.500000, '#800080', '		<table>\
+			<tr><th>ID</th><td>14/1/6</td></tr>\
+			<tr><th>Category</th><td>FIXME</td></tr>\
+			<tr><th>Subcategory</th><td>FIXME</td></tr>\
+			<tr><th>Name</th><td>SECURITY-1 ROBOT</td></tr>\
+			<tr><th>Position</th><td>(37.50, 26.50, 0.68)</td></tr>\
+			<tr><th>Rotation</th><td>(0, 1, 0)</td></tr>\
+			<tr><th>AI Index?</th><td>6</td></tr>\
+			<tr><th>HP?</th><td>170</td></tr>\
+		</table>\
+	');
+      point(objLayers[14], 40.500000, 43.500000, '#800080', '		<table>\
+			<tr><th>ID</th><td>14/0/3</td></tr>\
+			<tr><th>Category</th><td>FIXME</td></tr>\
+			<tr><th>Subcategory</th><td>FIXME</td></tr>\
+			<tr><th>Name</th><td>AVIAN MUTANT</td></tr>\
+			<tr><th>Position</th><td>(40.50, 43.50, 0.68)</td></tr>\
+			<tr><th>Rotation</th><td>(0, 66, 0)</td></tr>\
+			<tr><th>AI Index?</th><td>4</td></tr>\
+			<tr><th>HP?</th><td>125</td></tr>\
+		</table>\
+	');
+      point(objLayers[14], 42.496094, 33.000000, '#800080', '		<table>\
+			<tr><th>ID</th><td>14/0/4</td></tr>\
+			<tr><th>Category</th><td>FIXME</td></tr>\
+			<tr><th>Subcategory</th><td>FIXME</td></tr>\
+			<tr><th>Name</th><td>PLANT MUTANT</td></tr>\
+			<tr><th>Position</th><td>(42.50, 33.00, 0.52)</td></tr>\
+			<tr><th>Rotation</th><td>(0, 66, 0)</td></tr>\
+			<tr><th>AI Index?</th><td>5</td></tr>\
+			<tr><th>HP?</th><td>126</td></tr>\
+		</table>\
+	');
+      point(objLayers[9], 30.996094, 41.527344, '#808000', '		<table>\
+			<tr><th>ID</th><td>9/0/1</td></tr>\
+			<tr><th>Category</th><td>FIXME</td></tr>\
+			<tr><th>Subcategory</th><td>FIXME</td></tr>\
+			<tr><th>Name</th><td>SWITCH</td></tr>\
+			<tr><th>Position</th><td>(31.00, 41.53, 0.72)</td></tr>\
+			<tr><th>Rotation</th><td>(0, 64, 0)</td></tr>\
+			<tr><th>AI Index?</th><td>255</td></tr>\
+			<tr><th>HP?</th><td>0</td></tr>\
+		</table>\
+	');
+      point(objLayers[1], 43.500000, 22.500000, '#FF8080', '		<table>\
+			<tr><th>ID</th><td>1/2/2</td></tr>\
+			<tr><th>Category</th><td>FIXME</td></tr>\
+			<tr><th>Subcategory</th><td>FIXME</td></tr>\
+			<tr><th>Name</th><td>DC RUBBER SLUGS</td></tr>\
+			<tr><th>Position</th><td>(43.50, 22.50, 0.43)</td></tr>\
+			<tr><th>Rotation</th><td>(0, 0, 0)</td></tr>\
+			<tr><th>AI Index?</th><td>255</td></tr>\
+			<tr><th>HP?</th><td>15</td></tr>\
+		</table>\
+	');
+      point(objLayers[7], 45.277344, 31.339844, '#FFFFFF', '		<table>\
+			<tr><th>ID</th><td>7/6/1</td></tr>\
+			<tr><th>Category</th><td>FIXME</td></tr>\
+			<tr><th>Subcategory</th><td>FIXME</td></tr>\
+			<tr><th>Name</th><td>SHRUB</td></tr>\
+			<tr><th>Position</th><td>(45.28, 31.34, 0.18)</td></tr>\
+			<tr><th>Rotation</th><td>(0, 0, 0)</td></tr>\
+			<tr><th>AI Index?</th><td>255</td></tr>\
+			<tr><th>HP?</th><td>30</td></tr>\
+		</table>\
+	');
+      point(objLayers[7], 45.277344, 32.183594, '#FFFFFF', '		<table>\
+			<tr><th>ID</th><td>7/6/10</td></tr>\
+			<tr><th>Category</th><td>FIXME</td></tr>\
+			<tr><th>Subcategory</th><td>FIXME</td></tr>\
+			<tr><th>Name</th><td>PINE TREE</td></tr>\
+			<tr><th>Position</th><td>(45.28, 32.18, 0.18)</td></tr>\
+			<tr><th>Rotation</th><td>(0, 0, 0)</td></tr>\
+			<tr><th>AI Index?</th><td>255</td></tr>\
+			<tr><th>HP?</th><td>100</td></tr>\
+		</table>\
+	');
+      point(objLayers[7], 45.996094, 31.496094, '#FFFFFF', '		<table>\
+			<tr><th>ID</th><td>7/2/2</td></tr>\
+			<tr><th>Category</th><td>FIXME</td></tr>\
+			<tr><th>Subcategory</th><td>FIXME</td></tr>\
+			<tr><th>Name</th><td>GRAFFITI</td></tr>\
+			<tr><th>Position</th><td>(46.00, 31.50, 0.29)</td></tr>\
+			<tr><th>Rotation</th><td>(0, 64, 0)</td></tr>\
+			<tr><th>AI Index?</th><td>255</td></tr>\
+			<tr><th>HP?</th><td>0</td></tr>\
+		</table>\
+	');
+      point(objLayers[7], 44.558594, 35.371094, '#FFFFFF', '		<table>\
+			<tr><th>ID</th><td>7/6/13</td></tr>\
+			<tr><th>Category</th><td>FIXME</td></tr>\
+			<tr><th>Subcategory</th><td>FIXME</td></tr>\
+			<tr><th>Name</th><td>SHRUBBERY</td></tr>\
+			<tr><th>Position</th><td>(44.56, 35.37, 0.18)</td></tr>\
+			<tr><th>Rotation</th><td>(0, 0, 0)</td></tr>\
+			<tr><th>AI Index?</th><td>255</td></tr>\
+			<tr><th>HP?</th><td>10</td></tr>\
+		</table>\
+	');
+      point(objLayers[7], 43.589844, 42.027344, '#FFFFFF', '		<table>\
+			<tr><th>ID</th><td>7/6/13</td></tr>\
+			<tr><th>Category</th><td>FIXME</td></tr>\
+			<tr><th>Subcategory</th><td>FIXME</td></tr>\
+			<tr><th>Name</th><td>SHRUBBERY</td></tr>\
+			<tr><th>Position</th><td>(43.59, 42.03, 0.18)</td></tr>\
+			<tr><th>Rotation</th><td>(0, 0, 0)</td></tr>\
+			<tr><th>AI Index?</th><td>255</td></tr>\
+			<tr><th>HP?</th><td>10</td></tr>\
+		</table>\
+	');
+      point(objLayers[7], 41.402344, 45.308594, '#FFFFFF', '		<table>\
+			<tr><th>ID</th><td>7/6/1</td></tr>\
+			<tr><th>Category</th><td>FIXME</td></tr>\
+			<tr><th>Subcategory</th><td>FIXME</td></tr>\
+			<tr><th>Name</th><td>SHRUB</td></tr>\
+			<tr><th>Position</th><td>(41.40, 45.31, 0.62)</td></tr>\
+			<tr><th>Rotation</th><td>(0, 0, 0)</td></tr>\
+			<tr><th>AI Index?</th><td>255</td></tr>\
+			<tr><th>HP?</th><td>30</td></tr>\
+		</table>\
+	');
+      point(objLayers[7], 35.808594, 43.746094, '#FFFFFF', '		<table>\
+			<tr><th>ID</th><td>7/6/13</td></tr>\
+			<tr><th>Category</th><td>FIXME</td></tr>\
+			<tr><th>Subcategory</th><td>FIXME</td></tr>\
+			<tr><th>Name</th><td>SHRUBBERY</td></tr>\
+			<tr><th>Position</th><td>(35.81, 43.75, 0.46)</td></tr>\
+			<tr><th>Rotation</th><td>(0, 0, 0)</td></tr>\
+			<tr><th>AI Index?</th><td>255</td></tr>\
+			<tr><th>HP?</th><td>10</td></tr>\
+		</table>\
+	');
+      point(objLayers[7], 36.839844, 46.214844, '#FFFFFF', '		<table>\
+			<tr><th>ID</th><td>7/6/2</td></tr>\
+			<tr><th>Category</th><td>FIXME</td></tr>\
+			<tr><th>Subcategory</th><td>FIXME</td></tr>\
+			<tr><th>Name</th><td>GRASS</td></tr>\
+			<tr><th>Position</th><td>(36.84, 46.21, 0.73)</td></tr>\
+			<tr><th>Rotation</th><td>(0, 0, 0)</td></tr>\
+			<tr><th>AI Index?</th><td>255</td></tr>\
+			<tr><th>HP?</th><td>30</td></tr>\
+		</table>\
+	');
+      point(objLayers[12], 30.500000, 45.500000, '#FFFFFF', '		<table>\
+			<tr><th>ID</th><td>12/0/10</td></tr>\
+			<tr><th>Category</th><td>FIXME</td></tr>\
+			<tr><th>Subcategory</th><td>FIXME</td></tr>\
+			<tr><th>Name</th><td>REPULSOR</td></tr>\
+			<tr><th>Position</th><td>(30.50, 45.50, 0.25)</td></tr>\
+			<tr><th>Rotation</th><td>(0, 0, 0)</td></tr>\
+			<tr><th>AI Index?</th><td>255</td></tr>\
+			<tr><th>HP?</th><td>0</td></tr>\
+		</table>\
+	');
+      point(objLayers[7], 40.500000, 44.500000, '#FFFFFF', '		<table>\
+			<tr><th>ID</th><td>7/6/10</td></tr>\
+			<tr><th>Category</th><td>FIXME</td></tr>\
+			<tr><th>Subcategory</th><td>FIXME</td></tr>\
+			<tr><th>Name</th><td>PINE TREE</td></tr>\
+			<tr><th>Position</th><td>(40.50, 44.50, 0.25)</td></tr>\
+			<tr><th>Rotation</th><td>(0, 0, 0)</td></tr>\
+			<tr><th>AI Index?</th><td>255</td></tr>\
+			<tr><th>HP?</th><td>100</td></tr>\
+		</table>\
+	');
+      point(objLayers[14], 28.500000, 35.500000, '#800080', '		<table>\
+			<tr><th>ID</th><td>14/0/4</td></tr>\
+			<tr><th>Category</th><td>FIXME</td></tr>\
+			<tr><th>Subcategory</th><td>FIXME</td></tr>\
+			<tr><th>Name</th><td>PLANT MUTANT</td></tr>\
+			<tr><th>Position</th><td>(28.50, 35.50, 0.08)</td></tr>\
+			<tr><th>Rotation</th><td>(0, 65, 0)</td></tr>\
+			<tr><th>AI Index?</th><td>0</td></tr>\
+			<tr><th>HP?</th><td>115</td></tr>\
+		</table>\
+	');
+      point(objLayers[7], 36.996094, 37.496094, '#FFFFFF', '		<table>\
+			<tr><th>ID</th><td>7/6/1</td></tr>\
+			<tr><th>Category</th><td>FIXME</td></tr>\
+			<tr><th>Subcategory</th><td>FIXME</td></tr>\
+			<tr><th>Name</th><td>SHRUB</td></tr>\
+			<tr><th>Position</th><td>(37.00, 37.50, 0.62)</td></tr>\
+			<tr><th>Rotation</th><td>(0, 0, 0)</td></tr>\
+			<tr><th>AI Index?</th><td>255</td></tr>\
+			<tr><th>HP?</th><td>30</td></tr>\
+		</table>\
+	');
+      point(objLayers[7], 39.558594, 36.308594, '#FFFFFF', '		<table>\
+			<tr><th>ID</th><td>7/6/13</td></tr>\
+			<tr><th>Category</th><td>FIXME</td></tr>\
+			<tr><th>Subcategory</th><td>FIXME</td></tr>\
+			<tr><th>Name</th><td>SHRUBBERY</td></tr>\
+			<tr><th>Position</th><td>(39.56, 36.31, 0.62)</td></tr>\
+			<tr><th>Rotation</th><td>(0, 0, 0)</td></tr>\
+			<tr><th>AI Index?</th><td>255</td></tr>\
+			<tr><th>HP?</th><td>10</td></tr>\
+		</table>\
+	');
+      point(objLayers[7], 40.500000, 29.500000, '#FFFFFF', '		<table>\
+			<tr><th>ID</th><td>7/6/1</td></tr>\
+			<tr><th>Category</th><td>FIXME</td></tr>\
+			<tr><th>Subcategory</th><td>FIXME</td></tr>\
+			<tr><th>Name</th><td>SHRUB</td></tr>\
+			<tr><th>Position</th><td>(40.50, 29.50, 0.56)</td></tr>\
+			<tr><th>Rotation</th><td>(0, 0, 0)</td></tr>\
+			<tr><th>AI Index?</th><td>255</td></tr>\
+			<tr><th>HP?</th><td>30</td></tr>\
+		</table>\
+	');
+      point(objLayers[7], 42.500000, 26.500000, '#FFFFFF', '		<table>\
+			<tr><th>ID</th><td>7/6/10</td></tr>\
+			<tr><th>Category</th><td>FIXME</td></tr>\
+			<tr><th>Subcategory</th><td>FIXME</td></tr>\
+			<tr><th>Name</th><td>PINE TREE</td></tr>\
+			<tr><th>Position</th><td>(42.50, 26.50, 0.50)</td></tr>\
+			<tr><th>Rotation</th><td>(0, 0, 0)</td></tr>\
+			<tr><th>AI Index?</th><td>255</td></tr>\
+			<tr><th>HP?</th><td>100</td></tr>\
+		</table>\
+	');
+      point(objLayers[7], 37.500000, 28.500000, '#FFFFFF', '		<table>\
+			<tr><th>ID</th><td>7/1/5</td></tr>\
+			<tr><th>Category</th><td>FIXME</td></tr>\
+			<tr><th>Subcategory</th><td>FIXME</td></tr>\
+			<tr><th>Name</th><td>CHAIR</td></tr>\
+			<tr><th>Position</th><td>(37.50, 28.50, 0.66)</td></tr>\
+			<tr><th>Rotation</th><td>(2, 59, 71)</td></tr>\
+			<tr><th>AI Index?</th><td>255</td></tr>\
+			<tr><th>HP?</th><td>30</td></tr>\
+		</table>\
+	');
+      point(objLayers[7], 40.500000, 27.500000, '#FFFFFF', '		<table>\
+			<tr><th>ID</th><td>7/1/6</td></tr>\
+			<tr><th>Category</th><td>FIXME</td></tr>\
+			<tr><th>Subcategory</th><td>FIXME</td></tr>\
+			<tr><th>Name</th><td>TABLE</td></tr>\
+			<tr><th>Position</th><td>(40.50, 27.50, 0.45)</td></tr>\
+			<tr><th>Rotation</th><td>(44, 96, 12)</td></tr>\
+			<tr><th>AI Index?</th><td>255</td></tr>\
+			<tr><th>HP?</th><td>20</td></tr>\
+		</table>\
+	');
+      point(objLayers[7], 36.402344, 28.714844, '#FFFFFF', '		<table>\
+			<tr><th>ID</th><td>7/6/2</td></tr>\
+			<tr><th>Category</th><td>FIXME</td></tr>\
+			<tr><th>Subcategory</th><td>FIXME</td></tr>\
+			<tr><th>Name</th><td>GRASS</td></tr>\
+			<tr><th>Position</th><td>(36.40, 28.71, 0.67)</td></tr>\
+			<tr><th>Rotation</th><td>(0, 0, 0)</td></tr>\
+			<tr><th>AI Index?</th><td>255</td></tr>\
+			<tr><th>HP?</th><td>30</td></tr>\
+		</table>\
+	');
+      point(objLayers[7], 40.500000, 22.500000, '#FFFFFF', '		<table>\
+			<tr><th>ID</th><td>7/1/1</td></tr>\
+			<tr><th>Category</th><td>FIXME</td></tr>\
+			<tr><th>Subcategory</th><td>FIXME</td></tr>\
+			<tr><th>Name</th><td>DESK</td></tr>\
+			<tr><th>Position</th><td>(40.50, 22.50, 0.41)</td></tr>\
+			<tr><th>Rotation</th><td>(62, 48, 0)</td></tr>\
+			<tr><th>AI Index?</th><td>255</td></tr>\
+			<tr><th>HP?</th><td>50</td></tr>\
+		</table>\
+	');
+      point(objLayers[7], 31.589844, 42.339844, '#FFFFFF', '		<table>\
+			<tr><th>ID</th><td>7/4/0</td></tr>\
+			<tr><th>Category</th><td>FIXME</td></tr>\
+			<tr><th>Subcategory</th><td>FIXME</td></tr>\
+			<tr><th>Name</th><td>CONTROL PEDESTAL</td></tr>\
+			<tr><th>Position</th><td>(31.59, 42.34, 0.12)</td></tr>\
+			<tr><th>Rotation</th><td>(0, 68, 0)</td></tr>\
+			<tr><th>AI Index?</th><td>255</td></tr>\
+			<tr><th>HP?</th><td>10</td></tr>\
+		</table>\
+	');
+      point(objLayers[0], 19.500000, 19.500000, '#FF0000', '		<table>\
+			<tr><th>ID</th><td>0/4/2</td></tr>\
+			<tr><th>Category</th><td>FIXME</td></tr>\
+			<tr><th>Subcategory</th><td>FIXME</td></tr>\
+			<tr><th>Name</th><td>RW-45 ION RIFLE</td></tr>\
+			<tr><th>Position</th><td>(19.50, 19.50, 0.09)</td></tr>\
+			<tr><th>Rotation</th><td>(0, 0, 0)</td></tr>\
+			<tr><th>AI Index?</th><td>255</td></tr>\
+			<tr><th>HP?</th><td>30</td></tr>\
+		</table>\
+	');
+      point(objLayers[8], 38.746094, 22.433594, '#FFFFFF', '		<table>\
+			<tr><th>ID</th><td>8/1/1</td></tr>\
+			<tr><th>Category</th><td>FIXME</td></tr>\
+			<tr><th>Subcategory</th><td>FIXME</td></tr>\
+			<tr><th>Name</th><td>DEBRIS</td></tr>\
+			<tr><th>Position</th><td>(38.75, 22.43, 0.43)</td></tr>\
+			<tr><th>Rotation</th><td>(0, 0, 0)</td></tr>\
+			<tr><th>AI Index?</th><td>255</td></tr>\
+			<tr><th>HP?</th><td>200</td></tr>\
+		</table>\
+	');
+      point(objLayers[8], 45.000000, 31.746094, '#FFFFFF', '		<table>\
+			<tr><th>ID</th><td>8/2/1</td></tr>\
+			<tr><th>Category</th><td>FIXME</td></tr>\
+			<tr><th>Subcategory</th><td>FIXME</td></tr>\
+			<tr><th>Name</th><td>HUMAN CORPSE</td></tr>\
+			<tr><th>Position</th><td>(45.00, 31.75, 0.14)</td></tr>\
+			<tr><th>Rotation</th><td>(0, 0, 0)</td></tr>\
+			<tr><th>AI Index?</th><td>255</td></tr>\
+			<tr><th>HP?</th><td>30</td></tr>\
+		</table>\
+	');
+      point(objLayers[8], 42.500000, 40.500000, '#FFFFFF', '		<table>\
+			<tr><th>ID</th><td>8/2/13</td></tr>\
+			<tr><th>Category</th><td>FIXME</td></tr>\
+			<tr><th>Subcategory</th><td>FIXME</td></tr>\
+			<tr><th>Name</th><td>SEVERED HEAD</td></tr>\
+			<tr><th>Position</th><td>(42.50, 40.50, 0.11)</td></tr>\
+			<tr><th>Rotation</th><td>(0, 0, 0)</td></tr>\
+			<tr><th>AI Index?</th><td>255</td></tr>\
+			<tr><th>HP?</th><td>10</td></tr>\
+		</table>\
+	');
+      point(objLayers[8], 48.152344, 23.683594, '#FFFFFF', '		<table>\
+			<tr><th>ID</th><td>8/2/7</td></tr>\
+			<tr><th>Category</th><td>FIXME</td></tr>\
+			<tr><th>Subcategory</th><td>FIXME</td></tr>\
+			<tr><th>Name</th><td>HUMAN CORPSE</td></tr>\
+			<tr><th>Position</th><td>(48.15, 23.68, 0.05)</td></tr>\
+			<tr><th>Rotation</th><td>(0, 0, 0)</td></tr>\
+			<tr><th>AI Index?</th><td>255</td></tr>\
+			<tr><th>HP?</th><td>30</td></tr>\
+		</table>\
+	');
+      point(objLayers[8], 34.500000, 46.500000, '#FFFFFF', '		<table>\
+			<tr><th>ID</th><td>8/2/3</td></tr>\
+			<tr><th>Category</th><td>FIXME</td></tr>\
+			<tr><th>Subcategory</th><td>FIXME</td></tr>\
+			<tr><th>Name</th><td>HUMAN CORPSE</td></tr>\
+			<tr><th>Position</th><td>(34.50, 46.50, 0.73)</td></tr>\
+			<tr><th>Rotation</th><td>(0, 0, 0)</td></tr>\
+			<tr><th>AI Index?</th><td>255</td></tr>\
+			<tr><th>HP?</th><td>30</td></tr>\
+		</table>\
+	');
+      point(objLayers[14], 40.996094, 22.746094, '#800080', '		<table>\
+			<tr><th>ID</th><td>14/1/6</td></tr>\
+			<tr><th>Category</th><td>FIXME</td></tr>\
+			<tr><th>Subcategory</th><td>FIXME</td></tr>\
+			<tr><th>Name</th><td>SECURITY-1 ROBOT</td></tr>\
+			<tr><th>Position</th><td>(41.00, 22.75, 0.53)</td></tr>\
+			<tr><th>Rotation</th><td>(0, 66, 0)</td></tr>\
+			<tr><th>AI Index?</th><td>12</td></tr>\
+			<tr><th>HP?</th><td>302</td></tr>\
+		</table>\
+	');
+      point(objLayers[12], 40.500000, 29.500000, '#FFFFFF', '		<table>\
+			<tr><th>ID</th><td>12/2/4</td></tr>\
+			<tr><th>Category</th><td>FIXME</td></tr>\
+			<tr><th>Subcategory</th><td>FIXME</td></tr>\
+			<tr><th>Name</th><td>MUSIC VOODOO MARKER</td></tr>\
+			<tr><th>Position</th><td>(40.50, 29.50, 0.56)</td></tr>\
+			<tr><th>Rotation</th><td>(0, 0, 0)</td></tr>\
+			<tr><th>AI Index?</th><td>255</td></tr>\
+			<tr><th>HP?</th><td>0</td></tr>\
+		</table>\
+	');
+      point(objLayers[14], 27.136719, 28.246094, '#800080', '		<table>\
+			<tr><th>ID</th><td>14/0/8</td></tr>\
+			<tr><th>Category</th><td>FIXME</td></tr>\
+			<tr><th>Subcategory</th><td>FIXME</td></tr>\
+			<tr><th>Name</th><td>HUMANOID MUTANT</td></tr>\
+			<tr><th>Position</th><td>(27.14, 28.25, 0.39)</td></tr>\
+			<tr><th>Rotation</th><td>(0, 130, 0)</td></tr>\
+			<tr><th>AI Index?</th><td>7</td></tr>\
+			<tr><th>HP?</th><td>140</td></tr>\
+		</table>\
+	');
+      point(objLayers[14], 30.500000, 39.500000, '#800080', '		<table>\
+			<tr><th>ID</th><td>14/0/4</td></tr>\
+			<tr><th>Category</th><td>FIXME</td></tr>\
+			<tr><th>Subcategory</th><td>FIXME</td></tr>\
+			<tr><th>Name</th><td>PLANT MUTANT</td></tr>\
+			<tr><th>Position</th><td>(30.50, 39.50, 0.68)</td></tr>\
+			<tr><th>Rotation</th><td>(0, 64, 0)</td></tr>\
+			<tr><th>AI Index?</th><td>11</td></tr>\
+			<tr><th>HP?</th><td>86</td></tr>\
+		</table>\
+	');
+      point(objLayers[12], 39.500000, 23.500000, '#FFFFFF', '		<table>\
+			<tr><th>ID</th><td>12/0/1</td></tr>\
+			<tr><th>Category</th><td>FIXME</td></tr>\
+			<tr><th>Subcategory</th><td>FIXME</td></tr>\
+			<tr><th>Name</th><td>NULL TRIGGER</td></tr>\
+			<tr><th>Position</th><td>(39.50, 23.50, 0.50)</td></tr>\
+			<tr><th>Rotation</th><td>(0, 0, 0)</td></tr>\
+			<tr><th>AI Index?</th><td>255</td></tr>\
+			<tr><th>HP?</th><td>0</td></tr>\
+		</table>\
+	');
+      point(objLayers[7], 31.500000, 29.500000, '#FFFFFF', '		<table>\
+			<tr><th>ID</th><td>7/6/1</td></tr>\
+			<tr><th>Category</th><td>FIXME</td></tr>\
+			<tr><th>Subcategory</th><td>FIXME</td></tr>\
+			<tr><th>Name</th><td>SHRUB</td></tr>\
+			<tr><th>Position</th><td>(31.50, 29.50, 0.37)</td></tr>\
+			<tr><th>Rotation</th><td>(0, 0, 0)</td></tr>\
+			<tr><th>AI Index?</th><td>255</td></tr>\
+			<tr><th>HP?</th><td>30</td></tr>\
+		</table>\
+	');
+      point(objLayers[7], 25.433594, 28.527344, '#FFFFFF', '		<table>\
+			<tr><th>ID</th><td>7/6/13</td></tr>\
+			<tr><th>Category</th><td>FIXME</td></tr>\
+			<tr><th>Subcategory</th><td>FIXME</td></tr>\
+			<tr><th>Name</th><td>SHRUBBERY</td></tr>\
+			<tr><th>Position</th><td>(25.43, 28.53, 0.43)</td></tr>\
+			<tr><th>Rotation</th><td>(0, 0, 0)</td></tr>\
+			<tr><th>AI Index?</th><td>255</td></tr>\
+			<tr><th>HP?</th><td>10</td></tr>\
+		</table>\
+	');
+      point(objLayers[7], 30.500000, 24.500000, '#FFFFFF', '		<table>\
+			<tr><th>ID</th><td>7/6/10</td></tr>\
+			<tr><th>Category</th><td>FIXME</td></tr>\
+			<tr><th>Subcategory</th><td>FIXME</td></tr>\
+			<tr><th>Name</th><td>PINE TREE</td></tr>\
+			<tr><th>Position</th><td>(30.50, 24.50, 0.62)</td></tr>\
+			<tr><th>Rotation</th><td>(0, 0, 0)</td></tr>\
+			<tr><th>AI Index?</th><td>255</td></tr>\
+			<tr><th>HP?</th><td>100</td></tr>\
+		</table>\
+	');
+      point(objLayers[7], 31.500000, 22.500000, '#FFFFFF', '		<table>\
+			<tr><th>ID</th><td>7/6/13</td></tr>\
+			<tr><th>Category</th><td>FIXME</td></tr>\
+			<tr><th>Subcategory</th><td>FIXME</td></tr>\
+			<tr><th>Name</th><td>SHRUBBERY</td></tr>\
+			<tr><th>Position</th><td>(31.50, 22.50, 0.70)</td></tr>\
+			<tr><th>Rotation</th><td>(0, 0, 0)</td></tr>\
+			<tr><th>AI Index?</th><td>255</td></tr>\
+			<tr><th>HP?</th><td>10</td></tr>\
+		</table>\
+	');
+      point(objLayers[14], 28.500000, 23.488281, '#800080', '		<table>\
+			<tr><th>ID</th><td>14/0/4</td></tr>\
+			<tr><th>Category</th><td>FIXME</td></tr>\
+			<tr><th>Subcategory</th><td>FIXME</td></tr>\
+			<tr><th>Name</th><td>PLANT MUTANT</td></tr>\
+			<tr><th>Position</th><td>(28.50, 23.49, 0.68)</td></tr>\
+			<tr><th>Rotation</th><td>(0, 66, 0)</td></tr>\
+			<tr><th>AI Index?</th><td>10</td></tr>\
+			<tr><th>HP?</th><td>86</td></tr>\
+		</table>\
+	');
+      point(objLayers[14], 26.121094, 28.500000, '#800080', '		<table>\
+			<tr><th>ID</th><td>14/0/4</td></tr>\
+			<tr><th>Category</th><td>FIXME</td></tr>\
+			<tr><th>Subcategory</th><td>FIXME</td></tr>\
+			<tr><th>Name</th><td>PLANT MUTANT</td></tr>\
+			<tr><th>Position</th><td>(26.12, 28.50, 0.39)</td></tr>\
+			<tr><th>Rotation</th><td>(0, 66, 0)</td></tr>\
+			<tr><th>AI Index?</th><td>9</td></tr>\
+			<tr><th>HP?</th><td>86</td></tr>\
+		</table>\
+	');
+      point(objLayers[14], 36.500000, 44.496094, '#800080', '		<table>\
+			<tr><th>ID</th><td>14/0/3</td></tr>\
+			<tr><th>Category</th><td>FIXME</td></tr>\
+			<tr><th>Subcategory</th><td>FIXME</td></tr>\
+			<tr><th>Name</th><td>AVIAN MUTANT</td></tr>\
+			<tr><th>Position</th><td>(36.50, 44.50, 0.62)</td></tr>\
+			<tr><th>Rotation</th><td>(0, 66, 0)</td></tr>\
+			<tr><th>AI Index?</th><td>8</td></tr>\
+			<tr><th>HP?</th><td>218</td></tr>\
+		</table>\
+	');
+      point(objLayers[7], 29.500000, 35.500000, '#FFFFFF', '		<table>\
+			<tr><th>ID</th><td>7/7/0</td></tr>\
+			<tr><th>Category</th><td>FIXME</td></tr>\
+			<tr><th>Subcategory</th><td>FIXME</td></tr>\
+			<tr><th>Name</th><td>BRIDGE</td></tr>\
+			<tr><th>Position</th><td>(29.50, 35.50, 0.53)</td></tr>\
+			<tr><th>Rotation</th><td>(0, 0, 0)</td></tr>\
+			<tr><th>AI Index?</th><td>255</td></tr>\
+			<tr><th>HP?</th><td>200</td></tr>\
+		</table>\
+	');
+      point(objLayers[4], 31.871094, 42.871094, '#00FFFF', '		<table>\
+			<tr><th>ID</th><td>4/0/2</td></tr>\
+			<tr><th>Category</th><td>FIXME</td></tr>\
+			<tr><th>Subcategory</th><td>FIXME</td></tr>\
+			<tr><th>Name</th><td>BERSERK COMBAT BOOSTER</td></tr>\
+			<tr><th>Position</th><td>(31.87, 42.87, 0.16)</td></tr>\
+			<tr><th>Rotation</th><td>(0, 0, 0)</td></tr>\
+			<tr><th>AI Index?</th><td>255</td></tr>\
+			<tr><th>HP?</th><td>20</td></tr>\
+		</table>\
+	');
+      point(objLayers[4], 31.777344, 42.714844, '#00FFFF', '		<table>\
+			<tr><th>ID</th><td>4/0/0</td></tr>\
+			<tr><th>Category</th><td>FIXME</td></tr>\
+			<tr><th>Subcategory</th><td>FIXME</td></tr>\
+			<tr><th>Name</th><td>STAMINUP STIMULANT</td></tr>\
+			<tr><th>Position</th><td>(31.78, 42.71, 0.16)</td></tr>\
+			<tr><th>Rotation</th><td>(0, 0, 0)</td></tr>\
+			<tr><th>AI Index?</th><td>255</td></tr>\
+			<tr><th>HP?</th><td>20</td></tr>\
+		</table>\
+	');
+      point(objLayers[1], 28.496094, 41.339844, '#FF8080', '		<table>\
+			<tr><th>ID</th><td>1/0/0</td></tr>\
+			<tr><th>Category</th><td>FIXME</td></tr>\
+			<tr><th>Subcategory</th><td>FIXME</td></tr>\
+			<tr><th>Name</th><td>ML STANDARD ROUNDS</td></tr>\
+			<tr><th>Position</th><td>(28.50, 41.34, 0.02)</td></tr>\
+			<tr><th>Rotation</th><td>(0, 0, 0)</td></tr>\
+			<tr><th>AI Index?</th><td>255</td></tr>\
+			<tr><th>HP?</th><td>15</td></tr>\
+		</table>\
+	');
+      point(objLayers[1], 27.746094, 41.777344, '#FF8080', '		<table>\
+			<tr><th>ID</th><td>1/2/2</td></tr>\
+			<tr><th>Category</th><td>FIXME</td></tr>\
+			<tr><th>Subcategory</th><td>FIXME</td></tr>\
+			<tr><th>Name</th><td>DC RUBBER SLUGS</td></tr>\
+			<tr><th>Position</th><td>(27.75, 41.78, 0.02)</td></tr>\
+			<tr><th>Rotation</th><td>(0, 0, 0)</td></tr>\
+			<tr><th>AI Index?</th><td>255</td></tr>\
+			<tr><th>HP?</th><td>15</td></tr>\
+		</table>\
+	');
+      point(objLayers[8], 31.121094, 42.246094, '#FFFFFF', '		<table>\
+			<tr><th>ID</th><td>8/0/4</td></tr>\
+			<tr><th>Category</th><td>FIXME</td></tr>\
+			<tr><th>Subcategory</th><td>FIXME</td></tr>\
+			<tr><th>Name</th><td>FIRE EXTINGUISHER</td></tr>\
+			<tr><th>Position</th><td>(31.12, 42.25, 0.18)</td></tr>\
+			<tr><th>Rotation</th><td>(0, 0, 0)</td></tr>\
+			<tr><th>AI Index?</th><td>255</td></tr>\
+			<tr><th>HP?</th><td>10</td></tr>\
+		</table>\
+	');
+      point(objLayers[8], 31.496094, 43.652344, '#FFFFFF', '		<table>\
+			<tr><th>ID</th><td>8/0/7</td></tr>\
+			<tr><th>Category</th><td>FIXME</td></tr>\
+			<tr><th>Subcategory</th><td>FIXME</td></tr>\
+			<tr><th>Name</th><td>BRIEFCASE</td></tr>\
+			<tr><th>Position</th><td>(31.50, 43.65, 0.18)</td></tr>\
+			<tr><th>Rotation</th><td>(0, 0, 0)</td></tr>\
+			<tr><th>AI Index?</th><td>255</td></tr>\
+			<tr><th>HP?</th><td>15</td></tr>\
+		</table>\
+	');
+      point(objLayers[12], 23.500000, 34.500000, '#FFFFFF', '		<table>\
+			<tr><th>ID</th><td>12/0/3</td></tr>\
+			<tr><th>Category</th><td>FIXME</td></tr>\
+			<tr><th>Subcategory</th><td>FIXME</td></tr>\
+			<tr><th>Name</th><td>PLAYER DEATH TRIGGER</td></tr>\
+			<tr><th>Position</th><td>(23.50, 34.50, 0.12)</td></tr>\
+			<tr><th>Rotation</th><td>(0, 0, 0)</td></tr>\
+			<tr><th>AI Index?</th><td>255</td></tr>\
+			<tr><th>HP?</th><td>0</td></tr>\
+		</table>\
+	');
+      point(objLayers[8], 29.683594, 42.402344, '#FFFFFF', '		<table>\
+			<tr><th>ID</th><td>8/2/12</td></tr>\
+			<tr><th>Category</th><td>FIXME</td></tr>\
+			<tr><th>Subcategory</th><td>FIXME</td></tr>\
+			<tr><th>Name</th><td>SEVERED LIMB</td></tr>\
+			<tr><th>Position</th><td>(29.68, 42.40, 0.19)</td></tr>\
+			<tr><th>Rotation</th><td>(0, 0, 0)</td></tr>\
+			<tr><th>AI Index?</th><td>255</td></tr>\
+			<tr><th>HP?</th><td>10</td></tr>\
+		</table>\
+	');
+      point(objLayers[8], 30.683594, 40.464844, '#FFFFFF', '		<table>\
+			<tr><th>ID</th><td>8/2/7</td></tr>\
+			<tr><th>Category</th><td>FIXME</td></tr>\
+			<tr><th>Subcategory</th><td>FIXME</td></tr>\
+			<tr><th>Name</th><td>HUMAN CORPSE</td></tr>\
+			<tr><th>Position</th><td>(30.68, 40.46, 0.65)</td></tr>\
+			<tr><th>Rotation</th><td>(0, 0, 0)</td></tr>\
+			<tr><th>AI Index?</th><td>255</td></tr>\
+			<tr><th>HP?</th><td>30</td></tr>\
+		</table>\
+	');
+      point(objLayers[8], 34.277344, 26.902344, '#FFFFFF', '		<table>\
+			<tr><th>ID</th><td>8/2/0</td></tr>\
+			<tr><th>Category</th><td>FIXME</td></tr>\
+			<tr><th>Subcategory</th><td>FIXME</td></tr>\
+			<tr><th>Name</th><td>HUMAN CORPSE</td></tr>\
+			<tr><th>Position</th><td>(34.28, 26.90, 0.23)</td></tr>\
+			<tr><th>Rotation</th><td>(0, 0, 0)</td></tr>\
+			<tr><th>AI Index?</th><td>255</td></tr>\
+			<tr><th>HP?</th><td>30</td></tr>\
+		</table>\
+	');
+      point(objLayers[8], 34.246094, 26.808594, '#FFFFFF', '		<table>\
+			<tr><th>ID</th><td>8/6/5</td></tr>\
+			<tr><th>Category</th><td>FIXME</td></tr>\
+			<tr><th>Subcategory</th><td>FIXME</td></tr>\
+			<tr><th>Name</th><td>BLOOD STAIN</td></tr>\
+			<tr><th>Position</th><td>(34.25, 26.81, 0.17)</td></tr>\
+			<tr><th>Rotation</th><td>(189, 0, 0)</td></tr>\
+			<tr><th>AI Index?</th><td>255</td></tr>\
+			<tr><th>HP?</th><td>0</td></tr>\
+		</table>\
+	');
+      point(objLayers[8], 33.683594, 32.527344, '#FFFFFF', '		<table>\
+			<tr><th>ID</th><td>8/2/11</td></tr>\
+			<tr><th>Category</th><td>FIXME</td></tr>\
+			<tr><th>Subcategory</th><td>FIXME</td></tr>\
+			<tr><th>Name</th><td>SKULL</td></tr>\
+			<tr><th>Position</th><td>(33.68, 32.53, 0.55)</td></tr>\
+			<tr><th>Rotation</th><td>(0, 0, 0)</td></tr>\
+			<tr><th>AI Index?</th><td>255</td></tr>\
+			<tr><th>HP?</th><td>10</td></tr>\
+		</table>\
+	');
+      point(objLayers[1], 33.496094, 32.621094, '#FF8080', '		<table>\
+			<tr><th>ID</th><td>1/6/0</td></tr>\
+			<tr><th>Category</th><td>FIXME</td></tr>\
+			<tr><th>Subcategory</th><td>FIXME</td></tr>\
+			<tr><th>Name</th><td>SB MAG PULSE CART</td></tr>\
+			<tr><th>Position</th><td>(33.50, 32.62, 0.55)</td></tr>\
+			<tr><th>Rotation</th><td>(0, 0, 0)</td></tr>\
+			<tr><th>AI Index?</th><td>255</td></tr>\
+			<tr><th>HP?</th><td>15</td></tr>\
+		</table>\
+	');
+      point(objLayers[1], 43.621094, 20.339844, '#FF8080', '		<table>\
+			<tr><th>ID</th><td>1/0/1</td></tr>\
+			<tr><th>Category</th><td>FIXME</td></tr>\
+			<tr><th>Subcategory</th><td>FIXME</td></tr>\
+			<tr><th>Name</th><td>ML TEFLON COATED ROUNDS</td></tr>\
+			<tr><th>Position</th><td>(43.62, 20.34, 0.43)</td></tr>\
+			<tr><th>Rotation</th><td>(0, 0, 0)</td></tr>\
+			<tr><th>AI Index?</th><td>255</td></tr>\
+			<tr><th>HP?</th><td>15</td></tr>\
+		</table>\
+	');
+      point(objLayers[1], 39.652344, 41.996094, '#FF8080', '		<table>\
+			<tr><th>ID</th><td>1/1/0</td></tr>\
+			<tr><th>Category</th><td>FIXME</td></tr>\
+			<tr><th>Subcategory</th><td>FIXME</td></tr>\
+			<tr><th>Name</th><td>SV NEEDLE DARTS</td></tr>\
+			<tr><th>Position</th><td>(39.65, 42.00, 0.18)</td></tr>\
+			<tr><th>Rotation</th><td>(0, 0, 0)</td></tr>\
+			<tr><th>AI Index?</th><td>255</td></tr>\
+			<tr><th>HP?</th><td>15</td></tr>\
+		</table>\
+	');
+      point(objLayers[1], 31.527344, 46.683594, '#FF8080', '		<table>\
+			<tr><th>ID</th><td>1/1/1</td></tr>\
+			<tr><th>Category</th><td>FIXME</td></tr>\
+			<tr><th>Subcategory</th><td>FIXME</td></tr>\
+			<tr><th>Name</th><td>SV TRANQ DARTS</td></tr>\
+			<tr><th>Position</th><td>(31.53, 46.68, 0.68)</td></tr>\
+			<tr><th>Rotation</th><td>(0, 0, 0)</td></tr>\
+			<tr><th>AI Index?</th><td>255</td></tr>\
+			<tr><th>HP?</th><td>15</td></tr>\
+		</table>\
+	');
+      point(objLayers[1], 31.214844, 46.871094, '#FF8080', '		<table>\
+			<tr><th>ID</th><td>1/1/1</td></tr>\
+			<tr><th>Category</th><td>FIXME</td></tr>\
+			<tr><th>Subcategory</th><td>FIXME</td></tr>\
+			<tr><th>Name</th><td>SV TRANQ DARTS</td></tr>\
+			<tr><th>Position</th><td>(31.21, 46.87, 0.68)</td></tr>\
+			<tr><th>Rotation</th><td>(0, 0, 0)</td></tr>\
+			<tr><th>AI Index?</th><td>255</td></tr>\
+			<tr><th>HP?</th><td>15</td></tr>\
+		</table>\
+	');
+      point(objLayers[7], 27.000000, 35.496094, '#FFFFFF', '		<table>\
+			<tr><th>ID</th><td>7/2/9</td></tr>\
+			<tr><th>Category</th><td>FIXME</td></tr>\
+			<tr><th>Subcategory</th><td>FIXME</td></tr>\
+			<tr><th>Name</th><td>SCREEN</td></tr>\
+			<tr><th>Position</th><td>(27.00, 35.50, 0.12)</td></tr>\
+			<tr><th>Rotation</th><td>(0, 192, 0)</td></tr>\
+			<tr><th>AI Index?</th><td>255</td></tr>\
+			<tr><th>HP?</th><td>100</td></tr>\
+		</table>\
+	');
+      point(objLayers[12], 39.500000, 22.500000, '#FFFFFF', '		<table>\
+			<tr><th>ID</th><td>12/0/1</td></tr>\
+			<tr><th>Category</th><td>FIXME</td></tr>\
+			<tr><th>Subcategory</th><td>FIXME</td></tr>\
+			<tr><th>Name</th><td>NULL TRIGGER</td></tr>\
+			<tr><th>Position</th><td>(39.50, 22.50, 0.50)</td></tr>\
+			<tr><th>Rotation</th><td>(0, 0, 0)</td></tr>\
+			<tr><th>AI Index?</th><td>255</td></tr>\
+			<tr><th>HP?</th><td>0</td></tr>\
+		</table>\
+	');
+      point(objLayers[7], 27.500000, 36.500000, '#FFFFFF', '		<table>\
+			<tr><th>ID</th><td>7/5/6</td></tr>\
+			<tr><th>Category</th><td>FIXME</td></tr>\
+			<tr><th>Subcategory</th><td>FIXME</td></tr>\
+			<tr><th>Name</th><td>CONTROL PEDESTAL</td></tr>\
+			<tr><th>Position</th><td>(27.50, 36.50, 0.00)</td></tr>\
+			<tr><th>Rotation</th><td>(0, 224, 0)</td></tr>\
+			<tr><th>AI Index?</th><td>255</td></tr>\
+			<tr><th>HP?</th><td>15</td></tr>\
+		</table>\
+	');
+      point(objLayers[7], 28.496094, 36.996094, '#FFFFFF', '		<table>\
+			<tr><th>ID</th><td>7/2/9</td></tr>\
+			<tr><th>Category</th><td>FIXME</td></tr>\
+			<tr><th>Subcategory</th><td>FIXME</td></tr>\
+			<tr><th>Name</th><td>SCREEN</td></tr>\
+			<tr><th>Position</th><td>(28.50, 37.00, 0.12)</td></tr>\
+			<tr><th>Rotation</th><td>(0, 0, 0)</td></tr>\
+			<tr><th>AI Index?</th><td>255</td></tr>\
+			<tr><th>HP?</th><td>100</td></tr>\
+		</table>\
+	');
+      point(objLayers[7], 25.500000, 35.500000, '#FFFFFF', '		<table>\
+			<tr><th>ID</th><td>7/2/3</td></tr>\
+			<tr><th>Category</th><td>FIXME</td></tr>\
+			<tr><th>Subcategory</th><td>FIXME</td></tr>\
+			<tr><th>Name</th><td>WORDS</td></tr>\
+			<tr><th>Position</th><td>(25.50, 35.50, 0.30)</td></tr>\
+			<tr><th>Rotation</th><td>(0, 224, 0)</td></tr>\
+			<tr><th>AI Index?</th><td>255</td></tr>\
+			<tr><th>HP?</th><td>0</td></tr>\
+		</table>\
+	');
+      point(objLayers[12], 39.500000, 23.500000, '#FFFFFF', '		<table>\
+			<tr><th>ID</th><td>12/0/8</td></tr>\
+			<tr><th>Category</th><td>FIXME</td></tr>\
+			<tr><th>Subcategory</th><td>FIXME</td></tr>\
+			<tr><th>Name</th><td>LEVEL ENTRY TRIGGER</td></tr>\
+			<tr><th>Position</th><td>(39.50, 23.50, 0.50)</td></tr>\
+			<tr><th>Rotation</th><td>(0, 0, 0)</td></tr>\
+			<tr><th>AI Index?</th><td>255</td></tr>\
+			<tr><th>HP?</th><td>0</td></tr>\
+		</table>\
+	');
+      point(objLayers[12], 29.500000, 43.500000, '#FFFFFF', '		<table>\
+			<tr><th>ID</th><td>12/0/1</td></tr>\
+			<tr><th>Category</th><td>FIXME</td></tr>\
+			<tr><th>Subcategory</th><td>FIXME</td></tr>\
+			<tr><th>Name</th><td>NULL TRIGGER</td></tr>\
+			<tr><th>Position</th><td>(29.50, 43.50, 0.25)</td></tr>\
+			<tr><th>Rotation</th><td>(0, 0, 0)</td></tr>\
+			<tr><th>AI Index?</th><td>255</td></tr>\
+			<tr><th>HP?</th><td>0</td></tr>\
+		</table>\
+	');
+      point(objLayers[12], 27.500000, 36.500000, '#FFFFFF', '		<table>\
+			<tr><th>ID</th><td>12/0/1</td></tr>\
+			<tr><th>Category</th><td>FIXME</td></tr>\
+			<tr><th>Subcategory</th><td>FIXME</td></tr>\
+			<tr><th>Name</th><td>NULL TRIGGER</td></tr>\
+			<tr><th>Position</th><td>(27.50, 36.50, 0.12)</td></tr>\
+			<tr><th>Rotation</th><td>(0, 0, 0)</td></tr>\
+			<tr><th>AI Index?</th><td>255</td></tr>\
+			<tr><th>HP?</th><td>0</td></tr>\
+		</table>\
+	');
+      point(objLayers[12], 29.500000, 43.500000, '#FFFFFF', '		<table>\
+			<tr><th>ID</th><td>12/0/1</td></tr>\
+			<tr><th>Category</th><td>FIXME</td></tr>\
+			<tr><th>Subcategory</th><td>FIXME</td></tr>\
+			<tr><th>Name</th><td>NULL TRIGGER</td></tr>\
+			<tr><th>Position</th><td>(29.50, 43.50, 0.25)</td></tr>\
+			<tr><th>Rotation</th><td>(0, 0, 0)</td></tr>\
+			<tr><th>AI Index?</th><td>255</td></tr>\
+			<tr><th>HP?</th><td>0</td></tr>\
+		</table>\
+	');
+      point(objLayers[7], 40.746094, 29.527344, '#FFFFFF', '		<table>\
+			<tr><th>ID</th><td>7/0/3</td></tr>\
+			<tr><th>Category</th><td>FIXME</td></tr>\
+			<tr><th>Subcategory</th><td>FIXME</td></tr>\
+			<tr><th>Name</th><td>STEREO</td></tr>\
+			<tr><th>Position</th><td>(40.75, 29.53, 0.44)</td></tr>\
+			<tr><th>Rotation</th><td>(0, 192, 0)</td></tr>\
+			<tr><th>AI Index?</th><td>255</td></tr>\
+			<tr><th>HP?</th><td>0</td></tr>\
+		</table>\
+	');
+      point(objLayers[7], 35.902344, 24.339844, '#FFFFFF', '		<table>\
+			<tr><th>ID</th><td>7/5/4</td></tr>\
+			<tr><th>Category</th><td>FIXME</td></tr>\
+			<tr><th>Subcategory</th><td>FIXME</td></tr>\
+			<tr><th>Name</th><td>CAMERA</td></tr>\
+			<tr><th>Position</th><td>(35.90, 24.34, 0.89)</td></tr>\
+			<tr><th>Rotation</th><td>(0, 48, 232)</td></tr>\
+			<tr><th>AI Index?</th><td>255</td></tr>\
+			<tr><th>HP?</th><td>15</td></tr>\
+		</table>\
+	');
+      point(objLayers[7], 35.808594, 24.000000, '#FFFFFF', '		<table>\
+			<tr><th>ID</th><td>7/5/4</td></tr>\
+			<tr><th>Category</th><td>FIXME</td></tr>\
+			<tr><th>Subcategory</th><td>FIXME</td></tr>\
+			<tr><th>Name</th><td>CAMERA</td></tr>\
+			<tr><th>Position</th><td>(35.81, 24.00, 0.90)</td></tr>\
+			<tr><th>Rotation</th><td>(0, 14, 232)</td></tr>\
+			<tr><th>AI Index?</th><td>255</td></tr>\
+			<tr><th>HP?</th><td>15</td></tr>\
+		</table>\
+	');
+      point(objLayers[7], 43.933594, 28.089844, '#FFFFFF', '		<table>\
+			<tr><th>ID</th><td>7/5/4</td></tr>\
+			<tr><th>Category</th><td>FIXME</td></tr>\
+			<tr><th>Subcategory</th><td>FIXME</td></tr>\
+			<tr><th>Name</th><td>CAMERA</td></tr>\
+			<tr><th>Position</th><td>(43.93, 28.09, 0.80)</td></tr>\
+			<tr><th>Rotation</th><td>(0, 32, 232)</td></tr>\
+			<tr><th>AI Index?</th><td>255</td></tr>\
+			<tr><th>HP?</th><td>15</td></tr>\
+		</table>\
+	');
+      point(objLayers[7], 38.152344, 43.152344, '#FFFFFF', '		<table>\
+			<tr><th>ID</th><td>7/5/4</td></tr>\
+			<tr><th>Category</th><td>FIXME</td></tr>\
+			<tr><th>Subcategory</th><td>FIXME</td></tr>\
+			<tr><th>Name</th><td>CAMERA</td></tr>\
+			<tr><th>Position</th><td>(38.15, 43.15, 0.63)</td></tr>\
+			<tr><th>Rotation</th><td>(0, 96, 232)</td></tr>\
+			<tr><th>AI Index?</th><td>255</td></tr>\
+			<tr><th>HP?</th><td>15</td></tr>\
+		</table>\
+	');
+      point(objLayers[7], 31.089844, 46.933594, '#FFFFFF', '		<table>\
+			<tr><th>ID</th><td>7/5/4</td></tr>\
+			<tr><th>Category</th><td>FIXME</td></tr>\
+			<tr><th>Subcategory</th><td>FIXME</td></tr>\
+			<tr><th>Name</th><td>CAMERA</td></tr>\
+			<tr><th>Position</th><td>(31.09, 46.93, 0.91)</td></tr>\
+			<tr><th>Rotation</th><td>(0, 140, 242)</td></tr>\
+			<tr><th>AI Index?</th><td>255</td></tr>\
+			<tr><th>HP?</th><td>15</td></tr>\
+		</table>\
+	');
+      point(objLayers[7], 39.839844, 32.183594, '#FFFFFF', '		<table>\
+			<tr><th>ID</th><td>7/5/4</td></tr>\
+			<tr><th>Category</th><td>FIXME</td></tr>\
+			<tr><th>Subcategory</th><td>FIXME</td></tr>\
+			<tr><th>Name</th><td>CAMERA</td></tr>\
+			<tr><th>Position</th><td>(39.84, 32.18, 0.74)</td></tr>\
+			<tr><th>Rotation</th><td>(0, 32, 247)</td></tr>\
+			<tr><th>AI Index?</th><td>255</td></tr>\
+			<tr><th>HP?</th><td>15</td></tr>\
+		</table>\
+	');
+      point(objLayers[7], 33.152344, 37.871094, '#FFFFFF', '		<table>\
+			<tr><th>ID</th><td>7/5/4</td></tr>\
+			<tr><th>Category</th><td>FIXME</td></tr>\
+			<tr><th>Subcategory</th><td>FIXME</td></tr>\
+			<tr><th>Name</th><td>CAMERA</td></tr>\
+			<tr><th>Position</th><td>(33.15, 37.87, 0.76)</td></tr>\
+			<tr><th>Rotation</th><td>(0, 160, 242)</td></tr>\
+			<tr><th>AI Index?</th><td>255</td></tr>\
+			<tr><th>HP?</th><td>15</td></tr>\
+		</table>\
+	');
+      point(objLayers[7], 33.183594, 32.121094, '#FFFFFF', '		<table>\
+			<tr><th>ID</th><td>7/5/4</td></tr>\
+			<tr><th>Category</th><td>FIXME</td></tr>\
+			<tr><th>Subcategory</th><td>FIXME</td></tr>\
+			<tr><th>Name</th><td>CAMERA</td></tr>\
+			<tr><th>Position</th><td>(33.18, 32.12, 0.74)</td></tr>\
+			<tr><th>Rotation</th><td>(0, 96, 242)</td></tr>\
+			<tr><th>AI Index?</th><td>255</td></tr>\
+			<tr><th>HP?</th><td>15</td></tr>\
+		</table>\
+	');
+      point(objLayers[12], 45.500000, 29.500000, '#FFFFFF', '		<table>\
+			<tr><th>ID</th><td>12/0/1</td></tr>\
+			<tr><th>Category</th><td>FIXME</td></tr>\
+			<tr><th>Subcategory</th><td>FIXME</td></tr>\
+			<tr><th>Name</th><td>NULL TRIGGER</td></tr>\
+			<tr><th>Position</th><td>(45.50, 29.50, 0.12)</td></tr>\
+			<tr><th>Rotation</th><td>(0, 0, 0)</td></tr>\
+			<tr><th>AI Index?</th><td>255</td></tr>\
+			<tr><th>HP?</th><td>0</td></tr>\
+		</table>\
+	');
+      point(objLayers[12], 45.500000, 29.500000, '#FFFFFF', '		<table>\
+			<tr><th>ID</th><td>12/0/1</td></tr>\
+			<tr><th>Category</th><td>FIXME</td></tr>\
+			<tr><th>Subcategory</th><td>FIXME</td></tr>\
+			<tr><th>Name</th><td>NULL TRIGGER</td></tr>\
+			<tr><th>Position</th><td>(45.50, 29.50, 0.12)</td></tr>\
+			<tr><th>Rotation</th><td>(0, 0, 0)</td></tr>\
+			<tr><th>AI Index?</th><td>255</td></tr>\
+			<tr><th>HP?</th><td>0</td></tr>\
+		</table>\
+	');
+      point(objLayers[12], 45.500000, 29.500000, '#FFFFFF', '		<table>\
+			<tr><th>ID</th><td>12/0/1</td></tr>\
+			<tr><th>Category</th><td>FIXME</td></tr>\
+			<tr><th>Subcategory</th><td>FIXME</td></tr>\
+			<tr><th>Name</th><td>NULL TRIGGER</td></tr>\
+			<tr><th>Position</th><td>(45.50, 29.50, 0.12)</td></tr>\
+			<tr><th>Rotation</th><td>(0, 0, 0)</td></tr>\
+			<tr><th>AI Index?</th><td>255</td></tr>\
+			<tr><th>HP?</th><td>0</td></tr>\
+		</table>\
+	');
+      point(objLayers[9], 45.496094, 30.000000, '#808000', '		<table>\
+			<tr><th>ID</th><td>9/0/3</td></tr>\
+			<tr><th>Category</th><td>FIXME</td></tr>\
+			<tr><th>Subcategory</th><td>FIXME</td></tr>\
+			<tr><th>Name</th><td>BUTTON</td></tr>\
+			<tr><th>Position</th><td>(45.50, 30.00, 0.21)</td></tr>\
+			<tr><th>Rotation</th><td>(0, 128, 0)</td></tr>\
+			<tr><th>AI Index?</th><td>255</td></tr>\
+			<tr><th>HP?</th><td>0</td></tr>\
+		</table>\
+	');
+      point(objLayers[7], 39.058594, 21.000000, '#FFFFFF', '		<table>\
+			<tr><th>ID</th><td>7/2/3</td></tr>\
+			<tr><th>Category</th><td>FIXME</td></tr>\
+			<tr><th>Subcategory</th><td>FIXME</td></tr>\
+			<tr><th>Name</th><td>WORDS</td></tr>\
+			<tr><th>Position</th><td>(39.06, 21.00, 0.50)</td></tr>\
+			<tr><th>Rotation</th><td>(0, 128, 64)</td></tr>\
+			<tr><th>AI Index?</th><td>255</td></tr>\
+			<tr><th>HP?</th><td>0</td></tr>\
+		</table>\
+	');
+      point(objLayers[12], 26.500000, 23.500000, '#FFFFFF', '		<table>\
+			<tr><th>ID</th><td>12/0/11</td></tr>\
+			<tr><th>Category</th><td>FIXME</td></tr>\
+			<tr><th>Subcategory</th><td>FIXME</td></tr>\
+			<tr><th>Name</th><td>ECOLOGY TRIGGER</td></tr>\
+			<tr><th>Position</th><td>(26.50, 23.50, 0.12)</td></tr>\
+			<tr><th>Rotation</th><td>(0, 0, 0)</td></tr>\
+			<tr><th>AI Index?</th><td>255</td></tr>\
+			<tr><th>HP?</th><td>0</td></tr>\
+		</table>\
+	');
+      point(objLayers[12], 43.500000, 46.500000, '#FFFFFF', '		<table>\
+			<tr><th>ID</th><td>12/0/1</td></tr>\
+			<tr><th>Category</th><td>FIXME</td></tr>\
+			<tr><th>Subcategory</th><td>FIXME</td></tr>\
+			<tr><th>Name</th><td>NULL TRIGGER</td></tr>\
+			<tr><th>Position</th><td>(43.50, 46.50, 0.12)</td></tr>\
+			<tr><th>Rotation</th><td>(0, 0, 0)</td></tr>\
+			<tr><th>AI Index?</th><td>255</td></tr>\
+			<tr><th>HP?</th><td>0</td></tr>\
+		</table>\
+	');
+      point(objLayers[14], 36.500000, 35.500000, '#800080', '		<table>\
+			<tr><th>ID</th><td>14/0/1</td></tr>\
+			<tr><th>Category</th><td>FIXME</td></tr>\
+			<tr><th>Subcategory</th><td>FIXME</td></tr>\
+			<tr><th>Name</th><td>GORILLA TIGER MUTANT</td></tr>\
+			<tr><th>Position</th><td>(36.50, 35.50, 0.58)</td></tr>\
+			<tr><th>Rotation</th><td>(0, 65, 0)</td></tr>\
+			<tr><th>AI Index?</th><td>1</td></tr>\
+			<tr><th>HP?</th><td>230</td></tr>\
+		</table>\
+	');
+      point(objLayers[12], 26.500000, 23.500000, '#FFFFFF', '		<table>\
+			<tr><th>ID</th><td>12/0/11</td></tr>\
+			<tr><th>Category</th><td>FIXME</td></tr>\
+			<tr><th>Subcategory</th><td>FIXME</td></tr>\
+			<tr><th>Name</th><td>ECOLOGY TRIGGER</td></tr>\
+			<tr><th>Position</th><td>(26.50, 23.50, 0.12)</td></tr>\
+			<tr><th>Rotation</th><td>(0, 0, 0)</td></tr>\
+			<tr><th>AI Index?</th><td>255</td></tr>\
+			<tr><th>HP?</th><td>0</td></tr>\
+		</table>\
+	');
 
 
       stage.add(mapLayer);
@@ -665,7 +1853,6 @@
       for (var i = 0; i < 15; ++i) {
         stage.add(objLayers[i]);
       }
-      stage.add(msgLayer);
 
       toggleLayer(2);
       toggleLayer(7);

@@ -41,6 +41,9 @@
         <td>
           <div id="map"></div>
         </td>
+        <td>
+          <div id="info"></div>
+        </td>
       </tr>
     </table>
     <script src="./kinetic.js"></script>
@@ -49,23 +52,18 @@
       var WIDTH=${WIDTH};
       var HEIGHT=${HEIGHT};
 
-      function writeMessage(messageLayer, message) {
-        var context = messageLayer.getContext();
-        messageLayer.clear();
-        context.font = '18pt Calibri';
-        context.fillStyle = 'black';
-        context.fillText(message, messageLayer.getX() + 10, messageLayer.getY() + 25);
+      function writeMessage(message) {
+        info = document.getElementById("info").innerHTML = message
       }
 
       var stage = new Kinetic.Stage({
         container: 'map',
-        width: WIDTH*SCALE + 256,
+        width: WIDTH*SCALE,
         height: HEIGHT*SCALE
       });
 
       var mapLayer = new Kinetic.Layer({ x: 0, width: WIDTH*SCALE }); // level geometry
       var hitLayer = new Kinetic.Layer({ x: 0, width: WIDTH*SCALE, opacity: 0 });  // mouse event trap
-      var msgLayer = new Kinetic.Layer({ x: WIDTH*SCALE, width: 256 });
 
       var objLayers = {}; // objects, by object class
       for (var i = 0; i < 15 ; ++i) {
@@ -79,7 +77,7 @@
       hitLayer.add(new Kinetic.Rect({x:0, y:0, width:WIDTH*SCALE, height:HEIGHT*SCALE}));
       hitLayer.on('mousemove', function(evt) {
         var xy = stage.getUserPosition();
-        writeMessage(msgLayer, "Tile: (" + Math.floor(xy.x/SCALE) + ", " + Math.floor(HEIGHT - xy.y/SCALE) + ")");
+        writeMessage("Tile: (" + Math.floor(xy.x/SCALE) + ", " + Math.floor(HEIGHT - xy.y/SCALE) + ")");
         console.log(evt);
       });
 
@@ -106,7 +104,7 @@
           //fill: colour,
         });
         obj.on('mouseover', function() {
-          writeMessage(msgLayer, name);
+          writeMessage(name);
         });
         layer.add(obj);
       }
@@ -120,7 +118,6 @@
       for (var i = 0; i < 15; ++i) {
         stage.add(objLayers[i]);
       }
-      stage.add(msgLayer);
 
       toggleLayer(2);
       toggleLayer(7);

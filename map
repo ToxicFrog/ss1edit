@@ -4,6 +4,7 @@
 require "util"
 local res = require "ss1.res"
 local map = require "ss1.map"
+local gamesys = require "ss1.gamesys"
 
 local HELP_TEXT = [[
 Usage: map <archive> <prefix> [levels...]
@@ -71,6 +72,30 @@ local function drawWalls(map)
 	end
 end
 
+local function infobox(obj)
+	local template = [[
+		<table>\
+			<tr><th>ID</th><td>%d/%d/%d</td></tr>\
+			<tr><th>Category</th><td>FIXME</td></tr>\
+			<tr><th>Subcategory</th><td>FIXME</td></tr>\
+			<tr><th>Name</th><td>%s</td></tr>\
+			<tr><th>Position</th><td>(%.2f, %.2f, %.2f)</td></tr>\
+			<tr><th>Rotation</th><td>(%d, %d, %d)</td></tr>\
+			<tr><th>AI Index?</th><td>%d</td></tr>\
+			<tr><th>HP?</th><td>%d</td></tr>\
+		</table>\
+	]]
+
+	return template % {
+		obj.class, obj.subclass, obj.type,
+		gamesys.name(obj.class, obj.subclass, obj.type),
+		obj.x/256, obj.y/256, obj.z/256,
+		obj.pitch, obj.yaw, obj.roll,
+		obj.ai_maybe,
+		obj.hp_maybe
+	}
+end
+
 local function main(archive, prefix, ...)
 	local levels = {...}
 
@@ -111,7 +136,11 @@ local function main(archive, prefix, ...)
 
 		for _,obj in ipairs(map.objects) do
 			if obj.used and colours[obj.class+1] then
-				point('objLayers[%d]' % obj.class, obj.x/256, obj.y/256, colours[obj.class+1], "%d/%d/%d" % { obj.class, obj.subclass, obj.type })
+				point('objLayers[%d]' % obj.class,
+					obj.x/256,
+					obj.y/256,
+					colours[obj.class+1],
+					infobox(obj))
 			end
 
 			-- FIXME is there a specific subclass for non-openable gratings and stuff?
@@ -123,7 +152,7 @@ local function main(archive, prefix, ...)
 						line(obj.x/256 - 0.5, obj.y/256, obj.x/256 + 0.5, obj.y/256, "#FFFF00")
 					end
 				else
-					point('objLayers[%d]' % obj.class, obj.x/256, obj.y/256, '#FFFF00', "%d/%d/%d" % { obj.class, obj.subclass, obj.type })
+					point('objLayers[%d]' % obj.class, obj.x/256, obj.y/256, '#FFFF00', infobox(obj))
 				end
 			end
 		end

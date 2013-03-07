@@ -60,7 +60,7 @@ function map.load(rf, index)
 				next:u2
 				x:u2
 				y:u2
-				z_maybe:u1
+				z:u1
 				pitch:u1
 				yaw:u1
 				roll:u1
