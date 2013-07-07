@@ -40,7 +40,17 @@ function map.load(rf, index)
 				texture:{
 					[2|floor:u5 ceiling:u5 wall:u6]
 				}
-				flags:u4
+				flags:{
+					[4|
+						mapped:b1 x3
+						shade: u12
+						music: u4
+						slope: u2
+						spooky:b1
+						textures:b1
+						vtex:u8
+					]
+				}
 				magic:u4
 			}
 		]]
