@@ -129,20 +129,85 @@ end
 ]]
 
 -- table of cell shapes indicating which directions they are solid in
+-- "solid" means the cell is solid in that direction; "slope" means that it
+-- slopes upwards in that direction (and thus the height of that edge doesn't
+-- match the configured height of the tile). No value means the tile is open
+-- and non-sloping in that direction.
 local walls = {
-	[0] = { n = true, s = true, e = true, w = true },	-- solid space
+	[0] = { n = "solid", s = "solid", e = "solid", w = "solid" },	-- solid space
 	{},							-- open space
-	{ w = true, n = true },		-- diagonal open SE
-	{ e = true, n = true },		-- SW
-	{ e = true, s = true },		-- NW
-	{ w = true, s = true },		-- NE
-	{}, {}, {}, {},				-- flat slopes
-	{}, {}, {}, {},				-- valleys
+	{ w = "solid", n = "solid" },		-- diagonal open SE
+	{ e = "solid", n = "solid" },		-- SW
+	{ e = "solid", s = "solid" },		-- NW
+	{ w = "solid", s = "solid" },		-- NE
+	{ n = "slope" },					-- flat slopes
+	{ e = "slope" },
+	{ s = "slope" },
+	{ w = "slope" },
+	{ n = "slope", w = "slope" },		-- valleys
+	{ n = "slope", e = "slope" },
+	{ s = "slope", e = "slope" },
+	{ s = "slope", w = "slope" },
 	{}, {}, {}, {},				-- ridges
 }
 
 function map:walls(x, y)
-	return walls[self:tile(x,y).shape]
+	local w = {}
+	for k,v in pairs(walls[self:tile(x,y).shape]) do
+		w[k] = v
+	end
+	return w
+end
+
+local function flip(dir)
+	local t = { n = "s", s = "n", e = "w", w = "e" }
+	return t[dir]
+end
+
+-- return the effective floor height in each direction
+-- if solid, return math.huge
+-- this is not always the same as the recorded floor height because of slopes
+function map:floorHeight(x, y)
+	local walls = self:walls(x, y)
+	local tile = self:tile(x, y)
+
+	for _,dir in pairs { "n", "s", "e", "w" } do
+		local height = tile.floor.height
+
+		if walls[dir] == "solid" then
+			height = math.huge
+		elseif walls[dir] == "slope" and tile.flags.slope ~= 3 then
+			height = tile.floor.height + tile.slope
+		end
+
+		walls[dir] = height
+	end
+
+	return walls
+end
+
+-- return the effective ceiling height in each direction, in units UP FROM BOTTOM
+-- if solid, return math.huge
+-- this is not always the same as the recorded ceiling height because of slopes
+function map:ceilingHeight(x, y)
+	local walls = self:walls(x, y)
+	local tile = self:tile(x, y)
+
+	for _,dir in pairs { "n", "s", "e", "w" } do
+		local height = 32 - tile.ceiling.height
+
+		if walls[dir] == "solid" then
+			height = math.huge
+		elseif tile.flags.slope == 1 and walls[dir] == "slope" then
+			height = 32 - tile.ceiling.height - tile.slope
+		elseif tile.flags.slope ~= 2 and walls[flip(dir)] == "slope" then
+			height = 32 - tile.ceiling.height - tile.slope
+		end
+
+		walls[dir] = height
+	end
+
+	return walls
 end
 
 -- reports the change in height between two cells
@@ -161,17 +226,26 @@ function map:ledgeHeight(x1, y1, x2, y2)
 
 	local t1,t2 = self:tile(x1,y1),self:tile(x2,y2)
 	local w1,w2 = self:walls(x1,y1),self:walls(x2,y2)
+	local delta
 
 	if x1 < x2 then -- t1 is west of t2
 		w1,w2 = w1.e,w2.w
+		delta = math.min(self:ceilingHeight(x1, y1).e - self:floorHeight(x2, y2).w,
+									   self:ceilingHeight(x2, y2).w - self:floorHeight(x1, y1).e)
 	else -- t1 is south of t2
 		w1,w2 = w1.n,w2.s
+		delta = math.min(self:ceilingHeight(x1, y1).n - self:floorHeight(x2, y2).s,
+									   self:ceilingHeight(x2, y2).s - self:floorHeight(x1, y1).n)
 	end
 
-	if w1 ~= w2 then
-		return math.huge -- one tile has a solid face, the other doesn't
-	elseif w1 then
+	if w1 == "solid" and w2 == "solid" then
 		return 0 -- both tiles have solid faces
+	elseif w1 == "solid" or w2 == "solid" then
+		return math.huge -- one tile has a solid face, the other doesn't
+	end
+
+	if delta <= 0 then
+		return math.huge
 	end
 
 	-- now we need to check relative heights
