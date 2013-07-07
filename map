@@ -114,7 +114,7 @@ local function main(archive, prefix, ...)
 	local html = io.open("map.html"):read("*a")
 
 	print("Loading ARCHIVE.DAT...")
-	local rf = res.load(archive)
+	local rf = assert(res.load(archive))
 
 	for _,level in ipairs(levels) do
 		level = tonumber(level)
