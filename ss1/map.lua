@@ -110,31 +110,19 @@ end
 0000	uint8		tile shape.
 			00			solid
 			01			open
-			02			diagonal, open S+E
-			03			diagonal, open S+W
-			04			diagonal, open N+W
-			05			diagonal, open N+E
-			06			slope, S->N (all slopes expressed as low->high)
-			07			slope, W->E
-			08			slope, N->S
-			09			slope, E->W
-			0A			slope, valley SE->NW
-			0B			slope, valley SW->NE
-			0C			slope, valley NW->SE
-			0D			slope, valley NE->SW
-			0E			slope, ridge NW->SE
-			0F			slope, ridge NE->SW
-			10			slope, ridge SE->NW
-			11			slope, ridge SW->NE
+			02-05		diagonal, open SE, SW, NW, NE
+			06-09		slope, S->N, W->E, N->S, E->W (all slopes are low->high)
+			0A-0D		valley slope, SE->NW, SW->NE, NW->SE, NE->SW
+			0E-11		ridge slope, NW->SE, NE->SW, SE->NW, SW->NE
 0008	uint32		flags:
 			8000 0000	tile has been visited/automapped
 			0F0F 0000	?? shade control ??
 			0000 F000	?? music nibble ??
 			0000 0C00	slope control:
-			     x0xx	floor & ceiling, same direction
-				 x4xx	floor & ceiling, opposite directions
-				 x8xx	floor only
-				 xCxx	ceiling only
+				x0xx	floor & ceiling, same direction
+				x4xx	floor & ceiling, opposite directions
+				x8xx	floor only
+				xCxx	ceiling only
 			0000 0200	?? spooky music flag ??
 			0000 0100	use adjacent rather than local wall textures
 			0000 001F	vertical texture offset adjustment
