@@ -98,6 +98,43 @@ local function infobox(obj)
 	}
 end
 
+local function tileinfo(map)
+	local info = {}
+
+	local template = [[
+		"%d,%d": '<table>\
+			<tr><th>Coordinates</th><td>(%d,%d)</td></tr>\
+			<tr><th>Shape</th><td>%s</td></tr>\
+			<tr><th>Floor height</th><td>%d</td></tr>\
+			<tr><th>Ceiling height</th><td>%d</td></tr>\
+			<tr><th>Slope degree</th><td>%d</td></tr>\
+			<tr><th>Slope control</th><td>%s</td></tr>\
+			<tr><th>Biohazard</th><td>%s</td></tr>\
+			<tr><th>Radiation</th><td>%s</td></tr>\
+			<tr><th>Spooky</th><td>%s</td></tr>\
+		</table>']]
+
+	for y=1,map.info.height-1 do
+		for x=1,map.info.width-1 do
+			local tile = map:tile(x,y)
+				table.insert(info, template % {
+					x, y,
+					x, y,
+					("%02X"):format(tile.shape),
+					tile.floor.height,
+					32 - tile.ceiling.height,
+					tile.slope,
+					tostring(tile.flags.slope),
+					tostring(tile.biohazard),
+					tostring(tile.radiation),
+					tostring(tile.flags.spooky)
+				})
+		end
+	end
+
+	return table.concat(info, ",\n")
+end
+
 local function main(archive, prefix, ...)
 	local levels = {...}
 
@@ -164,6 +201,7 @@ local function main(archive, prefix, ...)
 			WIDTH = map.info.width;
 			HEIGHT = map.info.height;
 			SCALE = 16;
+			TILE_INFO = tileinfo(map);
 			WALLS = commit();
 		}
 		fd:write(html:interpolate(data))

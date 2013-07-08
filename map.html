@@ -52,6 +52,10 @@
       var WIDTH=${WIDTH};
       var HEIGHT=${HEIGHT};
 
+      var tile_info = {
+        ${TILE_INFO}
+      };
+
       var messageLocked = false
       function writeMessage(message) {
         if (!messageLocked) {
@@ -83,7 +87,11 @@
       hitLayer.add(new Kinetic.Rect({x:0, y:0, width:WIDTH*SCALE, height:HEIGHT*SCALE}));
       hitLayer.on('mousemove', function(evt) {
         var xy = stage.getUserPosition();
-        writeMessage("Tile: (" + Math.floor(xy.x/SCALE) + ", " + Math.floor(HEIGHT - xy.y/SCALE) + ")");
+        var x = Math.floor(xy.x/SCALE);
+        var y  = Math.floor(HEIGHT - xy.y/SCALE);
+        var info = tile_info[x + "," + y];
+        writeMessage("Tile: (" + Math.floor(xy.x/SCALE) + ", " + Math.floor(HEIGHT - xy.y/SCALE) + ")<br>" + info)
+        //writeMessage("Tile: (" + Math.floor(xy.x/SCALE) + ", " + Math.floor(HEIGHT - xy.y/SCALE) + ")");
         console.log(evt);
       });
       hitLayer.on('mousedown', function() { lockMessage(false); })
