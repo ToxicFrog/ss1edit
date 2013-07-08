@@ -231,11 +231,15 @@ function map:ledgeHeight(x1, y1, x2, y2)
 	if x1 < x2 then -- t1 is west of t2
 		w1,w2 = w1.e,w2.w
 		delta = math.min(self:ceilingHeight(x1, y1).e - self:floorHeight(x2, y2).w,
-									   self:ceilingHeight(x2, y2).w - self:floorHeight(x1, y1).e)
+									   self:ceilingHeight(x2, y2).w - self:floorHeight(x1, y1).e,
+									   self:ceilingHeight(x1, y1).e - self:floorHeight(x1, y1).e,
+									   self:ceilingHeight(x2, y2).w - self:floorHeight(x2, y2).w)
 	else -- t1 is south of t2
 		w1,w2 = w1.n,w2.s
 		delta = math.min(self:ceilingHeight(x1, y1).n - self:floorHeight(x2, y2).s,
-									   self:ceilingHeight(x2, y2).s - self:floorHeight(x1, y1).n)
+									   self:ceilingHeight(x2, y2).s - self:floorHeight(x1, y1).n,
+									   self:ceilingHeight(x1, y1).n - self:floorHeight(x1, y1).n,
+									   self:ceilingHeight(x2, y2).s - self:floorHeight(x2, y2).s)
 	end
 
 	if w1 == "solid" and w2 == "solid" then
