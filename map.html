@@ -90,9 +90,7 @@
         var x = Math.floor(xy.x/SCALE);
         var y  = Math.floor(HEIGHT - xy.y/SCALE);
         var info = tile_info[x + "," + y];
-        writeMessage("Tile: (" + Math.floor(xy.x/SCALE) + ", " + Math.floor(HEIGHT - xy.y/SCALE) + ")<br>" + info)
-        //writeMessage("Tile: (" + Math.floor(xy.x/SCALE) + ", " + Math.floor(HEIGHT - xy.y/SCALE) + ")");
-        console.log(evt);
+        writeMessage(info)
       });
       hitLayer.on('mousedown', function() { lockMessage(false); })
 
