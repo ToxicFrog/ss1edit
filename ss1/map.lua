@@ -192,22 +192,26 @@ end
 function map:ceilingHeight(x, y)
 	local walls = self:walls(x, y)
 	local tile = self:tile(x, y)
+	local heights = {}
 
 	for _,dir in pairs { "n", "s", "e", "w" } do
 		local height = 32 - tile.ceiling.height
+    local actual_dir = dir
+
+		if tile.flags.slope ~= 1 and (walls[dir] == "slope" or walls[flip(dir)] == "slope") then
+      actual_dir = flip(dir)
+		end
 
 		if walls[dir] == "solid" then
 			height = math.huge
-		elseif tile.flags.slope == 1 and walls[dir] == "slope" then
-			height = 32 - tile.ceiling.height - tile.slope
-		elseif tile.flags.slope ~= 2 and walls[flip(dir)] == "slope" then
+		elseif tile.flags.slope ~= 2 and walls[dir] == "slope" then
 			height = 32 - tile.ceiling.height - tile.slope
 		end
 
-		walls[dir] = height
+		heights[actual_dir] = height
 	end
 
-	return walls
+	return heights
 end
 
 -- reports the change in height between two cells
