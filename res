@@ -14,6 +14,8 @@ Modes:
     		if no chunks specified, unpack entire file
     c (not implemented) 
     		pack chunks into new file
+    d <infile> <outfile>
+        decompress all chunks in infile and store in outfile
     u <file> <prefix> [chunk...] 
     	update chunks already present in file
     	read chunks from prefix/<chunk id>
@@ -76,6 +78,11 @@ function mode.u(infile, outfile, prefix, ...)
 	end
 
 	rf:save(outfile)
+end
+
+function mode.d(infile, outfile)
+  local rf = res.load(infile)
+  rf:save(outfile)
 end
 
 local function main(...)
