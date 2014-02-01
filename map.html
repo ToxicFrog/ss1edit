@@ -1,6 +1,7 @@
 <!DOCTYPE HTML>
 <html>
   <head>
+    <title>${LEVEL_TITLE}</title>
     <style>
       body {
         margin: 0px;
@@ -14,13 +15,15 @@
          display: inline;
       } 
       */   
-  </style>
+    </style>
   </head>
   <body>
     <table>
       <tr>
         <td>
-          <div style="text-align: center">Layers</div>
+          <div style="text-align: center; font-weight: bold;">${LEVEL_TITLE}</div>
+          <div style="text-align: center;">${PREV_LINK} | ${NEXT_LINK}</div>
+          <div style="text-align: center; font-weight: bold;"><hr>Layers</div>
           <!-- ${LAYER_CONTROL} -->
           <label><input type="checkbox" checked="true" onchange="toggleLayer(0);">0 - Weapons</label><br>
           <label><input type="checkbox" checked="true" onchange="toggleLayer(1);">1 - Ammo</label><br>
@@ -55,6 +58,10 @@
       var tile_info = {
         ${TILE_INFO}
       };
+      
+      var object_info = {
+        ${OBJECT_INFO}
+      };
 
       var messageLocked = false
       function writeMessage(message) {
@@ -64,6 +71,35 @@
       }
       function lockMessage(lock) {
         messageLocked = lock
+      }
+      
+      function tileInfo(x, y) {
+        var info = tile_info[x + "," + y];
+        return '<table>'
+          + '<tr><th>Coordinates</th><td>(' + info.x + ',' + info.y + ')</td></tr>'
+          + '<tr><th>Shape</th><td>' + info.shape + '</td></tr>'
+          + '<tr><th>Floor height</th><td>' + info.floor + '</td></tr>'
+          + '<tr><th>Ceiling height</th><td>' + info.ceiling + '</td></tr>'
+          + '<tr><th>Slope degree</th><td>' + info.slope + '</td></tr>'
+          + '<tr><th>Slope control</th><td>' + info.slope_control + '</td></tr>'
+          + '<tr><th>Biohazard</th><td>' + info.biohazard + '</td></tr>'
+          + '<tr><th>Radiation</th><td>' + info.radiation + '</td></tr>'
+          + '<tr><th>Spooky</th><td>' + info.spooky + '</td></tr>'
+          + '</table>';
+      }
+      
+      function objectInfo(id) {
+        var info = object_info[id];
+        return '<table>'
+          + '<tr><th>ID</th><td>' + info.id + '</td></tr>'
+          + '<tr><th>Category</th><td>' + info.category + '</td></tr>'
+          + '<tr><th>Subcategory</th><td>' + info.subcategory + '</td></tr>'
+          + '<tr><th>Name</th><td>' + info.name + '</td></tr>'
+          + '<tr><th>Position</th><td>' + info.position + '</td></tr>'
+          + '<tr><th>Rotation</th><td>' + info.rotation + '</td></tr>'
+          + '<tr><th>AI Index?</th><td>' + info.ai + '</td></tr>'
+          + '<tr><th>HP?</th><td>' + info.hp + '</td></tr>'
+          + '</table>';
       }
 
       var stage = new Kinetic.Stage({
@@ -89,8 +125,7 @@
         var xy = stage.getUserPosition();
         var x = Math.floor(xy.x/SCALE);
         var y  = Math.floor(HEIGHT - xy.y/SCALE);
-        var info = tile_info[x + "," + y];
-        writeMessage(info)
+        writeMessage(tileInfo(x, y))
       });
       hitLayer.on('mousedown', function() { lockMessage(false); })
 
@@ -108,7 +143,7 @@
         }));
       }
 
-      function point(layer, x, y, colour, name) {
+      function point(layer, x, y, colour, id) {
         var obj = new Kinetic.Circle({
           x: x*SCALE,
           y: (HEIGHT-y)*SCALE,
@@ -117,9 +152,9 @@
           //fill: colour,
         });
         obj.on('mouseover', function() {
-          writeMessage(name);
+          writeMessage(objectInfo(id));
         });
-        obj.on('mousedown', function() { lockMessage(false); writeMessage(name); lockMessage(true); })
+        obj.on('mousedown', function() { lockMessage(false); writeMessage(objectInfo(id)); lockMessage(true); })
         layer.add(obj);
       }
     </script>

@@ -1,4 +1,23 @@
 return {
+  levels = {
+    [0] = "REACTOR";
+    "MEDICAL FACILITIES";
+    "RESEARCH LABS";
+    "MAINTENANCE";
+    "STORAGE";
+    "FLIGHT DECK";
+    "EXECUTIVE QUARTERS";
+    "ENGINEERING";
+    "SECURITY";
+    "COMMAND";
+    "SHODAN CYBERSPACE";
+    "DELTA GROVE";
+    "ALPHA GROVE";
+    "BETA GROVE";
+    "LOWER CYBERSPACE";
+    "UPPER CYBERSPACE";
+  };
+  objects = {
     [0x0000] = 'ML-41 PISTOL';
     [0x0001] = 'SV-23 DARTGUN';
     [0x0002] = 'MAGNUM 2100';
@@ -475,4 +494,5 @@ return {
     [0x01D9] = 'CYBERGUARD';
     [0x01DA] = 'SHODAN';
     [0x01DB] = 'CYBORG OF EDWARD DIEGO';
+  };
 }

@@ -1,7 +1,7 @@
 
 local gamesys = {}
 
-local names = require "ss1.names"
+local names = require "ss1.names".objects
 local sizes = {
 	n=16;
 	{ n=6, 5,2,2,2,3,2; }; -- weapons			16	16

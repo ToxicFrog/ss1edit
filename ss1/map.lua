@@ -3,6 +3,8 @@ local struct = require "vstruct"
 local map = {}
 local mt = { __index = map }
 
+local names = require "ss1.names".levels
+
 function chunkid(level, type)
 	local ids = {
 		info = 4;
@@ -87,8 +89,8 @@ function map.load(rf, index)
 		self.objects = struct.unpack(MAP_OBJECTS % (#objbuf/27), objbuf)
 	end
 
-	-- for now we just load the world geometry
 	local self = { index = index, res = rf }
+	self.name = names[index] or "UNKNOWN LEVEL"
 
 	loadinfo(self)
 	loadtiles(self)

@@ -19,9 +19,9 @@ Usage: map <archive> <prefix> [levels...]
 
 local output = {}
 
-local function point(layer, x, y, colour, name)
-	table.insert(output, "      point(%s, %f, %f, '%s', '%s');\n" % {
-		layer, x, y, colour, name })
+local function point(layer, x, y, colour, id)
+	table.insert(output, "      point(%s, %f, %f, '%s', '%d');\n" % {
+		layer, x, y, colour, id })
 end
 
 local function line(x1, y1, x2, y2, colour)
@@ -72,21 +72,11 @@ local function drawWalls(map)
 	end
 end
 
-local function infobox(obj)
-	local template = [[
-		<table>\
-			<tr><th>ID</th><td>%d/%d/%d</td></tr>\
-			<tr><th>Category</th><td>%s</td></tr>\
-			<tr><th>Subcategory</th><td>%s</td></tr>\
-			<tr><th>Name</th><td>%s</td></tr>\
-			<tr><th>Position</th><td>(%.2f, %.2f, %.2f)</td></tr>\
-			<tr><th>Rotation</th><td>(%d, %d, %d)</td></tr>\
-			<tr><th>AI Index?</th><td>%d</td></tr>\
-			<tr><th>HP?</th><td>%d</td></tr>\
-		</table>\
-	]]
+local function infobox(index, obj)
+  local template = [[ "%d": { id: "%d/%d/%d", category: "%s", subcategory: "%s", name: "%s", position: "(%.2f, %.2f, %.2f)", rotation: "(%d, %d, %d)", ai: %d, hp: %d }]]
 
 	return template % {
+    index,
 		obj.class, obj.subclass, obj.type,
 		gamesys.name(obj.class),
 		gamesys.name(obj.class, obj.subclass),
@@ -101,18 +91,7 @@ end
 local function tileinfo(map)
 	local info = {}
 
-	local template = [[
-		"%d,%d": '<table>\
-			<tr><th>Coordinates</th><td>(%d,%d)</td></tr>\
-			<tr><th>Shape</th><td>%s</td></tr>\
-			<tr><th>Floor height</th><td>%d</td></tr>\
-			<tr><th>Ceiling height</th><td>%d</td></tr>\
-			<tr><th>Slope degree</th><td>%d</td></tr>\
-			<tr><th>Slope control</th><td>%s</td></tr>\
-			<tr><th>Biohazard</th><td>%s</td></tr>\
-			<tr><th>Radiation</th><td>%s</td></tr>\
-			<tr><th>Spooky</th><td>%s</td></tr>\
-		</table>']]
+  local template = [[ "%d,%d": { x: %d, y: %d, shape: "%s", floor: %d, ceiling: %d, slope: %d, slope_control: %d, biohazard: "%s", radiation: "%s", spooky: "%s" }]]
 
 	for y=1,map.info.height-1 do
 		for x=1,map.info.width-1 do
@@ -153,7 +132,7 @@ local function main(archive, prefix, ...)
 	print("Loading ARCHIVE.DAT...")
 	local rf = assert(res.load(archive))
 
-	for _,level in ipairs(levels) do
+	for i,level in ipairs(levels) do
 		level = tonumber(level)
 		assert(level and level >= 0 and level <= 15, "invalid level index")
 
@@ -172,14 +151,18 @@ local function main(archive, prefix, ...)
 			"#FFFFFF", "#FFFFFF", "#A0A0A0", -- decorations, traps and containers
 			"#800080" -- enemies
 		}
+    
+    local objectinfo = {}
 
-		for _,obj in ipairs(map.objects) do
+		for i,obj in ipairs(map.objects) do
+      objectinfo[i] = infobox(i, obj)
+      
 			if obj.used and colours[obj.class+1] then
 				point('objLayers[%d]' % obj.class,
 					obj.x/256,
 					obj.y/256,
 					colours[obj.class+1],
-					infobox(obj))
+					i)
 			end
 
 			-- FIXME is there a specific subclass for non-openable gratings and stuff?
@@ -191,7 +174,7 @@ local function main(archive, prefix, ...)
 						line(obj.x/256 - 0.5, obj.y/256, obj.x/256 + 0.5, obj.y/256, "#FFFF00")
 					end
 				else
-					point('objLayers[%d]' % obj.class, obj.x/256, obj.y/256, '#FFFF00', infobox(obj))
+					point('objLayers[%d]' % obj.class, obj.x/256, obj.y/256, '#FFFF00', i)
 				end
 			end
 		end
@@ -202,7 +185,15 @@ local function main(archive, prefix, ...)
 			HEIGHT = map.info.height;
 			SCALE = 16;
 			TILE_INFO = tileinfo(map);
+      OBJECT_INFO = table.concat(objectinfo, ",\n");
 			WALLS = commit();
+      LEVEL_TITLE = map.name;
+      PREV_LINK = levels[i-1]
+        and ('<a href="%s%02d.html">&laquo %02d</a>' % { prefix:match("[^/]*$"), levels[i-1], levels[i-1] })
+        or '';
+      NEXT_LINK = levels[i+1]
+        and ('<a href="%s%02d.html">%02d &raquo</a>' % { prefix:match("[^/]*$"), levels[i+1], levels[i+1] })
+        or '';
 		}
 		fd:write(html:interpolate(data))
 		fd:close()
