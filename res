@@ -8,76 +8,76 @@ local HELP_TEXT = [[
 Usage: res <mode> <args>
 Modes:
     l <file>             
-    		list file contents
+        list file contents
     x <file> <prefix> [chunk...]
-    		extract file contents to prefix/<chunk id>
-    		if no chunks specified, unpack entire file
+        extract file contents to prefix/<chunk id>
+        if no chunks specified, unpack entire file
     c (not implemented) 
-    		pack chunks into new file
+        pack chunks into new file
     d <infile> <outfile>
         decompress all chunks in infile and store in outfile
     u <file> <prefix> [chunk...] 
-    	update chunks already present in file
-    	read chunks from prefix/<chunk id>
-    	if no chunks specified, is a no-op! FIXME..
+      update chunks already present in file
+      read chunks from prefix/<chunk id>
+      if no chunks specified, is a no-op! FIXME..
 ]]
 
 local mode = {}
 
 -- List
 function mode.l(file)
-	local rf = res.load(file)
+  local rf = res.load(file)
 
-	printf("Comment: %s\n", rf.comment)
-	printf("File contains %u chunks\n", rf.count)
+  printf("Comment: %s\n", rf.comment)
+  printf("File contains %u chunks\n", rf.count)
 
-	printf("id      id      size    type        packed  dir\n")
-	for id,chunk in rf:chunks() do
-		printf("%05u   %04x    %-7u %-11s %-8s%s\n", id, id,
-			chunk.size,
-			chunk.typename,
-			chunk.compressed and tostring(chunk.packed_size) or "",
-			chunk.dir and "yes" or "")
-	end
+  printf("id      id      size    type        packed  dir\n")
+  for id,chunk in rf:chunks() do
+    printf("%05u   %04x    %-7u %-11s %-8s%s\n", id, id,
+      chunk.size,
+      chunk.typename,
+      chunk.compressed and tostring(chunk.packed_size) or "",
+      chunk.dir and "yes" or "")
+  end
 end
 
 -- eXtract
 function mode.x(file, prefix, ...)
-	local rf = res.load(file)
-	if prefix then
-		prefix = prefix .. "/"
-	else
-		prefix = ""
-	end
+  local rf = res.load(file)
+  if prefix then
+    prefix = prefix .. "/"
+  else
+    prefix = ""
+  end
 
-	for id,chunk in rf:chunks() do
-		if chunk.data then
-			local fd = io.open(prefix .. tostring(chunk.id), "wb")
-			fd:write(chunk.data)
-			fd:close()
-		end
-	end
+  for id,chunk in rf:chunks() do
+    if chunk.data then
+      local fd = io.open(prefix .. tostring(chunk.id), "wb")
+      fd:write(chunk.data)
+      fd:close()
+    end
+  end
 end
 
 -- Create
 function mode.c(file, chunks)
-	error "creation is not yet implemented"
+  error "creation is not yet implemented"
 end
 
 -- Update
 function mode.u(infile, outfile, prefix, ...)
-	local rf = res.load(infile)
+  local rf = res.load(infile)
 
-	for _,id in ipairs(list.map({...}, tonumber)) do
-		if rf:get(id) then
-			local data = assert(io.open(prefix .. "/" .. tostring(id), "rb")):read("*a")
-			rf:get(id).data = data
-		else
-			error("Attempted to add chunk "..id.." that does not exist in file!")
-		end
-	end
+  for _,id in ipairs(list.map({...}, tonumber)) do
+    if rf:get(id) then
+      local data = assert(io.open(prefix .. "/" .. tostring(id), "rb")):read("*a")
+      rf:get(id).data = data
+    else
+      error("Attempted to add chunk "..id.." that does not exist in file!")
+    end
+  end
 
-	rf:save(outfile)
+  rf:save(outfile)
 end
 
 function mode.d(infile, outfile)
@@ -86,14 +86,14 @@ function mode.d(infile, outfile)
 end
 
 local function main(...)
-	local argv = {...}
+  local argv = {...}
 
-	if not mode[argv[1]] then
-		print(HELP_TEXT)
-		return
-	end
+  if not mode[argv[1]] then
+    print(HELP_TEXT)
+    return
+  end
 
-	return mode[argv[1]](select(2, ...))
+  return mode[argv[1]](select(2, ...))
 end
 
 return main(...)

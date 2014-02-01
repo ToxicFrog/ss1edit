@@ -14,179 +14,179 @@ Usage: map <archive> <prefix> [levels...]
     level N will be named prefixNN.html.
     <levels> is a list of level numbers, from 0 to 15; if omitted,
     all levels will be mapped. (Level 0 is Deck R; levels 1-9 are
-   	the corresponding decks, and 10-15 are cyberspace and groves)
+     the corresponding decks, and 10-15 are cyberspace and groves)
 ]]
 
 local output = {}
 
 local function point(layer, x, y, colour, id)
-	table.insert(output, "      point(%s, %f, %f, '%s', '%d');\n" % {
-		layer, x, y, colour, id })
+  table.insert(output, "      point(%s, %f, %f, '%s', '%d');\n" % {
+    layer, x, y, colour, id })
 end
 
 local function line(x1, y1, x2, y2, colour)
-	table.insert(output, "      line(%f, %f, %f, %f, '%s');\n" % {
-		x1, y1, x2, y2, colour })
+  table.insert(output, "      line(%f, %f, %f, %f, '%s');\n" % {
+    x1, y1, x2, y2, colour })
 end
 
 local function commit()
-	local buf = table.concat(output, "")
-	output = {}
-	return buf
+  local buf = table.concat(output, "")
+  output = {}
+  return buf
 end
 
 local function drawLedges(map)
-	for y=1,map.info.height-1 do
-		for x=1,map.info.width-1 do
-			for x2,y2 in pairs { [x] = y-1, [x-1] = y } do
-				local delta = map:ledgeHeight(x, y, x2, y2)
+  for y=1,map.info.height-1 do
+    for x=1,map.info.width-1 do
+      for x2,y2 in pairs { [x] = y-1, [x-1] = y } do
+        local delta = map:ledgeHeight(x, y, x2, y2)
 
-				if delta > 0 and delta < math.huge then
-					local shade = 0x40 + delta * 4
-					line(x, y, x2+1, y2+1, "#00%02X00" % shade)
-				end
-			end
-		end
-	end
+        if delta > 0 and delta < math.huge then
+          local shade = 0x40 + delta * 4
+          line(x, y, x2+1, y2+1, "#00%02X00" % shade)
+        end
+      end
+    end
+  end
 end
 
 local function drawWalls(map)
-	for y=1,map.info.height-1 do
-		for x=1,map.info.width-1 do
-			for x2,y2 in pairs { [x] = y-1, [x-1] = y } do
-				local delta = map:ledgeHeight(x, y, x2, y2)
+  for y=1,map.info.height-1 do
+    for x=1,map.info.width-1 do
+      for x2,y2 in pairs { [x] = y-1, [x-1] = y } do
+        local delta = map:ledgeHeight(x, y, x2, y2)
 
-				if delta == math.huge then
-					line(x, y, x2+1, y2+1, "#00FF30" % shade)
-				end
-			end
+        if delta == math.huge then
+          line(x, y, x2+1, y2+1, "#00FF30" % shade)
+        end
+      end
 
-			-- diagonal walls don't need a ledge check
-			local tile = map:tile(x,y)
-			if tile.shape == 2 or tile.shape == 4 then -- / diagonal
-				line(x, y, x+1, y+1, "#00FF30")
-			elseif tile.shape == 3 or tile.shape == 5 then -- \ diagonal
-				line(x+1, y, x, y+1, "#00FF30")
-			end
-		end
-	end
+      -- diagonal walls don't need a ledge check
+      local tile = map:tile(x,y)
+      if tile.shape == 2 or tile.shape == 4 then -- / diagonal
+        line(x, y, x+1, y+1, "#00FF30")
+      elseif tile.shape == 3 or tile.shape == 5 then -- \ diagonal
+        line(x+1, y, x, y+1, "#00FF30")
+      end
+    end
+  end
 end
 
 local function infobox(index, obj)
   local template = [[ "%d": { id: "%d/%d/%d", category: "%s", subcategory: "%s", name: "%s", position: "(%.2f, %.2f, %.2f)", rotation: "(%d, %d, %d)", ai: %d, hp: %d }]]
 
-	return template % {
+  return template % {
     index,
-		obj.class, obj.subclass, obj.type,
-		gamesys.name(obj.class),
-		gamesys.name(obj.class, obj.subclass),
-		gamesys.name(obj.class, obj.subclass, obj.type),
-		obj.x/256, obj.y/256, obj.z/256,
-		obj.pitch, obj.yaw, obj.roll,
-		obj.ai_maybe,
-		obj.hp_maybe
-	}
+    obj.class, obj.subclass, obj.type,
+    gamesys.name(obj.class),
+    gamesys.name(obj.class, obj.subclass),
+    gamesys.name(obj.class, obj.subclass, obj.type),
+    obj.x/256, obj.y/256, obj.z/256,
+    obj.pitch, obj.yaw, obj.roll,
+    obj.ai_maybe,
+    obj.hp_maybe
+  }
 end
 
 local function tileinfo(map)
-	local info = {}
+  local info = {}
 
   local template = [[ "%d,%d": { x: %d, y: %d, shape: "%s", floor: %d, ceiling: %d, slope: %d, slope_control: %d, biohazard: "%s", radiation: "%s", spooky: "%s" }]]
 
-	for y=1,map.info.height-1 do
-		for x=1,map.info.width-1 do
-			local tile = map:tile(x,y)
-				table.insert(info, template % {
-					x, y,
-					x, y,
-					("%02X"):format(tile.shape),
-					tile.floor.height,
-					32 - tile.ceiling.height,
-					tile.slope,
-					tostring(tile.flags.slope),
-					tostring(tile.biohazard),
-					tostring(tile.radiation),
-					tostring(tile.flags.spooky)
-				})
-		end
-	end
+  for y=1,map.info.height-1 do
+    for x=1,map.info.width-1 do
+      local tile = map:tile(x,y)
+        table.insert(info, template % {
+          x, y,
+          x, y,
+          ("%02X"):format(tile.shape),
+          tile.floor.height,
+          32 - tile.ceiling.height,
+          tile.slope,
+          tostring(tile.flags.slope),
+          tostring(tile.biohazard),
+          tostring(tile.radiation),
+          tostring(tile.flags.spooky)
+        })
+    end
+  end
 
-	return table.concat(info, ",\n")
+  return table.concat(info, ",\n")
 end
 
 local function main(archive, prefix, ...)
-	local levels = {...}
+  local levels = {...}
 
-	if not prefix then
-		print(HELP_TEXT)
-		return
-	end
+  if not prefix then
+    print(HELP_TEXT)
+    return
+  end
 
-	if #levels == 0 then
-		levels = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 }
-	end
+  if #levels == 0 then
+    levels = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 }
+  end
 
-	print("Loading template...")
-	local html = io.open("map.html"):read("*a")
+  print("Loading template...")
+  local html = io.open("map.html"):read("*a")
 
-	print("Loading ARCHIVE.DAT...")
-	local rf = assert(res.load(archive))
+  print("Loading ARCHIVE.DAT...")
+  local rf = assert(res.load(archive))
 
-	for i,level in ipairs(levels) do
-		level = tonumber(level)
-		assert(level and level >= 0 and level <= 15, "invalid level index")
+  for i,level in ipairs(levels) do
+    level = tonumber(level)
+    assert(level and level >= 0 and level <= 15, "invalid level index")
 
-		print("Writing level " .. level)
-		map = map.load(rf, level)
+    print("Writing level " .. level)
+    map = map.load(rf, level)
 
-		drawLedges(map)
-		drawWalls(map)
+    drawLedges(map)
+    drawWalls(map)
 
-		local colours = {
-			"#FF0000", "#FF8080", "#FFFFFF", "#FF0080", -- weapons, ammo, projectiles, and explosives
-			"#00FFFF", -- patches
-			"#0000FF", "#0000FF", -- hardware and software
-			"#FFFFFF", "#FFFFFF", -- scenery and trash
-			"#808000", "#FFFF00", -- switches and doors
-			"#FFFFFF", "#FFFFFF", "#A0A0A0", -- decorations, traps and containers
-			"#800080" -- enemies
-		}
+    local colours = {
+      "#FF0000", "#FF8080", "#FFFFFF", "#FF0080", -- weapons, ammo, projectiles, and explosives
+      "#00FFFF", -- patches
+      "#0000FF", "#0000FF", -- hardware and software
+      "#FFFFFF", "#FFFFFF", -- scenery and trash
+      "#808000", "#FFFF00", -- switches and doors
+      "#FFFFFF", "#FFFFFF", "#A0A0A0", -- decorations, traps and containers
+      "#800080" -- enemies
+    }
     
     local objectinfo = {}
 
-		for i,obj in ipairs(map.objects) do
+    for i,obj in ipairs(map.objects) do
       objectinfo[i] = infobox(i, obj)
       
-			if obj.used and colours[obj.class+1] then
-				point('objLayers[%d]' % obj.class,
-					obj.x/256,
-					obj.y/256,
-					colours[obj.class+1],
-					i)
-			end
+      if obj.used and colours[obj.class+1] then
+        point('objLayers[%d]' % obj.class,
+          obj.x/256,
+          obj.y/256,
+          colours[obj.class+1],
+          i)
+      end
 
-			-- FIXME is there a specific subclass for non-openable gratings and stuff?
-			if obj.used and obj.class == 10 then -- openable doors
-				if obj.pitch == 0 then
-					if obj.yaw % 128 == 64 then
-						line(obj.x/256, obj.y/256 - 0.5, obj.x/256, obj.y/256 + 0.5, "#FFFF00")
-					else
-						line(obj.x/256 - 0.5, obj.y/256, obj.x/256 + 0.5, obj.y/256, "#FFFF00")
-					end
-				else
-					point('objLayers[%d]' % obj.class, obj.x/256, obj.y/256, '#FFFF00', i)
-				end
-			end
-		end
+      -- FIXME is there a specific subclass for non-openable gratings and stuff?
+      if obj.used and obj.class == 10 then -- openable doors
+        if obj.pitch == 0 then
+          if obj.yaw % 128 == 64 then
+            line(obj.x/256, obj.y/256 - 0.5, obj.x/256, obj.y/256 + 0.5, "#FFFF00")
+          else
+            line(obj.x/256 - 0.5, obj.y/256, obj.x/256 + 0.5, obj.y/256, "#FFFF00")
+          end
+        else
+          point('objLayers[%d]' % obj.class, obj.x/256, obj.y/256, '#FFFF00', i)
+        end
+      end
+    end
 
-		local fd = assert(io.open(prefix .. ("%02d" % level) .. ".html", "w"))
-		local data = {
-			WIDTH = map.info.width;
-			HEIGHT = map.info.height;
-			SCALE = 16;
-			TILE_INFO = tileinfo(map);
+    local fd = assert(io.open(prefix .. ("%02d" % level) .. ".html", "w"))
+    local data = {
+      WIDTH = map.info.width;
+      HEIGHT = map.info.height;
+      SCALE = 16;
+      TILE_INFO = tileinfo(map);
       OBJECT_INFO = table.concat(objectinfo, ",\n");
-			WALLS = commit();
+      WALLS = commit();
       LEVEL_TITLE = map.name;
       PREV_LINK = levels[i-1]
         and ('<a href="%s%02d.html">&laquo %02d</a>' % { prefix:match("[^/]*$"), levels[i-1], levels[i-1] })
@@ -194,10 +194,10 @@ local function main(archive, prefix, ...)
       NEXT_LINK = levels[i+1]
         and ('<a href="%s%02d.html">%02d &raquo</a>' % { prefix:match("[^/]*$"), levels[i+1], levels[i+1] })
         or '';
-		}
-		fd:write(html:interpolate(data))
-		fd:close()
-	end
+    }
+    fd:write(html:interpolate(data))
+    fd:close()
+  end
 end
 
 return main(...)
