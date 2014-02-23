@@ -114,18 +114,18 @@ function res.load(filename)
     
     -- read file header and TOC header
     -- self.comment,toc_offs,self.count,chunk_offs = struct.unpack("z124 u4 @$2 u2 u4")
-    self.comment,toc_offs = struct.unpack("z124 u4", fd, true)
-    self.count,chunk_offs = struct.unpack("@%d u2 u4" % toc_offs, fd, true)
+    self.comment,toc_offs = struct.unpackvals("z124 u4", fd)
+    self.count,chunk_offs = struct.unpackvals("@%d u2 u4" % toc_offs, fd)
     
     -- read the entire TOC into memory
-    self.toc = struct.unpack(RES_TOCENTRY % self.count, fd, false)
+    self.toc = struct.unpack(RES_TOCENTRY % self.count, fd)
     self.byid = {}
 
     -- prepare to unpack the chunk data
     fd:seek("set", chunk_offs)
     
     for i,chunk in ipairs(self.toc) do
-      chunk.packed_data = struct.unpack("a4 s%d" % chunk.packed_size, fd, true)
+      chunk.packed_data = struct.unpackvals("a4 s%d" % chunk.packed_size, fd)
 
       if chunk.compressed and chunk.dir then
         eprintf("WARNING: skipping compressed chunk directory %05d (%04x)\n", chunk.id, chunk.id)
