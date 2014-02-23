@@ -4,19 +4,10 @@ local map = {}
 local mt = { __index = map }
 
 local names = require "ss1.names".levels
+local objprop = require "ss1.map.objprop"
+local tiles = require "ss1.map.tiles"
 
-function chunkid(level, type)
-  local ids = {
-    info = 4;
-    tiles = 5;
-    objects = 8;
-  }
-
-  return 4000 + 100*level + ids[type]
-end
-
-
-function map.load(rf, index)
+function map.load(rf, level)
   local function loadinfo(self)
     local MAP_INFO = [[
       width:u4 height:u4
@@ -27,74 +18,19 @@ function map.load(rf, index)
       magic:s30
     ]]
 
-    self.info = struct.unpack(MAP_INFO, rf:get(chunkid(index, "info")).data)
+    return struct.unpack(MAP_INFO, rf:get(self.id + 4).data)
   end
 
-  local function loadtiles(self)
-    local MAP_TILES = [[
-      %d * %d * {
-        shape:u1
-        ceiling:{} floor:{}
-        [1|biohazard:b1 floor.dir:u2 floor.height:u5]
-        [1|radiation:b1 ceiling.dir:u2 ceiling.height:u5]
-        slope:u1
-        xref:u2
-        texture:{
-          [2|floor:u5 ceiling:u5 wall:u6]
-        }
-        flags:{
-          [4|
-            mapped:b1 x3
-            shade: u12
-            music: u4
-            slope: u2
-            spooky:b1
-            textures:b1
-            vtex:u8
-          ]
-        }
-        magic:u4
-      }
-    ]]
+  local self = {
+    level = level;
+    id = 4000 + 100*level; -- base chunk ID of this level
+    res = rf;
+  }
 
-    self.tiles = struct.unpack(MAP_TILES % {self.info.width, self.info.height}, rf:get(chunkid(index, "tiles")).data)
-  end
-
-  local function loadobjects(self)
-    local MAP_OBJECTS = [[
-      %d * {
-        used:b1
-        class:u1
-        subclass:u1
-        info_index:u2
-        xref_index:u2
-        prev:u2
-        next:u2
-        x:u2
-        y:u2
-        z:u1
-        pitch:u1
-        yaw:u1
-        roll:u1
-        ai_maybe:u1
-        type:u1
-        hp_maybe:u2
-        state:u1
-        unknown:s3
-      }
-    ]]
-
-    local objbuf = rf:get(chunkid(index, "objects")).data
-    assert(#objbuf % 27 == 0, "confusing object table length")
-    self.objects = struct.unpack(MAP_OBJECTS % (#objbuf/27), objbuf)
-  end
-
-  local self = { index = index, res = rf }
   self.name = names[index] or "UNKNOWN LEVEL"
-
-  loadinfo(self)
-  loadtiles(self)
-  loadobjects(self)
+  self.info = loadinfo(self)
+  self.objects = objprop.load(self)
+  self.tiles = tiles.load(self)
 
   return setmetatable(self, mt)
 end
@@ -107,28 +43,6 @@ function map:tile(x,y)
 
   return self.tiles[y*w + x + 1]
 end
-
---[[
-0000  uint8    tile shape.
-      00      solid
-      01      open
-      02-05    diagonal, open SE, SW, NW, NE
-      06-09    slope, S->N, W->E, N->S, E->W (all slopes are low->high)
-      0A-0D    valley slope, SE->NW, SW->NE, NW->SE, NE->SW
-      0E-11    ridge slope, NW->SE, NE->SW, SE->NW, SW->NE
-0008  uint32    flags:
-      8000 0000  tile has been visited/automapped
-      0F0F 0000  ?? shade control ??
-      0000 F000  ?? music nibble ??
-      0000 0C00  slope control:
-        x0xx  floor & ceiling, same direction
-        x4xx  floor & ceiling, opposite directions
-        x8xx  floor only
-        xCxx  ceiling only
-      0000 0200  ?? spooky music flag ??
-      0000 0100  use adjacent rather than local wall textures
-      0000 001F  vertical texture offset adjustment
-]]
 
 -- table of cell shapes indicating which directions they are solid in
 -- "solid" means the cell is solid in that direction; "slope" means that it
