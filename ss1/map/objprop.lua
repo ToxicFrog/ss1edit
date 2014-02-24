@@ -39,7 +39,7 @@ local function load(self)
 
   local buf = self.res:get(self.id + OFFSET).data
   assert(#buf % 27 == 0, "confusing object table length")
-  return vstruct.unpack(MAP_OBJECTS % (#buf/27), buf)
+  return vstruct.read(MAP_OBJECTS % (#buf/27), buf)
 end
 
 return {

@@ -1,4 +1,4 @@
-local struct = require "vstruct"
+local vstruct = require "vstruct"
 
 local map = {}
 local mt = { __index = map }
@@ -18,7 +18,7 @@ function map.load(rf, level)
       magic:s30
     ]]
 
-    return struct.unpack(MAP_INFO, rf:get(self.id + 4).data)
+    return vstruct.read(MAP_INFO, rf:get(self.id + 4).data)
   end
 
   local self = {

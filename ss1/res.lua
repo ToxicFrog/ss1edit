@@ -1,4 +1,4 @@
-local struct = require "vstruct"
+local vstruct = require "vstruct"
 
 local res = {}
 
@@ -114,18 +114,18 @@ function res.load(filename)
     
     -- read file header and TOC header
     -- self.comment,toc_offs,self.count,chunk_offs = struct.unpack("z124 u4 @$2 u2 u4")
-    self.comment,toc_offs = struct.unpackvals("z124 u4", fd)
-    self.count,chunk_offs = struct.unpackvals("@%d u2 u4" % toc_offs, fd)
+    self.comment,toc_offs = vstruct.readvals("z124 u4", fd)
+    self.count,chunk_offs = vstruct.readvals("@%d u2 u4" % toc_offs, fd)
     
     -- read the entire TOC into memory
-    self.toc = struct.unpack(RES_TOCENTRY % self.count, fd)
+    self.toc = vstruct.read(RES_TOCENTRY % self.count, fd)
     self.byid = {}
 
     -- prepare to unpack the chunk data
     fd:seek("set", chunk_offs)
     
     for i,chunk in ipairs(self.toc) do
-      chunk.packed_data = struct.unpackvals("a4 s%d" % chunk.packed_size, fd)
+      chunk.packed_data = vstruct.readvals("a4 s%d" % chunk.packed_size, fd)
 
       if chunk.compressed and chunk.dir then
         eprintf("WARNING: skipping compressed chunk directory %05d (%04x)\n", chunk.id, chunk.id)
@@ -153,7 +153,7 @@ function res:save(filename)
   if not fd then return nil,err end
 
     -- write the header. write 0 for offset to TOC, we'll fill that in later.
-    struct.pack("z124 u4", fd, { self.comment, 0 })
+    vstruct.write("z124 u4", fd, { self.comment, 0 })
 
     -- write chunk data
     for i,chunk in ipairs(self.toc) do
@@ -163,17 +163,17 @@ function res:save(filename)
       chunk.packed_size = chunk.size
       chunk.packed_data = chunk.data
 
-      struct.pack("a4 s%d" % chunk.size, fd, { chunk.data })
+      vstruct.write("a4 s%d" % chunk.size, fd, { chunk.data })
     end
 
     -- write TOC
-    struct.pack("a4", fd, {})
+    vstruct.write("a4", fd, {})
     local toc_offs = fd:seek("cur", 0)
-    struct.pack("u2 u4", fd, { #self.toc, 128 })
-    struct.pack(RES_TOCENTRY % #self.toc, fd, self.toc)
+    vstruct.write("u2 u4", fd, { #self.toc, 128 })
+    vstruct.write(RES_TOCENTRY % #self.toc, fd, self.toc)
 
     -- write TOC pointer
-    struct.pack("@124 u4", fd, { toc_offs })
+    vstruct.write("@124 u4", fd, { toc_offs })
     
     -- commit
     fd:close()
