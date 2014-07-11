@@ -150,8 +150,11 @@ end
 -- 0 means there is no height change, >0 means there is a height
 -- change of that many map height units; infinity means that there
 -- is no connection between cells (i.e. a wall).
--- does not support slopes yet, so it may report incorrect values
--- when one of the cells is sloped
+-- When one or both of the sides is sloped, it reports the difference between
+-- the highest points in the slope.
+-- FIXME: this should be revisited to find a good way to handle mismatched
+-- edges, e.g. a 3->5 slope running alongside a 5->5 flat -- this should show
+-- up as a ledge, but we can't just average the slope height.
 function map:ledgeHeight(x1, y1, x2, y2)
   assert(x1 == x2 or y1 == y2, "tiles must be adjacent")
 
@@ -162,49 +165,34 @@ function map:ledgeHeight(x1, y1, x2, y2)
 
   local t1,t2 = self:tile(x1,y1),self:tile(x2,y2)
   local w1,w2 = self:walls(x1,y1),self:walls(x2,y2)
-  local delta
+  local f1,f2,c1,c2 -- floor and ceiling heights
 
+  -- Check to see if the floor and the ceiling meet, either because the
+  -- ceiling is sloped and touches the floor of its own tile, or because the
+  -- ceiling of one tile is <= the floor of the adjacent tile.
   if x1 < x2 then -- t1 is west of t2
     w1,w2 = w1.e,w2.w
-    delta = math.min(self:ceilingHeight(x1, y1).e - self:floorHeight(x2, y2).w,
-                     self:ceilingHeight(x2, y2).w - self:floorHeight(x1, y1).e,
-                     self:ceilingHeight(x1, y1).e - self:floorHeight(x1, y1).e,
-                     self:ceilingHeight(x2, y2).w - self:floorHeight(x2, y2).w)
+    f1,f2 = self:floorHeight(x1,y1).e, self:floorHeight(x2,y2).w
+    c1,c2 = self:ceilingHeight(x1,y1).e, self:ceilingHeight(x2,y2).w
   else -- t1 is south of t2
     w1,w2 = w1.n,w2.s
-    delta = math.min(self:ceilingHeight(x1, y1).n - self:floorHeight(x2, y2).s,
-                     self:ceilingHeight(x2, y2).s - self:floorHeight(x1, y1).n,
-                     self:ceilingHeight(x1, y1).n - self:floorHeight(x1, y1).n,
-                     self:ceilingHeight(x2, y2).s - self:floorHeight(x2, y2).s)
+    f1,f2 = self:floorHeight(x1,y1).n, self:floorHeight(x2,y2).s
+    c1,c2 = self:ceilingHeight(x1,y1).n, self:ceilingHeight(x2,y2).s
   end
+
+  local delta = math.min(c1 - f2, c2 - f1, c1 - f1, c2 - f2)
 
   if w1 == "solid" and w2 == "solid" then
     return 0 -- both tiles have solid faces
   elseif w1 == "solid" or w2 == "solid" then
     return math.huge -- one tile has a solid face, the other doesn't
+  elseif delta <= 0 then
+    return math.huge -- tiles have open faces but ceiling touches floor
   end
 
-  if delta <= 0 then
-    return math.huge
-  end
-
-  -- now we need to check relative heights
-  -- first we check for inferred walls, where the ceiling of one tile is <= the
-  -- floor of the other
-  -- ceiling is in units down from the top of the map, so we take the *highest*
-  -- ceiling value and then subtract it from 32 (the maximum height value)
-  if 32 - math.max(t1.ceiling.height, t2.ceiling.height) <= math.max(t1.floor.height, t2.floor.height) then
-    return math.huge
-  end
-
-  -- if there is no inferred wall, just return the difference between the two floor
-  -- heights for now (i.e. without taking slope into account). The length of a height
-  -- unit varies from map to map, so we convert it to world units first; the resulting
-  -- value will be somewhere between 1/32 (one height unit with the smallest possible
-  -- value) and 31 (31 height units with the greatest possible value).
-  -- FIXME: we need to understand and handle slopes, which will mean the height of the
-  -- tile will be different depending on which edge you're measuring. Ick.
-  return math.abs(t1.floor.height - t2.floor.height) * (1/2^self.info.step_power)
+  -- Now we know that both tiles are open and connected, and we need to
+  -- calculate the difference in floor height between them.
+  return math.abs(f1 - f2) * (1/2^self.info.step_power)
 end
 
 
