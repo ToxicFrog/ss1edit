@@ -27,7 +27,7 @@ function map.load(rf, level)
     res = rf;
   }
 
-  self.name = names[index] or "UNKNOWN LEVEL"
+  self.name = names[level] or "UNKNOWN LEVEL"
   self.info = loadinfo(self)
   self.objects = objprop.load(self)
   self._tiles = tiles.load(self)
