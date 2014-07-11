@@ -36,38 +36,34 @@ local function commit()
 end
 
 local function drawLedges(map)
-  for y=1,map.info.height-1 do
-    for x=1,map.info.width-1 do
-      for x2,y2 in pairs { [x] = y-1, [x-1] = y } do
-        local delta = map:ledgeHeight(x, y, x2, y2)
+  for x,y,tile in map:tiles(1,1) do
+    for x2,y2 in pairs { [x] = y-1, [x-1] = y } do
+      local delta = map:ledgeHeight(x, y, x2, y2)
 
-        if delta > 0 and delta < math.huge then
-          local shade = 0x40 + delta * 4
-          line(x, y, x2+1, y2+1, "#00%02X00" % shade)
-        end
+      if delta > 0 and delta < math.huge then
+        local shade = 0x40 + delta * 4
+        line(x, y, x2+1, y2+1, "#00%02X00" % shade)
       end
     end
   end
 end
 
 local function drawWalls(map)
-  for y=1,map.info.height-1 do
-    for x=1,map.info.width-1 do
-      for x2,y2 in pairs { [x] = y-1, [x-1] = y } do
-        local delta = map:ledgeHeight(x, y, x2, y2)
+  for x,y,tile in map:tiles(1,1) do
+    for x2,y2 in pairs { [x] = y-1, [x-1] = y } do
+      local delta = map:ledgeHeight(x, y, x2, y2)
 
-        if delta == math.huge then
-          line(x, y, x2+1, y2+1, "#00FF30" % shade)
-        end
+      if delta == math.huge then
+        line(x, y, x2+1, y2+1, "#00FF30" % shade)
       end
+    end
 
-      -- diagonal walls don't need a ledge check
-      local tile = map:tile(x,y)
-      if tile.shape == 2 or tile.shape == 4 then -- / diagonal
-        line(x, y, x+1, y+1, "#00FF30")
-      elseif tile.shape == 3 or tile.shape == 5 then -- \ diagonal
-        line(x+1, y, x, y+1, "#00FF30")
-      end
+    -- diagonal walls don't need a ledge check
+    local tile = map:tile(x,y)
+    if tile.shape == 2 or tile.shape == 4 then -- / diagonal
+      line(x, y, x+1, y+1, "#00FF30")
+    elseif tile.shape == 3 or tile.shape == 5 then -- \ diagonal
+      line(x+1, y, x, y+1, "#00FF30")
     end
   end
 end
@@ -151,12 +147,12 @@ local function main(archive, prefix, ...)
       "#FFFFFF", "#FFFFFF", "#A0A0A0", -- decorations, traps and containers
       "#800080" -- enemies
     }
-    
+
     local objectinfo = {}
 
     for i,obj in ipairs(map.objects) do
       objectinfo[i] = infobox(i, obj)
-      
+
       if obj.used and colours[obj.class+1] then
         point('objLayers[%d]' % obj.class,
           obj.x/256,

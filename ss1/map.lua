@@ -30,18 +30,34 @@ function map.load(rf, level)
   self.name = names[index] or "UNKNOWN LEVEL"
   self.info = loadinfo(self)
   self.objects = objprop.load(self)
-  self.tiles = tiles.load(self)
+  self._tiles = tiles.load(self)
 
   return setmetatable(self, mt)
 end
 
--- tiles are packed bottom to top, left to right, row-major in the resource file
+-- Tiles are packed bottom to top, left to right, row-major in the resource
+-- file. The API expects tile indexes using System Shock coordinates, i.e.
+-- 0-indexed; a typical map contains tiles tiles in the range (0,0)-(63,63).
 function map:tile(x,y)
   local w,h = self.info.width,self.info.height
+  return self._tiles[y*w + x + 1]
+end
 
-  --print(w*h, x, y, (h - y - 1)*w + x + 1)
-
-  return self.tiles[y*w + x + 1]
+-- Return an iterator over all tiles within the given bounding box.
+-- If no bounds specified, iterates over all tiles row by row.
+function map:tiles(x1, y1, x2, y2)
+  x1 = x1 or 0
+  y1 = y1 or 0
+  x2 = x2 or self.info.width-1
+  y2 = y2 or self.info.height-1
+  local function iter()
+    for y=y1,y2 do
+      for x=x1,x2 do
+        coroutine.yield(x, y, self:tile(x,y))
+      end
+    end
+  end
+  return coroutine.wrap(iter)
 end
 
 -- table of cell shapes indicating which directions they are solid in
