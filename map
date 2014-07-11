@@ -29,6 +29,11 @@ local function line(x1, y1, x2, y2, colour)
     x1, y1, x2, y2, colour })
 end
 
+local function arrow(x, y, dir, colour)
+  table.insert(output, "      arrow_%s(%f, %f, '%s');\n" % {
+    dir, x, y, colour})
+end
+
 local function infobox(index, obj)
   local template = [[ "%d": { id: "%d/%d/%d", category: "%s", subcategory: "%s", name: "%s", position: "(%.2f, %.2f, %.2f)", rotation: "(%d, %d, %d)", ai: %d, hp: %d }]]
 
@@ -87,20 +92,33 @@ local function drawLedgeOrWall(x, y, x2, y2, delta)
   end
 end
 
-local function drawWalls(map)
+local function drawDiagonalWall(x, y, tile)
+  if tile.shape == 2 or tile.shape == 4 then -- / diagonal
+    line(x, y, x+1, y+1, "#00FF30")
+  elseif tile.shape == 3 or tile.shape == 5 then -- \ diagonal
+    line(x+1, y, x, y+1, "#00FF30")
+  end
+end
+
+local function drawSlope(x, y, tile)
+  slopes = { [6] = "up", [7] = "rt", [8] = "dn", [9] = "lf" }
+  if slopes[tile.shape] then
+    if tile.flags.slope == 3 then -- ceiling slope only
+      arrow(x, y, slopes[tile.shape], "#303030")
+    else -- floor slope
+      arrow(x, y, slopes[tile.shape], "#004000")
+    end
+  end
+end
+
+local function drawTiles(map)
   for x,y,tile in map:tiles(1,1) do
     for x2,y2 in pairs { [x] = y-1, [x-1] = y } do
       local delta = map:ledgeHeight(x, y, x2, y2)
       drawLedgeOrWall(x, y, x2, y2, delta)
     end
-
-    -- diagonal walls don't need a ledge check
-    local tile = map:tile(x,y)
-    if tile.shape == 2 or tile.shape == 4 then -- / diagonal
-      line(x, y, x+1, y+1, "#00FF30")
-    elseif tile.shape == 3 or tile.shape == 5 then -- \ diagonal
-      line(x+1, y, x, y+1, "#00FF30")
-    end
+    drawDiagonalWall(x, y, tile)
+    drawSlope(x, y, tile)
   end
 end
 
@@ -170,7 +188,7 @@ local function main(archive, prefix, ...)
     print("Writing level " .. level)
     map = map.load(rf, level)
 
-    drawWalls(map)
+    drawTiles(map)
     local objectinfo = drawObjects(map)
 
     local fd = assert(io.open(prefix .. ("%02d" % level) .. ".html", "w"))
