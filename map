@@ -29,45 +29,6 @@ local function line(x1, y1, x2, y2, colour)
     x1, y1, x2, y2, colour })
 end
 
-local function commit()
-  local buf = table.concat(output, "")
-  output = {}
-  return buf
-end
-
-local function drawLedges(map)
-  for x,y,tile in map:tiles(1,1) do
-    for x2,y2 in pairs { [x] = y-1, [x-1] = y } do
-      local delta = map:ledgeHeight(x, y, x2, y2)
-
-      if delta > 0 and delta < math.huge then
-        local shade = 0x40 + delta * 4
-        line(x, y, x2+1, y2+1, "#00%02X00" % shade)
-      end
-    end
-  end
-end
-
-local function drawWalls(map)
-  for x,y,tile in map:tiles(1,1) do
-    for x2,y2 in pairs { [x] = y-1, [x-1] = y } do
-      local delta = map:ledgeHeight(x, y, x2, y2)
-
-      if delta == math.huge then
-        line(x, y, x2+1, y2+1, "#00FF30" % shade)
-      end
-    end
-
-    -- diagonal walls don't need a ledge check
-    local tile = map:tile(x,y)
-    if tile.shape == 2 or tile.shape == 4 then -- / diagonal
-      line(x, y, x+1, y+1, "#00FF30")
-    elseif tile.shape == 3 or tile.shape == 5 then -- \ diagonal
-      line(x+1, y, x, y+1, "#00FF30")
-    end
-  end
-end
-
 local function infobox(index, obj)
   local template = [[ "%d": { id: "%d/%d/%d", category: "%s", subcategory: "%s", name: "%s", position: "(%.2f, %.2f, %.2f)", rotation: "(%d, %d, %d)", ai: %d, hp: %d }]]
 
@@ -110,6 +71,80 @@ local function tileinfo(map)
   return table.concat(info, ",\n")
 end
 
+local function commit()
+  local buf = table.concat(output, "")
+  output = {}
+  return buf
+end
+
+local function drawLedgeOrWall(x, y, x2, y2, delta)
+  if delta == 0 then
+    return
+  elseif delta < math.huge then
+    line(x, y, x2+1, y2+1, "#00%02X00" % (0x40 + delta*4))
+  else
+    line(x, y, x2+1, y2+1, "#00FF30")
+  end
+end
+
+local function drawWalls(map)
+  for x,y,tile in map:tiles(1,1) do
+    for x2,y2 in pairs { [x] = y-1, [x-1] = y } do
+      local delta = map:ledgeHeight(x, y, x2, y2)
+      drawLedgeOrWall(x, y, x2, y2, delta)
+    end
+
+    -- diagonal walls don't need a ledge check
+    local tile = map:tile(x,y)
+    if tile.shape == 2 or tile.shape == 4 then -- / diagonal
+      line(x, y, x+1, y+1, "#00FF30")
+    elseif tile.shape == 3 or tile.shape == 5 then -- \ diagonal
+      line(x+1, y, x, y+1, "#00FF30")
+    end
+  end
+end
+
+local function drawObjects(map)
+  local colours = {
+    "#FF0000", "#FF8080", "#FFFFFF", "#FF0080", -- weapons, ammo, projectiles, and explosives
+    "#00FFFF", -- patches
+    "#0000FF", "#0000FF", -- hardware and software
+    "#FFFFFF", "#FFFFFF", -- scenery and trash
+    "#808000", "#FFFF00", -- switches and doors
+    "#FFFFFF", "#FFFFFF", "#A0A0A0", -- decorations, traps and containers
+    "#800080" -- enemies
+  }
+
+  local objectinfo = {}
+
+  for i,obj in ipairs(map.objects) do
+    objectinfo[i] = infobox(i, obj)
+
+    if obj.used and colours[obj.class+1] then
+      point('objLayers[%d]' % obj.class,
+        obj.x/256,
+        obj.y/256,
+        colours[obj.class+1],
+        i)
+    end
+
+    -- FIXME is there a specific subclass for non-openable gratings and stuff?
+    if obj.used and obj.class == 10 then -- openable doors
+      if obj.pitch == 0 then
+        if obj.yaw % 128 == 64 then
+          line(obj.x/256, obj.y/256 - 0.5, obj.x/256, obj.y/256 + 0.5, "#FFFF00")
+        else
+          line(obj.x/256 - 0.5, obj.y/256, obj.x/256 + 0.5, obj.y/256, "#FFFF00")
+        end
+      else
+        point('objLayers[%d]' % obj.class, obj.x/256, obj.y/256, '#FFFF00', i)
+      end
+    end
+  end
+
+  return objectinfo
+end
+
 local function main(archive, prefix, ...)
   local levels = {...}
 
@@ -135,45 +170,8 @@ local function main(archive, prefix, ...)
     print("Writing level " .. level)
     map = map.load(rf, level)
 
-    drawLedges(map)
     drawWalls(map)
-
-    local colours = {
-      "#FF0000", "#FF8080", "#FFFFFF", "#FF0080", -- weapons, ammo, projectiles, and explosives
-      "#00FFFF", -- patches
-      "#0000FF", "#0000FF", -- hardware and software
-      "#FFFFFF", "#FFFFFF", -- scenery and trash
-      "#808000", "#FFFF00", -- switches and doors
-      "#FFFFFF", "#FFFFFF", "#A0A0A0", -- decorations, traps and containers
-      "#800080" -- enemies
-    }
-
-    local objectinfo = {}
-
-    for i,obj in ipairs(map.objects) do
-      objectinfo[i] = infobox(i, obj)
-
-      if obj.used and colours[obj.class+1] then
-        point('objLayers[%d]' % obj.class,
-          obj.x/256,
-          obj.y/256,
-          colours[obj.class+1],
-          i)
-      end
-
-      -- FIXME is there a specific subclass for non-openable gratings and stuff?
-      if obj.used and obj.class == 10 then -- openable doors
-        if obj.pitch == 0 then
-          if obj.yaw % 128 == 64 then
-            line(obj.x/256, obj.y/256 - 0.5, obj.x/256, obj.y/256 + 0.5, "#FFFF00")
-          else
-            line(obj.x/256 - 0.5, obj.y/256, obj.x/256 + 0.5, obj.y/256, "#FFFF00")
-          end
-        else
-          point('objLayers[%d]' % obj.class, obj.x/256, obj.y/256, '#FFFF00', i)
-        end
-      end
-    end
+    local objectinfo = drawObjects(map)
 
     local fd = assert(io.open(prefix .. ("%02d" % level) .. ".html", "w"))
     local data = {
