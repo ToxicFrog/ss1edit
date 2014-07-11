@@ -13,11 +13,11 @@
          width: 1024px;
          text-align: center;
          display: inline;
-      } 
-      */   
+      }
+      */
     </style>
   </head>
-  <body>
+  <body bgcolor="#202020" text="#B0B0B0">
     <table>
       <tr>
         <td>
@@ -58,7 +58,7 @@
       var tile_info = {
         ${TILE_INFO}
       };
-      
+
       var object_info = {
         ${OBJECT_INFO}
       };
@@ -72,7 +72,7 @@
       function lockMessage(lock) {
         messageLocked = lock
       }
-      
+
       function tileInfo(x, y) {
         var info = tile_info[x + "," + y];
         return '<table>'
@@ -87,7 +87,7 @@
           + '<tr><th>Spooky</th><td>' + info.spooky + '</td></tr>'
           + '</table>';
       }
-      
+
       function objectInfo(id) {
         var info = object_info[id];
         return '<table>'
