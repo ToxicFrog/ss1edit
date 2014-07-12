@@ -469,6 +469,14 @@ seems to be:
 Each entry is 16 bytes long. The extra 10 bytes are unused for most objects; it
 is likely that they hold authorization information for access cards.
 
+0000    int16   Item index in master object table
+0002    int16   "Prev" link for slot list
+0004    int16   "Next" link for slot list
+0006    byte[2] unknown
+0008    int16   access granted -- bitmask; bit N being set lets you open doors
+                  with access == N
+000A    byte[6] unknown
+
 
     ------------------------------------
     The switches / panels table, class 9

@@ -66,6 +66,12 @@ formats[7] = [[
 ]]
 
 -- Inventory items. Not yet reverse engineered.
+formats[8] = [[
+  x6
+  unknown_8_6:s2
+  access:s2
+  unknown_8_A:s6
+]]
 
 -- Switches and panels.
 formats[9] = [[

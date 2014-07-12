@@ -10,6 +10,10 @@ local function add(t, key, value)
   return t
 end
 
+local function hex(s)
+  return (s:gsub(".", function(c) return ("%02X "):format(c:byte()) end):sub(1,-2))
+end
+
 function pretty.map(map)
   local info = {}
   add(info, "level", map.level)
@@ -59,6 +63,26 @@ function pretty.tile(tile)
   return info
 end
 
+-- hardware
+details[5] = function(info, obj)
+  add(info, "version", obj.version)
+end
+
+-- inventory items
+details[8] = function(info, obj)
+  add(info, "unknown", hex(obj.unknown_8_6))
+  add(info, "access", hex(obj.access))
+  add(info, "unknown", hex(obj.unknown_8_A))
+end
+
+-- Doors and gratings.
+details[10] = function(info, obj)
+  add(info, "message", obj.message)
+  add(info, "access", obj.access)
+  add(info, "unknown", hex(obj.unknown_10))
+end
+
+-- containers
 details[13] = function(info, obj)
   if #obj.contents > 0 then
     add(info, "contents", table.concat(
@@ -68,7 +92,6 @@ details[13] = function(info, obj)
   else
     add(info, "contents", "(empty)")
   end
-  return info
 end
 
 return pretty
