@@ -34,8 +34,25 @@ local function arrow(x, y, dir, colour)
     dir, x, y, colour})
 end
 
+local function details(obj)
+  if obj.class == 13 then
+    return table.concat(
+      table.mapv(obj.contents,
+        function(obj) return gamesys.name(obj.class, obj.subclass, obj.type) end),
+      "<br>")
+  else
+    return "(unsupported)"
+  end
+end
+
 local function infobox(index, obj)
-  local template = [[ "%d": { id: "%d/%d/%d", category: "%s", subcategory: "%s", name: "%s", position: "(%.2f, %.2f, %.2f)", rotation: "(%d, %d, %d)", ai: %d, hp: %d }]]
+  local template = [[ "%d": {
+    id: "%d/%d/%d",
+    category: "%s", subcategory: "%s",
+    name: "%s",
+    position: "(%.2f, %.2f, %.2f)", rotation: "(%d, %d, %d)",
+    ai: %d, hp: %d, details: "%s"
+  }]]
 
   return template % {
     index,
@@ -46,14 +63,21 @@ local function infobox(index, obj)
     obj.x/256, obj.y/256, obj.z/256,
     obj.pitch, obj.yaw, obj.roll,
     obj.ai_maybe,
-    obj.hp_maybe
+    obj.hp_maybe,
+    details(obj)
   }
 end
 
 local function tileinfo(map)
   local info = {}
 
-  local template = [[ "%d,%d": { x: %d, y: %d, shape: "%s", floor: %d, ceiling: %d, slope: %d, slope_control: %d, biohazard: "%s", radiation: "%s", spooky: "%s" }]]
+  local template = [[ "%d,%d": {
+    x: %d, y: %d,
+    shape: "%s",
+    floor: %d, ceiling: %d,
+    slope: %d, slope_control: %d,
+    biohazard: "%s", radiation: "%s", spooky: "%s"
+  }]]
 
   for y=1,map.info.height-1 do
     for x=1,map.info.width-1 do
@@ -138,7 +162,7 @@ local function drawObjects(map)
   for i,obj in ipairs(map.objects) do
     objectinfo[i] = infobox(i, obj)
 
-    if obj.used and colours[obj.class+1] then
+    if colours[obj.class+1] then
       point('objLayers[%d]' % obj.class,
         obj.x/256,
         obj.y/256,
@@ -147,7 +171,7 @@ local function drawObjects(map)
     end
 
     -- FIXME is there a specific subclass for non-openable gratings and stuff?
-    if obj.used and obj.class == 10 then -- openable doors
+    if obj.class == 10 then -- openable doors
       if obj.pitch == 0 then
         if obj.yaw % 128 == 64 then
           line(obj.x/256, obj.y/256 - 0.5, obj.x/256, obj.y/256 + 0.5, "#FFFF00")
