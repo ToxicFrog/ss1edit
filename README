@@ -1,4 +1,4 @@
-One day, this is planned to be a full set of editing tools for System Shock - a map and gamesys editor, and converters between SS1 art formats to standard formats that can be edited with existing tools. 
+One day, this is planned to be a full set of editing tools for System Shock - a map and gamesys editor, and converters between SS1 art formats to standard formats that can be edited with existing tools.
 
 At the moment, however, it consists of two tools: `res`, for unpacking (and, eventually, packing) resource files, and `map` for generating pretty HTML5 maps of System Shock levels. Run them without arguments for help. It depends on vstruct[1] and kineticJS[2]. A recent version of kineticJS is included as `kinetic.js`; you'll need to put this in the same directory as the generated map files for them to work.
 
@@ -8,3 +8,13 @@ Note that unpacking compressed resource files - especially ARCHIVE.DAT, which co
 
 [1] https://github.com/ToxicFrog/vstruct
 [2] http://kineticjs.com/
+
+## License
+
+Copyright © 2014 Ben "ToxicFrog" Kelly, Google Inc.
+
+Distributed under the Apache License v2; see the file COPYING for details.
+
+### Disclaimer
+
+This is not an official Google product and is not supported by Google.
