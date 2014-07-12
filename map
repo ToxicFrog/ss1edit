@@ -5,6 +5,7 @@ require "util"
 local res = require "ss1.res"
 local map = require "ss1.map"
 local gamesys = require "ss1.gamesys"
+local pretty = require "ss1.map.pretty"
 
 local HELP_TEXT = [[
 Usage: map <archive> <prefix> [levels...]
@@ -34,70 +35,31 @@ local function arrow(x, y, dir, colour)
     dir, x, y, colour})
 end
 
-local function details(obj)
-  if obj.class == 13 then
-    return table.concat(
-      table.mapv(obj.contents,
-        function(obj) return gamesys.name(obj.class, obj.subclass, obj.type) end),
-      "<br>")
-  else
-    return "(unsupported)"
-  end
-end
-
 local function infobox(index, obj)
-  local template = [[ "%d": {
-    id: "%d/%d/%d",
-    category: "%s", subcategory: "%s",
-    name: "%s",
-    position: "(%.2f, %.2f, %.2f)", rotation: "(%d, %d, %d)",
-    ai: %d, hp: %d, details: "%s"
-  }]]
+  local buf = {}
+  for _,info in ipairs(pretty.object(obj)) do
+    table.insert(buf, "<tr><th>%s</th><td>%s</td></tr>" % { info.key, info.value })
+  end
 
-  return template % {
+  return [[ "%d": "<table>%s</table>" ]] % {
     index,
-    obj.class, obj.subclass, obj.type,
-    gamesys.name(obj.class),
-    gamesys.name(obj.class, obj.subclass),
-    gamesys.name(obj.class, obj.subclass, obj.type),
-    obj.x, obj.y, obj.z,
-    obj.pitch, obj.yaw, obj.roll,
-    obj.ai_maybe,
-    obj.hp_maybe,
-    details(obj)
+    table.concat(buf, "")
   }
 end
 
 local function tileinfo(map)
-  local info = {}
+  local tiles = {}
+  local template = [[ "%d,%d": "<table>%s</table>" ]]
 
-  local template = [[ "%d,%d": {
-    x: %d, y: %d,
-    shape: "%s",
-    floor: %d, ceiling: %d,
-    slope: %d, slope_control: %d,
-    biohazard: "%s", radiation: "%s", spooky: "%s"
-  }]]
-
-  for y=1,map.info.height-1 do
-    for x=1,map.info.width-1 do
-      local tile = map:tile(x,y)
-        table.insert(info, template % {
-          x, y,
-          x, y,
-          ("%02X"):format(tile.shape),
-          tile.floor.height,
-          32 - tile.ceiling.height,
-          tile.slope,
-          tostring(tile.flags.slope),
-          tostring(tile.biohazard),
-          tostring(tile.radiation),
-          tostring(tile.flags.spooky)
-        })
+  for x,y,tile in map:tiles() do
+    local buf = {}
+    for _,info in ipairs(pretty.tile(tile)) do
+      table.insert(buf, "<tr><th>%s</th><td>%s</td></tr>" % { info.key, info.value })
     end
+    table.insert(tiles, template % { x, y, table.concat(buf, "") })
   end
 
-  return table.concat(info, ",\n")
+  return table.concat(tiles, ",\n")
 end
 
 local function commit()

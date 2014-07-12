@@ -74,33 +74,11 @@
       }
 
       function tileInfo(x, y) {
-        var info = tile_info[x + "," + y];
-        return '<table>'
-          + '<tr><th>Coordinates</th><td>(' + info.x + ',' + info.y + ')</td></tr>'
-          + '<tr><th>Shape</th><td>' + info.shape + '</td></tr>'
-          + '<tr><th>Floor height</th><td>' + info.floor + '</td></tr>'
-          + '<tr><th>Ceiling height</th><td>' + info.ceiling + '</td></tr>'
-          + '<tr><th>Slope degree</th><td>' + info.slope + '</td></tr>'
-          + '<tr><th>Slope control</th><td>' + info.slope_control + '</td></tr>'
-          + '<tr><th>Biohazard</th><td>' + info.biohazard + '</td></tr>'
-          + '<tr><th>Radiation</th><td>' + info.radiation + '</td></tr>'
-          + '<tr><th>Spooky</th><td>' + info.spooky + '</td></tr>'
-          + '</table>';
+        return tile_info[x + "," + y];
       }
 
       function objectInfo(id) {
-        var info = object_info[id];
-        return '<table>'
-          + '<tr><th>ID</th><td>' + info.id + '</td></tr>'
-          + '<tr><th>Category</th><td>' + info.category + '</td></tr>'
-          + '<tr><th>Subcategory</th><td>' + info.subcategory + '</td></tr>'
-          + '<tr><th>Name</th><td>' + info.name + '</td></tr>'
-          + '<tr><th>Position</th><td>' + info.position + '</td></tr>'
-          + '<tr><th>Rotation</th><td>' + info.rotation + '</td></tr>'
-          + '<tr><th>AI Index?</th><td>' + info.ai + '</td></tr>'
-          + '<tr><th>HP?</th><td>' + info.hp + '</td></tr>'
-          + '<tr><th>Details</th><td>' + info.details + '</td></tr>'
-          + '</table>';
+        return object_info[id];
       }
 
       var stage = new Kinetic.Stage({
