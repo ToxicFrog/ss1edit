@@ -60,7 +60,7 @@ local function infobox(index, obj)
     gamesys.name(obj.class),
     gamesys.name(obj.class, obj.subclass),
     gamesys.name(obj.class, obj.subclass, obj.type),
-    obj.x/256, obj.y/256, obj.z/256,
+    obj.x, obj.y, obj.z,
     obj.pitch, obj.yaw, obj.roll,
     obj.ai_maybe,
     obj.hp_maybe,
@@ -164,8 +164,8 @@ local function drawObjects(map)
 
     if colours[obj.class+1] then
       point('objLayers[%d]' % obj.class,
-        obj.x/256,
-        obj.y/256,
+        obj.x,
+        obj.y,
         colours[obj.class+1],
         i)
     end
@@ -174,12 +174,12 @@ local function drawObjects(map)
     if obj.class == 10 then -- openable doors
       if obj.pitch == 0 then
         if obj.yaw % 128 == 64 then
-          line(obj.x/256, obj.y/256 - 0.5, obj.x/256, obj.y/256 + 0.5, "#FFFF00")
+          line(obj.x, obj.y - 0.5, obj.x, obj.y + 0.5, "#FFFF00")
         else
-          line(obj.x/256 - 0.5, obj.y/256, obj.x/256 + 0.5, obj.y/256, "#FFFF00")
+          line(obj.x - 0.5, obj.y, obj.x + 0.5, obj.y, "#FFFF00")
         end
       else
-        point('objLayers[%d]' % obj.class, obj.x/256, obj.y/256, '#FFFF00', i)
+        point('objLayers[%d]' % obj.class, obj.x, obj.y, '#FFFF00', i)
       end
     end
   end

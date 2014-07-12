@@ -9,8 +9,8 @@ formats.Object = [[
   xref_index:u2
   prev:u2
   next:u2
-  x:u2
-  y:u2
+  x:p2,8
+  y:p2,8
   z:u1
   pitch:u1
   yaw:u1
