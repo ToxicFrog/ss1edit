@@ -53,7 +53,7 @@ local function tileinfo(map)
 
   for x,y,tile in map:tiles() do
     local buf = {}
-    for _,info in ipairs(pretty.tile(tile)) do
+    for _,info in ipairs(pretty.tile(tile, x, y)) do
       table.insert(buf, "<tr><th>%s</th><td>%s</td></tr>" % { info.key, info.value })
     end
     table.insert(tiles, template % { x, y, table.concat(buf, "") })

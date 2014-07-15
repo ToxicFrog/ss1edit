@@ -50,9 +50,11 @@ local tile_shape = {
   "ridge-se", "ridge-sw", "ridge-nw", "ridge-ne",
 }
 
-function pretty.tile(tile)
+function pretty.tile(tile, x, y)
   local info = {}
-  --add(info, "position", "(%d,%d)" % { tile.x, tile.y })
+  if x and y then
+    add(info, "position", "(%d,%d)" % { x, y })
+  end
   add(info, "shape", tile_shape[tile.shape])
   add(info, "height", tile.floor.height .. "-" .. (32-tile.ceiling.height))
   add(info, "slope", tile.slope)
