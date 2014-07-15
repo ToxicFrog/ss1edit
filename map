@@ -87,7 +87,12 @@ local function drawDiagonalWall(x, y, tile)
 end
 
 local function drawSlope(x, y, tile)
-  slopes = { [6] = "up", [7] = "rt", [8] = "dn", [9] = "lf" }
+  slopes = {
+    nil, nil, nil, nil, nil,
+    "n", "e", "s", "w",
+    "nw", "ne", "se", "sw",
+    "se", "sw", "nw", "ne",
+  }
   if slopes[tile.shape] then
     if tile.flags.slope == 3 then -- ceiling slope only
       arrow(x, y, slopes[tile.shape], "#303030")
