@@ -21,17 +21,17 @@ Usage: map <archive> <prefix> [levels...]
 local output = {}
 
 local function point(layer, x, y, colour, id)
-  table.insert(output, "      point(%s, %f, %f, '%s', '%d');\n" % {
+  table.insert(output, "point(%s, %f, %f, '%s', '%d');" % {
     layer, x, y, colour, id })
 end
 
 local function line(x1, y1, x2, y2, colour)
-  table.insert(output, "      line(%f, %f, %f, %f, '%s');\n" % {
+  table.insert(output, "line(%f, %f, %f, %f, '%s');" % {
     x1, y1, x2, y2, colour })
 end
 
 local function arrow(x, y, dir, colour)
-  table.insert(output, "      arrow_%s(%f, %f, '%s');\n" % {
+  table.insert(output, "arrow_%s(%f, %f, '%s');" % {
     dir, x, y, colour})
 end
 
@@ -59,11 +59,11 @@ local function tileinfo(map)
     table.insert(tiles, template % { x, y, table.concat(buf, ",") })
   end
 
-  return table.concat(tiles, ",\n        ")
+  return table.concat(tiles, ",\n  ")
 end
 
 local function commit()
-  local buf = table.concat(output, "")
+  local buf = table.concat(output, "\n  ")
   output = {}
   return buf
 end
@@ -167,7 +167,8 @@ local function main(archive, prefix, ...)
   end
 
   print("Loading template...")
-  local html = io.open("map.html"):read("*a")
+  local html = io.readfile("map.html")
+  local js = io.readfile("map.js")
 
   print("Loading ARCHIVE.DAT...")
   local rf = assert(res.load(archive))
@@ -184,11 +185,12 @@ local function main(archive, prefix, ...)
 
     local fd = assert(io.open(prefix .. ("%02d" % level) .. ".html", "w"))
     local data = {
+      PREFIX = (prefix .. ("%02d" % level)):gsub("^.*/","");
       WIDTH = map.info.width;
       HEIGHT = map.info.height;
       SCALE = 16;
       TILE_INFO = tileinfo(map);
-      OBJECT_INFO = table.concat(objects, ",\n        ");
+      OBJECT_INFO = table.concat(objects, ",\n  ");
       WALLS = commit();
       LEVEL_TITLE = map.name;
       PREV_LINK = levels[i-1]
@@ -198,8 +200,8 @@ local function main(archive, prefix, ...)
         and ('<a href="%s%02d.html">%02d &raquo</a>' % { prefix:match("[^/]*$"), levels[i+1], levels[i+1] })
         or '';
     }
-    fd:write(html:interpolate(data))
-    fd:close()
+    io.writefile(prefix .. ("%02d" % level) .. ".html", html:interpolate(data))
+    io.writefile(prefix .. ("%02d" % level) .. ".js", js:interpolate(data))
   end
 end
 

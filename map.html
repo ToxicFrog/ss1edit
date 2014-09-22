@@ -44,19 +44,8 @@
       </tr>
     </table>
     <script src="./kinetic.js"></script>
+    <script src="./${PREFIX}.js"></script>
     <script>
-      var SCALE=${SCALE}; /* pixels per map tile */
-      var WIDTH=${WIDTH};
-      var HEIGHT=${HEIGHT};
-
-      var tile_info = {
-        ${TILE_INFO}
-      };
-
-      var object_info = {
-        ${OBJECT_INFO}
-      };
-
       function clearChildren(node) {
         while (node.firstChild) {
           node.removeChild(node.firstChild);
@@ -203,7 +192,7 @@
     </script>
 
     <script>
-      ${WALLS}
+      drawTerrain();
 
       stage.add(mapLayer);
       stage.add(hitLayer);
