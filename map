@@ -38,7 +38,14 @@ end
 local function objectinfo(index, obj)
   local buf = {}
   for _,info in ipairs(pretty.object(obj)) do
-    table.insert(buf, "[%q,%q]" % { info.key, info.value })
+    if type(info.value) == "table" then
+      table.insert(buf, '[%q,["%s"]]' % {
+        info.key,
+        table.concat(info.value, '","')
+      })
+    else
+      table.insert(buf, "[%q,%q]" % { info.key, tostring(info.value) })
+    end
   end
 
   return [[ "%d": [%s] ]] % { index, table.concat(buf, ",") }

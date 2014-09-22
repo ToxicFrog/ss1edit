@@ -87,10 +87,9 @@ end
 -- containers
 details[13] = function(info, obj)
   if #obj.contents > 0 then
-    add(info, "contents", table.concat(
+    add(info, "contents",
       table.mapv(obj.contents,
-        function(obj) return gamesys.name(obj.class, obj.subclass, obj.type) end),
-      "<br>"))
+        function(obj) return gamesys.name(obj.class, obj.subclass, obj.type) end))
   else
     add(info, "contents", "(empty)")
   end

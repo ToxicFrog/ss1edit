@@ -69,12 +69,19 @@
       function infoToTable(info) {
         var buf = document.createElement("table");
 
-        for (i=0; i < info.length; ++i) {
+        for (var i=0; i < info.length; ++i) {
           var tr = buf.appendChild(document.createElement("tr"));
           var th = tr.appendChild(document.createElement("th"));
           th.appendChild(document.createTextNode(info[i][0]));
           var td = tr.appendChild(document.createElement("td"));
-          td.appendChild(document.createTextNode(info[i][1]));
+          if (info[i][1] instanceof Array) {
+            for (var j=0; j < info[i][1].length; ++j) {
+              td.appendChild(document.createTextNode(info[i][1][j]))
+              td.appendChild(document.createElement("br"))
+            }
+          } else {
+            td.appendChild(document.createTextNode(info[i][1]));
+          }
         }
         return buf;
       }
