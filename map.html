@@ -111,7 +111,6 @@
       function updateLayers() {
         var controls = document.getElementById("layercontrols").getElementsByTagName("input");
         for (var i=0; i < controls.length; ++i) {
-          console.log(i, controls[i]);
           objLayers[i].setVisible(controls[i].checked);
         }
       }
