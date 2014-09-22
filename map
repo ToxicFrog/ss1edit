@@ -156,6 +156,7 @@ end
 
 local function main(archive, prefix, ...)
   local levels = {...}
+  local index = false
 
   if not prefix then
     print(HELP_TEXT)
@@ -163,6 +164,7 @@ local function main(archive, prefix, ...)
   end
 
   if #levels == 0 then
+    index = { "<html><head><title>System Shock Maps</title></head><body>" }
     levels = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 }
   end
 
@@ -183,9 +185,10 @@ local function main(archive, prefix, ...)
     drawTiles(map)
     local objects = drawObjects(map)
 
-    local fd = assert(io.open(prefix .. ("%02d" % level) .. ".html", "w"))
+    local basename = (prefix .. ("%02d" % level)):gsub("^.*/","");
     local data = {
-      PREFIX = (prefix .. ("%02d" % level)):gsub("^.*/","");
+      INDEX = level;
+      BASENAME = basename;
       WIDTH = map.info.width;
       HEIGHT = map.info.height;
       SCALE = 16;
@@ -202,6 +205,16 @@ local function main(archive, prefix, ...)
     }
     io.writefile(prefix .. ("%02d" % level) .. ".html", html:interpolate(data))
     io.writefile(prefix .. ("%02d" % level) .. ".js", js:interpolate(data))
+
+    if index then
+      table.insert(index, '<a href="%s.html">%02d - %s</a><br>' % { basename, level, map.name })
+    end
+  end
+
+  -- write index
+  if index then
+    table.insert(index, "</body></html>")
+    io.writefile(prefix .. "index.html", table.concat(index, ""))
   end
 end
 
