@@ -35,31 +35,31 @@ local function arrow(x, y, dir, colour)
     dir, x, y, colour})
 end
 
-local function infobox(index, obj)
+local function objectinfo(index, obj)
   local buf = {}
   for _,info in ipairs(pretty.object(obj)) do
-    table.insert(buf, "<tr><th>%s</th><td>%s</td></tr>" % { info.key, info.value })
+    table.insert(buf, "[%q,%q]" % { info.key, info.value })
   end
 
-  return [[ "%d": "<table>%s</table>" ]] % {
-    index,
-    table.concat(buf, "")
-  }
+  return [[ "%d": [%s] ]] % { index, table.concat(buf, ",") }
 end
 
+-- Generate the tile info structure for a given map.
+-- The tile info is a JS map where the keys are "x,y" strings and the values
+-- are lists of [key,value] pairs in the order they are to be displayed in.
 local function tileinfo(map)
   local tiles = {}
-  local template = [[ "%d,%d": "<table>%s</table>" ]]
+  local template = '"%d,%d": [%s]'
 
   for x,y,tile in map:tiles() do
     local buf = {}
     for _,info in ipairs(pretty.tile(tile, x, y)) do
-      table.insert(buf, "<tr><th>%s</th><td>%s</td></tr>" % { info.key, info.value })
+      table.insert(buf, '[%q,%q]' % { info.key, info.value })
     end
-    table.insert(tiles, template % { x, y, table.concat(buf, "") })
+    table.insert(tiles, template % { x, y, table.concat(buf, ",") })
   end
 
-  return table.concat(tiles, ",\n")
+  return table.concat(tiles, ",\n        ")
 end
 
 local function commit()
@@ -124,10 +124,10 @@ local function drawObjects(map)
     "#800080" -- enemies
   }
 
-  local objectinfo = {}
+  local objects = {}
 
   for i,obj in ipairs(map.objects) do
-    objectinfo[i] = infobox(i, obj)
+    objects[i] = objectinfo(i, obj)
 
     if colours[obj.class+1] then
       point('objLayers[%d]' % obj.class,
@@ -151,7 +151,7 @@ local function drawObjects(map)
     end
   end
 
-  return objectinfo
+  return objects
 end
 
 local function main(archive, prefix, ...)
@@ -180,7 +180,7 @@ local function main(archive, prefix, ...)
     map = map.load(rf, level)
 
     drawTiles(map)
-    local objectinfo = drawObjects(map)
+    local objects = drawObjects(map)
 
     local fd = assert(io.open(prefix .. ("%02d" % level) .. ".html", "w"))
     local data = {
@@ -188,7 +188,7 @@ local function main(archive, prefix, ...)
       HEIGHT = map.info.height;
       SCALE = 16;
       TILE_INFO = tileinfo(map);
-      OBJECT_INFO = table.concat(objectinfo, ",\n");
+      OBJECT_INFO = table.concat(objects, ",\n        ");
       WALLS = commit();
       LEVEL_TITLE = map.name;
       PREV_LINK = levels[i-1]

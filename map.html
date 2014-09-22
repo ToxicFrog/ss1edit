@@ -57,22 +57,43 @@
         ${OBJECT_INFO}
       };
 
+      function clearChildren(node) {
+        while (node.firstChild) {
+          node.removeChild(node.firstChild);
+        }
+      }
+
       var messageLocked = false
-      function writeMessage(message) {
+      function writeMessage(node) {
         if (!messageLocked) {
-          info = document.getElementById("info").innerHTML = message
+          info = document.getElementById("info")
+          clearChildren(info)
+          info.appendChild(node)
         }
       }
       function lockMessage(lock) {
         messageLocked = lock
       }
 
+      function infoToTable(info) {
+        var buf = document.createElement("table");
+
+        for (i=0; i < info.length; ++i) {
+          var tr = buf.appendChild(document.createElement("tr"));
+          var th = tr.appendChild(document.createElement("th"));
+          th.appendChild(document.createTextNode(info[i][0]));
+          var td = tr.appendChild(document.createElement("td"));
+          td.appendChild(document.createTextNode(info[i][1]));
+        }
+        return buf;
+      }
+
       function tileInfo(x, y) {
-        return tile_info[x + "," + y];
+        return infoToTable(tile_info[x + "," + y])
       }
 
       function objectInfo(id) {
-        return object_info[id];
+        return infoToTable(object_info[id]);
       }
 
       var stage = new Kinetic.Stage({
