@@ -1,7 +1,7 @@
 <!DOCTYPE HTML>
 <html>
   <head>
-    <title>${LEVEL_TITLE}</title>
+    <title>System Shock</title>
     <style>
       body {
         margin: 0px;
@@ -14,7 +14,6 @@
       <tr>
         <td>
           <div style="text-align: center; font-weight: bold;">${LEVEL_TITLE}</div>
-          <div style="text-align: center;">${PREV_LINK} | ${NEXT_LINK}</div>
           <div id="layercontrols">
             <label><input type="checkbox" checked="true" onchange="updateLayers();">0 - Weapons</label><br>
             <label><input type="checkbox"                onchange="updateLayers();">1 - Ammo</label><br>
@@ -47,7 +46,33 @@
     </table>
     <script src="./kinetic.js"></script>
     <script>
-    <script src="./${BASENAME}.js"></script>
+      var SCALE = 16  // Pixels per map tile
+      var maps = []
+      var map
+
+      if (window.location.hash == "") {
+        map = ${INDEX}
+        maps[${INDEX}] = true
+      } else {
+        var hash = window.location.hash.substr(1).split(",")
+        console.log("Requested maps: ", hash)
+        map = parseInt(hash[0])
+        for (var i=0; i < hash.length; ++i) {
+          maps[parseInt(hash[i])] = true
+        }
+      }
+
+      /* Load the map data for the selected levels. */
+      for (var i=0; i < maps.length; ++i) {
+        if (!maps[i]) { continue }
+        console.log("Loading level " + i)
+        var script = document.createElement("script")
+        script.type = "text/javascript"
+        script.src = "./" + i + ".js"
+        document.getElementsByTagName("head")[0].appendChild(script)
+      }
+    </script>
+    <script>
       function clearChildren(node) {
         while (node.firstChild) {
           node.removeChild(node.firstChild);
@@ -87,31 +112,74 @@
       }
 
       function tileInfo(x, y) {
-        return infoToTable(tile_info[x + "," + y])
+        return infoToTable(map.tile_info[x + "," + y])
       }
 
       function objectInfo(id) {
-        return infoToTable(object_info[id]);
+        return infoToTable(map.object_info[id]);
       }
 
-      var stage = new Kinetic.Stage({
-        container: 'map',
-        width: WIDTH*SCALE,
-        height: HEIGHT*SCALE
-      });
+      function showMap(i) {
+        console.log("Showing map " + i)
+        if (maps[i]) {
+          map.stage.setVisible(false)
+          map = maps[i]
+          initMap()
+          map.stage.setVisible(true)
+          updateLayers()
+          document.title = map.title + " - System Shock Map"
+        } else {
+          console.log("Couldn't find map data!")
+        }
+      }
 
-      var mapLayer = new Kinetic.Layer({ x: 0, width: WIDTH*SCALE }); // level geometry
-      var hitLayer = new Kinetic.Layer({ x: 0, width: WIDTH*SCALE, opacity: 0 });  // mouse event trap
+      function initMap() {
+        if (map.stage)
+          return;
+        console.log("Initializing renderer for map " + map.index)
 
-      var objLayers = {}; // objects, by object class
-      for (var i = 0; i < 15 ; ++i) {
-        objLayers[i] = new Kinetic.Layer({ x: 0, width: WIDTH*SCALE });
+        map.stage = new Kinetic.Stage({
+          container: 'map',
+          width: map.width * SCALE,
+          height: map.height * SCALE
+        })
+
+        map.mapLayer = new Kinetic.Layer({ x: 0, width: map.width * SCALE }); // level geometry
+        map.hitLayer = new Kinetic.Layer({ x: 0, width: map.width * SCALE, opacity: 0 });  // mouse event trap
+
+        map.objLayers = [] // objects, by object class
+        for (var i = 0; i < 15 ; ++i) {
+          map.objLayers[i] = new Kinetic.Layer({ x: 0, width: map.width * SCALE });
+        }
+
+        map.hitLayer.add(new Kinetic.Rect({x:0, y:0, width: map.width * SCALE, height: map.height * SCALE}));
+        map.hitLayer.on('mousemove', function(evt) {
+          var xy = map.stage.getUserPosition();
+          var x = Math.floor(xy.x/SCALE);
+          var y = Math.floor(map.height - xy.y/SCALE);
+          writeMessage(tileInfo(x, y))
+        });
+        map.hitLayer.on('mousedown', function() { lockMessage(false); })
+
+        map.mapLayer.add(new Kinetic.Rect({
+          x: 0, y: 0,
+          width: map.width*SCALE, height: map.height*SCALE,
+          fill: '#000000',
+        }))
+
+        map.drawTerrain()
+
+        map.stage.add(map.mapLayer);
+        map.stage.add(map.hitLayer);
+        for (var i = 0; i < 15; ++i) {
+          map.stage.add(map.objLayers[i])
+        }
       }
 
       function updateLayers() {
         var controls = document.getElementById("layercontrols").getElementsByTagName("input");
         for (var i=0; i < controls.length; ++i) {
-          objLayers[i].setVisible(controls[i].checked);
+          map.objLayers[i].setVisible(controls[i].checked);
         }
       }
 
@@ -122,26 +190,9 @@
         }
         updateLayers();
       }
-
-      hitLayer.add(new Kinetic.Rect({x:0, y:0, width:WIDTH*SCALE, height:HEIGHT*SCALE}));
-      hitLayer.on('mousemove', function(evt) {
-        var xy = stage.getUserPosition();
-        var x = Math.floor(xy.x/SCALE);
-        var y  = Math.floor(HEIGHT - xy.y/SCALE);
-        writeMessage(tileInfo(x, y))
-      });
-      hitLayer.on('mousedown', function() { lockMessage(false); })
-
-      var background = new Kinetic.Rect({
-        x: 0, y: 0,
-        width: WIDTH*SCALE, height: HEIGHT*SCALE,
-        fill: '#000000',
-      })
-      mapLayer.add(background);
-
       function line(x1, y1, x2, y2, colour) {
-        mapLayer.add(new Kinetic.Line({
-          points: [x1*SCALE, (HEIGHT-y1)*SCALE, x2*SCALE, (HEIGHT-y2)*SCALE],
+        map.mapLayer.add(new Kinetic.Line({
+          points: [x1*SCALE, (map.height-y1)*SCALE, x2*SCALE, (map.height-y2)*SCALE],
           stroke: colour,
         }));
       }
@@ -149,7 +200,7 @@
       function point(layer, x, y, colour, id) {
         var obj = new Kinetic.Circle({
           x: x*SCALE,
-          y: (HEIGHT-y)*SCALE,
+          y: (map.height-y)*SCALE,
           radius: SCALE/4,
           stroke: colour,
           //fill: colour,
@@ -158,15 +209,15 @@
           writeMessage(objectInfo(id));
         });
         obj.on('mousedown', function() { lockMessage(false); writeMessage(objectInfo(id)); lockMessage(true); })
-        layer.add(obj);
+        map.objLayers[layer].add(obj);
       }
 
       function arrow(x1, y1, x2, y2, x3, y3, colour) {
-        mapLayer.add(new Kinetic.Line({
+        map.mapLayer.add(new Kinetic.Line({
           points: [
-            x1*SCALE, (HEIGHT-y1)*SCALE,
-            x2*SCALE, (HEIGHT-y2)*SCALE,
-            x3*SCALE, (HEIGHT-y3)*SCALE,
+            x1*SCALE, (map.height-y1)*SCALE,
+            x2*SCALE, (map.height-y2)*SCALE,
+            x3*SCALE, (map.height-y3)*SCALE,
           ],
           stroke: colour,
         }))
@@ -198,17 +249,13 @@
         arrow(x+0.7,y+0.3, x+0.3,y+0.3, x+0.3,y+0.7, colour)
       }
     </script>
-
     <script>
-      drawTerrain();
-
-      stage.add(mapLayer);
-      stage.add(hitLayer);
-      for (var i = 0; i < 15; ++i) {
-        stage.add(objLayers[i]);
-      }
-
-      updateLayers();
+      window.addEventListener('load', function() {
+        console.log(map, maps[map])
+        map = maps[map]
+        initMap()
+        showMap(map.index)
+      }, false)
     </script>
   </body>
 </html>

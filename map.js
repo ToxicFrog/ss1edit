@@ -1,15 +1,17 @@
-var SCALE=${SCALE}; /* pixels per map tile */
-var WIDTH=${WIDTH};
-var HEIGHT=${HEIGHT};
-
-var tile_info = {
-  ${TILE_INFO}
-};
-
-var object_info = {
-  ${OBJECT_INFO}
-};
-
-function drawTerrain() {
-  ${WALLS}
+maps[${INDEX}] = {
+  title: "${LEVEL_TITLE}",
+  index: ${INDEX},
+  width: ${WIDTH},
+  height: ${HEIGHT},
+  tile_info: {
+    ${TILE_INFO}
+  },
+  object_info: {
+    ${OBJECT_INFO}
+  },
+  drawTerrain: function() {
+    ${WALLS}
+  }
 }
+
+console.log("Level ${INDEX} loaded successfully.")

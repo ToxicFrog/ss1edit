@@ -21,7 +21,7 @@ Usage: map <archive> <prefix> [levels...]
 local output = {}
 
 local function point(layer, x, y, colour, id)
-  table.insert(output, "point(%s, %f, %f, '%s', '%d');" % {
+  table.insert(output, "point(%d, %f, %f, '%s', '%d');" % {
     layer, x, y, colour, id })
 end
 
@@ -66,11 +66,11 @@ local function tileinfo(map)
     table.insert(tiles, template % { x, y, table.concat(buf, ",") })
   end
 
-  return table.concat(tiles, ",\n  ")
+  return table.concat(tiles, ",\n    ")
 end
 
 local function commit()
-  local buf = table.concat(output, "\n  ")
+  local buf = table.concat(output, "\n    ")
   output = {}
   return buf
 end
@@ -137,7 +137,8 @@ local function drawObjects(map)
     objects[i] = objectinfo(i, obj)
 
     if colours[obj.class+1] then
-      point('objLayers[%d]' % obj.class,
+      point(
+        obj.class,
         obj.x,
         obj.y,
         colours[obj.class+1],
@@ -153,7 +154,7 @@ local function drawObjects(map)
           line(obj.x - 0.5, obj.y, obj.x + 0.5, obj.y, "#FFFF00")
         end
       else
-        point('objLayers[%d]' % obj.class, obj.x, obj.y, '#FFFF00', i)
+        point(obj.class, obj.x, obj.y, '#FFFF00', i)
       end
     end
   end
@@ -192,7 +193,7 @@ local function main(archive, prefix, ...)
     drawTiles(map)
     local objects = drawObjects(map)
 
-    local basename = (prefix .. ("%02d" % level)):gsub("^.*/","");
+    local basename = (prefix .. level):gsub("^.*/","");
     local data = {
       INDEX = level;
       BASENAME = basename;
@@ -200,18 +201,18 @@ local function main(archive, prefix, ...)
       HEIGHT = map.info.height;
       SCALE = 16;
       TILE_INFO = tileinfo(map);
-      OBJECT_INFO = table.concat(objects, ",\n  ");
+      OBJECT_INFO = table.concat(objects, ",\n    ");
       WALLS = commit();
       LEVEL_TITLE = map.name;
       PREV_LINK = levels[i-1]
-        and ('<a href="%s%02d.html">&laquo %02d</a>' % { prefix:match("[^/]*$"), levels[i-1], levels[i-1] })
+        and ('<a href="%s%d.html">&laquo %02d</a>' % { prefix:match("[^/]*$"), levels[i-1], levels[i-1] })
         or '';
       NEXT_LINK = levels[i+1]
-        and ('<a href="%s%02d.html">%02d &raquo</a>' % { prefix:match("[^/]*$"), levels[i+1], levels[i+1] })
+        and ('<a href="%s%d.html">%02d &raquo</a>' % { prefix:match("[^/]*$"), levels[i+1], levels[i+1] })
         or '';
     }
-    io.writefile(prefix .. ("%02d" % level) .. ".html", html:interpolate(data))
-    io.writefile(prefix .. ("%02d" % level) .. ".js", js:interpolate(data))
+    io.writefile(prefix .. level .. ".html", html:interpolate(data))
+    io.writefile(prefix .. level .. ".js", js:interpolate(data))
 
     if index then
       table.insert(index, '<a href="%s.html">%02d - %s</a><br>' % { basename, level, map.name })
