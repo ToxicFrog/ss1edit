@@ -188,11 +188,13 @@ local function main(archive, prefix, ...)
   print("Loading ARCHIVE.DAT...")
   local rf = assert(res.load(archive))
 
+  io.write("Processing level:")
   for i,level in ipairs(levels) do
+    io.write(" "..level)
+    io.flush()
     level = tonumber(level)
     assert(level and level >= 0 and level <= 15, "invalid level index")
 
-    print("Writing level " .. level)
     map = map.load(rf, level)
 
     drawTiles(map)
@@ -222,6 +224,8 @@ local function main(archive, prefix, ...)
       table.insert(index, map)
     end
   end
+  print()
+
   -- write index
   if index then
     print("Writing index")
