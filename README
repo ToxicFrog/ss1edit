@@ -2,9 +2,9 @@ One day, this is planned to be a full set of editing tools for System Shock - a 
 
 At the moment, however, it consists of two tools: `res`, for unpacking (and, eventually, packing) resource files, and `map` for generating pretty HTML5 maps of System Shock levels. Run them without arguments for help. It depends on vstruct[1] and kineticJS[2]. A recent version of kineticJS is included as `kinetic.js`; you'll need to put this in the same directory as the generated map files for them to work.
 
-The generated maps have gotten too large to reasonably commit (10+MB, and getting larger), so they aren't committed anymore; you can find them at http://funkyhorror.ancilla.ca/toxicfrog/ss1/maps/
+The generated maps have gotten too large to reasonably commit, so they aren't committed anymore; you can find them at http://funkyhorror.ancilla.ca/toxicfrog/ss1/maps/
 
-Note that unpacking compressed resource files - especially ARCHIVE.DAT, which contains several megabytes of compressed data - is *slow*. It is highly recommended that you create an uncompressed version of ARCHIVE.DAT (using res x + res u) if you're going to be running a lot of commands against it. (FIXME: write a script to do this automatically, or add it as an operating mode to `res`.)
+Note that unpacking compressed resource files - especially ARCHIVE.DAT, which contains several megabytes of compressed data - is *slow*. It is highly recommended that you create an uncompressed version of ARCHIVE.DAT; the included Makefile will do this automatically, or you can do it yourself using the `res d` command.
 
 [1] https://github.com/ToxicFrog/vstruct
 [2] http://kineticjs.com/
