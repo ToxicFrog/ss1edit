@@ -188,7 +188,7 @@ local function main(archive, prefix, ...)
   print("Loading ARCHIVE.DAT...")
   local rf = assert(res.load(archive))
 
-  io.write("Processing level:")
+  io.write("Processing levels:")
   for i,level in ipairs(levels) do
     io.write(" "..level)
     io.flush()
@@ -211,12 +211,6 @@ local function main(archive, prefix, ...)
       OBJECT_INFO = table.concat(objects, ",\n    ");
       WALLS = commit();
       LEVEL_TITLE = map.name;
-      PREV_LINK = levels[i-1]
-        and ('<a href="%s%d.html">&laquo %02d</a>' % { prefix:match("[^/]*$"), levels[i-1], levels[i-1] })
-        or '';
-      NEXT_LINK = levels[i+1]
-        and ('<a href="%s%d.html">%02d &raquo</a>' % { prefix:match("[^/]*$"), levels[i+1], levels[i+1] })
-        or '';
     }
     io.writefile(prefix .. level .. ".js", js:interpolate(data))
 
