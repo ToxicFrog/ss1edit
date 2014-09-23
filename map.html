@@ -13,7 +13,10 @@
     <table>
       <tr>
         <td>
-          <div style="text-align: center; font-weight: bold;">${LEVEL_TITLE}</div>
+          <select id="levelselect" onchange="changeLevel();" value="0">
+            ${LEVEL_SELECT}
+          </select>
+          <div style="text-align: center; font-weight: bold;">_</div>
           <div id="layercontrols">
             <label><input type="checkbox" checked="true" onchange="updateLayers();">0 - Weapons</label><br>
             <label><input type="checkbox"                onchange="updateLayers();">1 - Ammo</label><br>
@@ -37,6 +40,7 @@
           </div>
         </td>
         <td>
+          <div id="hidden" style="display: none;"></div>
           <div id="map"></div>
         </td>
         <td>
@@ -46,19 +50,24 @@
     </table>
     <script src="./kinetic.js"></script>
     <script>
+      // Initialization of globals and map data. //
+
+      var DEFAULT = ${DEFAULT_LEVEL}
       var SCALE = 16  // Pixels per map tile
+      var levels = {${ALL_LEVELS}}
       var maps = []
       var map
 
-      if (window.location.hash == "") {
-        map = ${INDEX}
-        maps[${INDEX}] = true
-      } else {
+      if (window.location.hash != "") {
         var hash = window.location.hash.substr(1).split(",")
         console.log("Requested maps: ", hash)
-        map = parseInt(hash[0])
+        DEFAULT = parseInt(hash[0])
         for (var i=0; i < hash.length; ++i) {
-          maps[parseInt(hash[i])] = true
+          maps[hash[i]] = levels[hash[i]]
+        }
+      } else {
+        for (k in levels) {
+          maps[k] = true
         }
       }
 
@@ -71,8 +80,19 @@
         script.src = "./" + i + ".js"
         document.getElementsByTagName("head")[0].appendChild(script)
       }
+
+      /* Hide the level select entries for levels we didn't load. */
+      var options = document.getElementById("levelselect").getElementsByTagName("option")
+      for (var i=options.length-1; i >= 0; --i) {
+        if (!maps[options[i].value]) {
+          console.log(options[i].value, maps[options[i].value])
+          options[i].parentNode.removeChild(options[i])
+        }
+      }
     </script>
     <script>
+      // General HTML manipulating/UI related functions //
+
       function clearChildren(node) {
         while (node.firstChild) {
           node.removeChild(node.firstChild);
@@ -119,13 +139,20 @@
         return infoToTable(map.object_info[id]);
       }
 
+      function changeLevel() {
+        level = document.getElementById("levelselect").value
+        showMap(parseInt(level))
+      }
+
       function showMap(i) {
         console.log("Showing map " + i)
         if (maps[i]) {
-          map.stage.setVisible(false)
+          map.stage.hide()
+          document.getElementById('hidden').appendChild(map.stage.content)
           map = maps[i]
           initMap()
-          map.stage.setVisible(true)
+          document.getElementById('map').appendChild(map.stage.content)
+          map.stage.show()
           updateLayers()
           document.title = map.title + " - System Shock Map"
         } else {
@@ -179,6 +206,7 @@
       function updateLayers() {
         var controls = document.getElementById("layercontrols").getElementsByTagName("input");
         for (var i=0; i < controls.length; ++i) {
+          console.log("Layer visibility", i, controls[i].checked)
           map.objLayers[i].setVisible(controls[i].checked);
         }
       }
@@ -190,6 +218,10 @@
         }
         updateLayers();
       }
+    </script>
+    <script>
+      // KineticJS map rendering functions //
+
       function line(x1, y1, x2, y2, colour) {
         map.mapLayer.add(new Kinetic.Line({
           points: [x1*SCALE, (map.height-y1)*SCALE, x2*SCALE, (map.height-y2)*SCALE],
@@ -250,10 +282,12 @@
       }
     </script>
     <script>
+      // Wait for all the other scripts to load and then load the default map. //
+
       window.addEventListener('load', function() {
-        console.log(map, maps[map])
-        map = maps[map]
+        map = maps[DEFAULT]
         initMap()
+        document.getElementById("levelselect").value = map.index
         showMap(map.index)
       }, false)
     </script>

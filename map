@@ -171,8 +171,13 @@ local function main(archive, prefix, ...)
     return
   end
 
-  if #levels == 0 then
-    index = { "<html><head><title>System Shock Maps</title></head><body>" }
+  if levels[1] == "index" then
+    index = {}
+    table.remove(levels, 1)
+  end
+
+  if #levels == 0 or levels[1] == "all" then
+    index = {}
     levels = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 }
   end
 
@@ -211,18 +216,26 @@ local function main(archive, prefix, ...)
         and ('<a href="%s%d.html">%02d &raquo</a>' % { prefix:match("[^/]*$"), levels[i+1], levels[i+1] })
         or '';
     }
-    io.writefile(prefix .. level .. ".html", html:interpolate(data))
     io.writefile(prefix .. level .. ".js", js:interpolate(data))
 
     if index then
-      table.insert(index, '<a href="%s.html">%02d - %s</a><br>' % { basename, level, map.name })
+      table.insert(index, map)
     end
   end
-
   -- write index
   if index then
-    table.insert(index, "</body></html>")
-    io.writefile(prefix .. "index.html", table.concat(index, ""))
+    print("Writing index")
+    io.writefile(prefix .. "index.html", html:interpolate {
+      DEFAULT_LEVEL = index[1].level;
+      ALL_LEVELS = table.concat(table.mapv(index, function(map) return "%d: true" % map.level end), ",");
+      LEVEL_SELECT = table.concat(
+        table.mapv(
+          index,
+          function(map)
+            return '<option value="%d">%02d - %s</option>'
+              % { map.level, map.level, map.name } end),
+        "\n            ");
+    })
   end
 end
 
