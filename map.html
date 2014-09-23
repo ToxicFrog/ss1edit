@@ -8,6 +8,7 @@
         padding: 0px;
       }
     </style>
+    <script src="./kinetic.js"></script>
   </head>
   <body bgcolor="#202020" text="#B0B0B0">
     <table height="1024px">
@@ -40,15 +41,13 @@
           </div>
         </td>
         <td>
-          <div id="hidden" style="display: none;"></div>
-          <div id="map"></div>
+          <div id="map"><h2>Loading map data...</h2></div>
         </td>
         <td>
           <div id="info"></div>
         </td>
       </tr>
     </table>
-    <script src="./kinetic.js"></script>
     <script>
       // Initialization of globals and map data. //
 
@@ -76,7 +75,7 @@
         var script = document.createElement("script")
         script.type = "text/javascript"
         script.src = "./" + i + ".js"
-        document.getElementsByTagName("head")[0].appendChild(script)
+        document.getElementsByTagName("body")[0].appendChild(script)
       }
 
       /* Hide the level select entries for levels we didn't load. */
@@ -137,18 +136,16 @@
       }
 
       function changeLevel() {
-        level = document.getElementById("levelselect").value
-        showMap(parseInt(level))
+        showMap(document.getElementById("levelselect").value)
       }
 
       function showMap(i) {
         if (maps[i]) {
-          map.stage.hide()
-          document.getElementById('hidden').appendChild(map.stage.content)
+          clearChildren(document.getElementById('map'))
+          destroyMap()
           map = maps[i]
           initMap()
           document.getElementById('map').appendChild(map.stage.content)
-          map.stage.show()
           updateLayers()
           document.title = map.title + " - System Shock Map"
         }
@@ -194,6 +191,14 @@
         for (var i = 0; i < 15; ++i) {
           map.stage.add(map.objLayers[i])
         }
+      }
+
+      function destroyMap() {
+        map.stage.destroy()
+        delete map.mapLayer
+        delete map.hitLayer
+        delete map.objLayers
+        delete map.stage
       }
 
       function updateLayers() {
@@ -277,6 +282,7 @@
       // Wait for all the other scripts to load and then load the default map. //
 
       window.addEventListener('load', function() {
+        clearChildren(document.getElementById('map'))
         map = maps[DEFAULT]
         initMap()
         document.getElementById("levelselect").value = map.index
