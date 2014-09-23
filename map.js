@@ -13,5 +13,3 @@ maps[${INDEX}] = {
     ${WALLS}
   }
 }
-
-console.log("Level ${INDEX} loaded successfully.")

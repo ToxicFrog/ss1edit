@@ -60,7 +60,6 @@
 
       if (window.location.hash != "") {
         var hash = window.location.hash.substr(1).split(",")
-        console.log("Requested maps: ", hash)
         DEFAULT = parseInt(hash[0])
         for (var i=0; i < hash.length; ++i) {
           maps[hash[i]] = levels[hash[i]]
@@ -74,7 +73,6 @@
       /* Load the map data for the selected levels. */
       for (var i=0; i < maps.length; ++i) {
         if (!maps[i]) { continue }
-        console.log("Loading level " + i)
         var script = document.createElement("script")
         script.type = "text/javascript"
         script.src = "./" + i + ".js"
@@ -85,7 +83,6 @@
       var options = document.getElementById("levelselect").getElementsByTagName("option")
       for (var i=options.length-1; i >= 0; --i) {
         if (!maps[options[i].value]) {
-          console.log(options[i].value, maps[options[i].value])
           options[i].parentNode.removeChild(options[i])
         }
       }
@@ -145,7 +142,6 @@
       }
 
       function showMap(i) {
-        console.log("Showing map " + i)
         if (maps[i]) {
           map.stage.hide()
           document.getElementById('hidden').appendChild(map.stage.content)
@@ -155,15 +151,12 @@
           map.stage.show()
           updateLayers()
           document.title = map.title + " - System Shock Map"
-        } else {
-          console.log("Couldn't find map data!")
         }
       }
 
       function initMap() {
         if (map.stage)
           return;
-        console.log("Initializing renderer for map " + map.index)
 
         map.stage = new Kinetic.Stage({
           container: 'map',
@@ -206,7 +199,6 @@
       function updateLayers() {
         var controls = document.getElementById("layercontrols").getElementsByTagName("input");
         for (var i=0; i < controls.length; ++i) {
-          console.log("Layer visibility", i, controls[i].checked)
           map.objLayers[i].setVisible(controls[i].checked);
         }
       }
