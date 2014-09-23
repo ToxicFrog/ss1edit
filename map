@@ -228,8 +228,8 @@ local function main(archive, prefix, ...)
 
   -- write index
   if index then
-    print("Writing index")
-    io.writefile(prefix .. "index.html", html:interpolate {
+    print("Writing viewer HTML")
+    io.writefile(prefix .. "map.html", html:interpolate {
       DEFAULT_LEVEL = index[1].level;
       ALL_LEVELS = table.concat(table.mapv(index, function(map) return "%d: true" % map.level end), ",");
       LEVEL_SELECT = table.concat(
