@@ -82,7 +82,7 @@ function initMap() {
 
   map.hitLayer.add(new Kinetic.Rect({x:0, y:0, width: map.width * SCALE, height: map.height * SCALE}));
   map.hitLayer.on('mousemove', function(evt) {
-    var xy = map.stage.getUserPosition();
+    var xy = map.stage.getPointerPosition();
     var x = Math.floor(xy.x/SCALE);
     var y = Math.floor(map.height - xy.y/SCALE);
     writeMessage(tileInfo(x, y))
