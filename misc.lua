@@ -4,13 +4,13 @@
 -- new: printf, fprintf, eprintf, sprintf, srequire, L
 
 -- new version of type() that supports the __type metamethod
-local _type = type
+rawtype = type
 function type(obj)
 	local mt = getmetatable(obj)
 	if mt and rawget(mt, "__type") then
 		return rawget(mt, "__type")(obj)
 	end
-	return _type(obj)
+	return rawtype(obj)
 end
 -- update file metatable
 getmetatable(io.stdout).__type = function() return "file" end
@@ -55,11 +55,11 @@ function f(src)
 	))()
 end
 
-
 -- bind args into function
-function partial(f, arg1, ...)
-	if arg1 == nil then
+function partial(f, ...)
+	if select('#', ...) == 0 then
 		return f
 	end
-	return curry(function(...) return f(arg1, ...) end, ...)
+	local arg = (...)
+	return partial(function(...) return f(arg, ...) end, select(2, ...))
 end
