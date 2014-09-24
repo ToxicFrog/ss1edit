@@ -126,3 +126,12 @@ function showAllLayers(visible) {
   }
   updateLayers();
 }
+
+function clearSearch() {
+  console.log("clearSearch")
+}
+
+function performSearch(all) {
+  console.log("performSearch", all)
+}
+
