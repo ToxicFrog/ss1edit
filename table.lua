@@ -3,22 +3,45 @@
 
 -- tprint - recursively display the contents of a table
 -- does not generate something the terp can read; use table.dump() for that
-function table.print(T)
+function table.tostring(T)
+	local buf = {}
 	assert(T, "bad argument to table.print")
 	local done = {}
-	local function tprint_r(T, prefix)
+	local function tstr(T, prefix)
 		for k,v in pairs(T) do
-			print(prefix..tostring(k),'=',tostring(v))
+			table.insert(buf, prefix..tostring(k)..'\t=\t'..tostring(v))
 			if type(v) == 'table' then
 				if not done[v] then
 					done[v] = true
-					tprint_r(v, prefix.."  ")
+					tstr(v, prefix.."  ")
 				end
 			end
 		end
 	end
 	done[T] = true
-	tprint_r(T, "")
+	tstr(T, "")
+	return table.concat(buf, "\n")
+end
+
+function table.print(T)
+	return print(table.tostring(T))
+end
+
+-- shallow-merge src into dst, with configurable duplicate-key semantics
+function table.merge(dst, src, dupes)
+	dupes = dupes or "overwrite"
+	for k,v in pairs(src) do
+		if not dst[k] or dupes == "overwrite" then
+			dst[k] = v
+		elseif dupes == "ignore" then
+			-- pass
+		elseif dupes == "error" then
+			error("Duplicate key %s while merging tables" % tostring(k))
+		else
+			error("Unknown duplicate key resolution mode %s" % tostring(dupes))
+		end
+	end
+	return dst
 end
 
 -- dump Lua code which, when loaded and called, returns a copy
@@ -43,20 +66,20 @@ function table.dump(T)
 
 	local function append_table(T)
 		ref[T] = tostring(T):gsub("table: ", "table_")
-		
+
 		local S = string.format("%s = {\n", ref[T])
 		for k,v in pairs(T) do
 			if check_kv(k,v) then
 				S = S..string.format("\t[%s] = %s;\n", getref(k), getref(v))
 			end
 		end
-		
+
 		dump = dump..S.."}\n\n"
 	end
 
 	function getref(v)
 		if ref[v] then return ref[v] end
-		
+
 		local t = type(v)
 		if t == 'nil'
 			or t == 'boolean'
@@ -92,7 +115,7 @@ end
 function table.copy(from, depth)
 	ref = {}
 	depth = depth or math.huge
-	
+
 	local function tcopy(from, depth)
 		local function getref(v)
 			if type(v) ~= 'table' then
@@ -102,21 +125,21 @@ function table.copy(from, depth)
 			end
 			return ref[v]
 		end
-	
+
 		if depth <= 0 then
 			return from
 		end
-		
+
 		local to = {}
 		ref[from] = to
-		
+
 		for k,v in pairs(from) do
 			to[getref(k)] = getref(v)
 		end
-		
+
 		return to
 	end
-	
+
 	return tcopy(from, depth)
 end
 
