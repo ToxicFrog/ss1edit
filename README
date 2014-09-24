@@ -9,6 +9,17 @@ Note that unpacking compressed resource files - especially ARCHIVE.DAT, which co
 [1] https://github.com/ToxicFrog/vstruct
 [2] http://kineticjs.com/
 
+## Installation
+
+You'll need Lua 5.2 installed (or LuaJIT 2.0.0 or later -- the beta versions won't work.) All other dependencies are pulled in via submodules:
+
+    git clone git://github.com/toxicfrog/ss1edit.git
+    cd ss1edit
+    git submodule init
+    git submodule update
+
+After that, you should be good to go. You will of course need a copy of System Shock to do anything interesting with it. If you drop a copy of ARCHIVE.DAT in the ss1edit directory -- or a save file renamed ARCHIVE.DAT -- the included Makefile will automatically turn it into maps for you.
+
 ## License
 
 Copyright © 2014 Ben "ToxicFrog" Kelly, Google Inc.

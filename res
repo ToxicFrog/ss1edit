@@ -1,6 +1,8 @@
 #!/usr/bin/env lua5.2
 -- :mode=lua: --
 
+package.path = package.path .. ";lib/?.lua;lib/?/init.lua"
+
 require "util"
 local res = require "ss1.res"
 
