@@ -38,8 +38,9 @@ window.addEventListener('load', function() {
   map = maps[DEFAULT]
   convertInfo()
   initMap()
+  updateLayers()
   document.getElementById("levelselect").value = map.index
-  showMap(map.index)
+  document.title = map.title + " - System Shock Map"
 }, false)
 
 // Turn objects in the form we get them from the map view generator, as lists

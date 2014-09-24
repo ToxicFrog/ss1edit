@@ -53,7 +53,7 @@ function changeLevel() {
 }
 
 function showMap(i) {
-  if (maps[i]) {
+  if (maps[i] && i != map.index) {
     clearChildren(document.getElementById('map'))
     destroyMap()
     map = maps[i]
@@ -200,7 +200,32 @@ function appendSearchResult(level, obj) {
   var results = document.getElementById("search-results")
   results.style.display = ''
   var row = results.insertRow(-1)
+  row.className = "search-result"
+  row.onmouseenter = hilightSearchResult.bind(undefined, level, obj)
+  row.onmouseleave = unhilightSearchResult.bind(undefined, obj)
+  row.onclick = displayAndHilight.bind(undefined, level, obj)
   row.insertCell(-1).innerHTML = short_levels[level]
   row.insertCell(-1).innerHTML = obj.type
 }
 
+function displayAndHilight(level, obj) {
+  showMap(level)
+  hilightSearchResult(level, obj)
+}
+
+function hilightSearchResult(level, obj) {
+  if (level != map.index) return
+  var coords = obj.position.split(/[(), ]+/)
+  obj._hilight = hilight(map.searchLayer, coords[1], coords[2])
+  map.searchLayer.draw()
+}
+
+function unhilightSearchResult(obj) {
+  console.log("unhilight", map.index, obj)
+  if (obj._hilight) {
+    console.log("actually removing hilight")
+    obj._hilight.destroy()
+    delete obj._hilight
+    map.searchLayer.draw()
+  }
+}

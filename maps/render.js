@@ -35,6 +35,17 @@ function target(layer, x, y) {
   }))
 }
 
+function hilight(layer, x, y) {
+  var circle = new Kinetic.Circle({
+    x: x*SCALE,
+    y: (map.height-y)*SCALE,
+    radius: SCALE,
+    stroke: '#FF00FF',
+  })
+  layer.add(circle)
+  return circle
+}
+
 function arrow(x1, y1, x2, y2, x3, y3, colour) {
   map.mapLayer.add(new Kinetic.Line({
     points: [
