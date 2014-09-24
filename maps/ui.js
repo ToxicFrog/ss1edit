@@ -214,6 +214,7 @@ function displayAndHilight(level, obj) {
 }
 
 function hilightSearchResult(level, obj) {
+  writeMessage(infoToTable(obj))
   if (level != map.index) return
   var coords = obj.position.split(/[(), ]+/)
   obj._hilight = hilight(map.searchLayer, coords[1], coords[2])
