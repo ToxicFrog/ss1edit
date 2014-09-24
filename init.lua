@@ -5,6 +5,7 @@ require (name..'.list')
 require (name..'.string')
 require (name..'.math')
 require (name..'.misc')
+require (name..'.io')
 
 local unpack = unpack
 local coroutine = coroutine
@@ -35,11 +36,11 @@ end)
 function getopts(args, ...)
 	local argv = { ... }
 	local yield = coroutine.yield
-	
+
 	local function isFlag(flag)
 		return args:match(flag) or false
 	end
-	
+
 	local function flagHasArgs(flag)
 		local s = args:find(flag)
 		local a = args:sub(s+1,s+1)
@@ -48,7 +49,7 @@ function getopts(args, ...)
 		end
 		return a
 	end
-	
+
 	local function doShortOpts(arg, next_arg)
 		while #arg > 0 do
 			flag = arg:sub(1,1)
@@ -76,13 +77,13 @@ function getopts(args, ...)
 					return true
 				end
 				yield(false, flag.." requires an argument")
-			
+
 			-- if the flag has an optional argument, the next argument is that
 			-- arg if present and not starting with -
 			elseif next_arg and not next_arg:match('^-') then
 				yield(flag, next_arg)
 				return true
-			
+
 			else
 				yield(flag)
 				return false
@@ -90,7 +91,7 @@ function getopts(args, ...)
 		end
 		return false
 	end
-	
+
 	return coroutine.wrap(function()
 		-- we roll our own for loop so that we can adjust i in mid-loop
 		local i = 1
