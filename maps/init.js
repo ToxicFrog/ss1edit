@@ -1,3 +1,4 @@
+var search_results = []
 var maps = []
 var map
 

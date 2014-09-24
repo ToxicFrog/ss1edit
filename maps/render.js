@@ -22,6 +22,19 @@ function point(layer, x, y, colour, id) {
   map.objLayers[layer].add(obj);
 }
 
+function target(layer, x, y) {
+  console.log("target", x, y)
+  layer.add(new Kinetic.Star({
+    numPoints: 4,
+    innerRadius: 0.1*SCALE,
+    outerRadius: 0.4*SCALE,
+    x: x*SCALE,
+    y: (map.height-y)*SCALE,
+    stroke: '#FFFFFF',
+    fill: '#FFFFFF',
+  }))
+}
+
 function arrow(x1, y1, x2, y2, x3, y3, colour) {
   map.mapLayer.add(new Kinetic.Line({
     points: [

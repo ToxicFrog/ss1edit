@@ -74,8 +74,9 @@ function initMap() {
     height: map.height * SCALE
   })
 
-  map.mapLayer = new Kinetic.Layer({ x: 0, width: map.width * SCALE }); // level geometry
-  map.hitLayer = new Kinetic.Layer({ x: 0, width: map.width * SCALE, opacity: 0 });  // mouse event trap
+  map.mapLayer = new Kinetic.FastLayer({ x: 0, y: 0, width: map.width * SCALE }); // level geometry
+  map.hitLayer = new Kinetic.Layer({ x: 0, y: 0, width: map.width * SCALE, opacity: 0 });  // mouse event trap
+  map.searchLayer = new Kinetic.FastLayer({ x: 0, y: 0, width: map.width * SCALE }) // search result hilighting
 
   map.objLayers = [] // objects, by object class
   for (var i = 0; i < 15 ; ++i) {
@@ -98,12 +99,24 @@ function initMap() {
   }))
 
   map.drawTerrain()
+  drawSearchResults()
 
   map.stage.add(map.mapLayer);
   map.stage.add(map.hitLayer);
   for (var i = 0; i < 15; ++i) {
     map.stage.add(map.objLayers[i])
   }
+  map.stage.add(map.searchLayer)
+}
+
+function drawSearchResults() {
+  map.searchLayer.destroyChildren()
+  for (var r in search_results) {
+    if (search_results[r].level != map.index) continue;
+    var coords = search_results[r].obj.position.split(/[(), ]+/)
+    target(map.searchLayer, coords[1], coords[2])
+  }
+  map.searchLayer.draw()
 }
 
 function destroyMap() {
@@ -111,6 +124,7 @@ function destroyMap() {
   delete map.mapLayer
   delete map.hitLayer
   delete map.objLayers
+  delete map.searchLayer
   delete map.stage
 }
 
@@ -131,42 +145,46 @@ function showAllLayers(visible) {
 
 function performSearch(all) {
   var search = document.getElementById("search-text").value.toLowerCase()
+  search_results = []
   if (search.length <= 1) return;
-  var results = []
   for (var level=0; level < maps.length; ++level) {
     if (maps[level] && (all || level == map.index)) {
       var objs = maps[level].object_info
       for (obj in objs) {
         if (!nameMatches(objs[obj], search)) continue;
-        results.push({level: level, obj: objs[obj]})
+        search_results.push({level: level, obj: objs[obj]})
       }
     }
   }
-  results.sort(function(x,y) {
+  search_results.sort(function(x,y) {
     if (x.obj.type < y.obj.type) return -1;
     if (x.obj.type > y.obj.type) return 1;
     return x.level - y.level
   })
-  displaySearchResults(results)
+  displaySearchResults()
 }
 
 function clearSearch() {
   document.getElementById("search-text").value = ''
-  displaySearchResults([])
+  search_results = []
+  displaySearchResults(search_results)
 }
 
-function displaySearchResults(results) {
+function displaySearchResults() {
   var table = document.getElementById("search-results")
   while (table.rows.length > 1) {
     table.deleteRow(1)
   }
 
-  for (var i in results) {
-    if (i > 0 && results[i-1].obj.type != results[i].obj.type) {
+  for (var i in search_results) {
+    var result = search_results[i]
+    if (i > 0 && search_results[i-1].obj.type != result.obj.type) {
       appendSearchResult(16, {type: "<hr>"})
     }
-    appendSearchResult(results[i].level, results[i].obj)
+    appendSearchResult(result.level, result.obj)
   }
+
+  drawSearchResults()
 }
 
 function nameMatches(obj, name) {
