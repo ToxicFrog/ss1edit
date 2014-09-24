@@ -26,15 +26,15 @@
             ${LEVEL_SELECT}
           </select>
         </td>
-        <td rowspan="3" width="1024px" height="1024px">
+        <td rowspan="3" width="1024px" height="1024px" style="vertical-align: top;">
           <div id="map"><img src="./loading.png" width="1024px" height="1024px"></div>
         </td>
         <td width="50%" rowspan="3" style="vertical-align: top;">
           <form onsubmit="return false;">
             <input type="text" id="search-text" style="width: 95%;"><br>
             <button type="reset" onclick="clearSearch();">Clear Results</button>
-            <button type="submit" onclick="clearSearch(); performSearch(false);">Search Level</button>
-            <button type="button" onclick="clearSearch(); performSearch(true);">Search All</button>
+            <button type="submit" onclick="performSearch(false);">Search Level</button>
+            <button type="button" onclick="performSearch(true);">Search All</button>
           </form>
           <hr>
           <table id="search-results" height="100%">

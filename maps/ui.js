@@ -127,11 +127,64 @@ function showAllLayers(visible) {
   updateLayers();
 }
 
-function clearSearch() {
-  console.log("clearSearch")
+function performSearch(all) {
+  var search = document.getElementById("search-text").value.toLowerCase()
+  if (search.length <= 1) return;
+  var results = []
+  for (var level=0; level < maps.length; ++level) {
+    if (maps[level] && (all || level == map.index)) {
+      var objs = maps[level].object_info
+      for (obj in objs) {
+        if (!nameMatches(objs[obj], search)) continue;
+        results.push([level, objs[obj]])
+      }
+    }
+  }
+  results.sort(function(x,y) {
+    var tx = objProp(x[1], 'type')
+    var ty = objProp(y[1], 'type')
+    if (tx < ty) return -1;
+    if (tx > ty) return 1;
+    return x[0] - y[0]
+  })
+  displaySearchResults(results)
 }
 
-function performSearch(all) {
-  console.log("performSearch", all)
+function clearSearch() {
+  document.getElementById("search-text").value = ''
+  displaySearchResults([])
+}
+
+function displaySearchResults(results) {
+  var table = document.getElementById("search-results")
+  while (table.rows.length > 1) {
+    table.deleteRow(1)
+  }
+
+  for (var i=0; i < results.length; ++i) {
+    if (i > 0 && objProp(results[i-1][1], 'type') != objProp(results[i][1], 'type')) {
+      appendSearchResult("", [["type", "<hr>"]])
+    }
+    appendSearchResult(results[i][0], results[i][1])
+  }
+}
+
+function objProp(obj, key) {
+  for (var i=0; i < obj.length; ++i) {
+    if (obj[i][0] == key) return obj[i][1];
+  }
+  return null
+}
+
+function nameMatches(obj, name) {
+  return objProp(obj, 'type').toLowerCase().search(name) != -1
+}
+
+function appendSearchResult(level, obj) {
+  var results = document.getElementById("search-results")
+  results.style.display = ''
+  var row = results.insertRow(-1)
+  row.insertCell(-1).innerHTML = level
+  row.insertCell(-1).innerHTML = objProp(obj, 'type')
 }
 
