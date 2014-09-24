@@ -20,19 +20,21 @@ function lockMessage(lock) {
 
 function infoToTable(info) {
   var buf = document.createElement("table");
+  var props = info._props
 
-  for (var i=0; i < info.length; ++i) {
+  for (var p in props) {
     var tr = buf.appendChild(document.createElement("tr"));
     var th = tr.appendChild(document.createElement("th"));
-    th.appendChild(document.createTextNode(info[i][0]));
+    th.appendChild(document.createTextNode(props[p]));
     var td = tr.appendChild(document.createElement("td"));
-    if (info[i][1] instanceof Array) {
-      for (var j=0; j < info[i][1].length; ++j) {
-        td.appendChild(document.createTextNode(info[i][1][j]))
+    var value = info[props[p]]
+    if (value instanceof Array) {
+      for (var i in value) {
+        td.appendChild(document.createTextNode(value[i]))
         td.appendChild(document.createElement("br"))
       }
     } else {
-      td.appendChild(document.createTextNode(info[i][1]));
+      td.appendChild(document.createTextNode(value));
     }
   }
   return buf;
@@ -136,16 +138,14 @@ function performSearch(all) {
       var objs = maps[level].object_info
       for (obj in objs) {
         if (!nameMatches(objs[obj], search)) continue;
-        results.push([level, objs[obj]])
+        results.push({level: level, obj: objs[obj]})
       }
     }
   }
   results.sort(function(x,y) {
-    var tx = objProp(x[1], 'type')
-    var ty = objProp(y[1], 'type')
-    if (tx < ty) return -1;
-    if (tx > ty) return 1;
-    return x[0] - y[0]
+    if (x.obj.type < y.obj.type) return -1;
+    if (x.obj.type > y.obj.type) return 1;
+    return x.level - y.level
   })
   displaySearchResults(results)
 }
@@ -161,23 +161,16 @@ function displaySearchResults(results) {
     table.deleteRow(1)
   }
 
-  for (var i=0; i < results.length; ++i) {
-    if (i > 0 && objProp(results[i-1][1], 'type') != objProp(results[i][1], 'type')) {
-      appendSearchResult(16, [["type", "<hr>"]])
+  for (var i in results) {
+    if (i > 0 && results[i-1].obj.type != results[i].obj.type) {
+      appendSearchResult(16, {type: "<hr>"})
     }
-    appendSearchResult(results[i][0], results[i][1])
+    appendSearchResult(results[i].level, results[i].obj)
   }
-}
-
-function objProp(obj, key) {
-  for (var i=0; i < obj.length; ++i) {
-    if (obj[i][0] == key) return obj[i][1];
-  }
-  return null
 }
 
 function nameMatches(obj, name) {
-  return objProp(obj, 'type').toLowerCase().search(name) != -1
+  return obj.type.toLowerCase().search(name) != -1
 }
 
 var short_levels = [
@@ -190,6 +183,6 @@ function appendSearchResult(level, obj) {
   results.style.display = ''
   var row = results.insertRow(-1)
   row.insertCell(-1).innerHTML = short_levels[level]
-  row.insertCell(-1).innerHTML = objProp(obj, 'type')
+  row.insertCell(-1).innerHTML = obj.type
 }
 
