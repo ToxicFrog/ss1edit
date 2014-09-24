@@ -140,11 +140,20 @@ function table.mapv(t, f)
 end
 
 -- map over keys and values
-function table.map(t, f)
+function table.mapkv(t, f)
 	local tprime = {}
 	for k,v in pairs(t) do
 		k,v = f(k,v)
 		tprime[k] = v
+	end
+	return tprime
+end
+
+-- map over table as list
+function table.map(t, f)
+	local tprime = {}
+	for i,v in ipairs(t) do
+		tprime[i] = f(v)
 	end
 	return tprime
 end
