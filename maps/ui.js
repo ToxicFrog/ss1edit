@@ -163,7 +163,7 @@ function displaySearchResults(results) {
 
   for (var i=0; i < results.length; ++i) {
     if (i > 0 && objProp(results[i-1][1], 'type') != objProp(results[i][1], 'type')) {
-      appendSearchResult("", [["type", "<hr>"]])
+      appendSearchResult(16, [["type", "<hr>"]])
     }
     appendSearchResult(results[i][0], results[i][1])
   }
@@ -180,11 +180,16 @@ function nameMatches(obj, name) {
   return objProp(obj, 'type').toLowerCase().search(name) != -1
 }
 
+var short_levels = [
+  "R", 1, 2, 3, 4, 5, 6, 7, 8, 9,
+  "CS", "&delta;", "&alpha;", "&beta;", "C1", "C2",
+  ""
+]
 function appendSearchResult(level, obj) {
   var results = document.getElementById("search-results")
   results.style.display = ''
   var row = results.insertRow(-1)
-  row.insertCell(-1).innerHTML = level
+  row.insertCell(-1).innerHTML = short_levels[level]
   row.insertCell(-1).innerHTML = objProp(obj, 'type')
 }
 
