@@ -202,3 +202,15 @@ Returns a curried version of f, such that:
 Is equivalent to
 	f(1,2,3,4,5,6)
 In effect, saves some arguments for later invocations of f.
+
+
+## License
+
+Copyright © 2014 Ben "ToxicFrog" Kelly, Google Inc.
+
+Distributed under the MIT license; see the file COPYING for details.
+
+### Disclaimer
+
+This is not an official Google product and is not supported by Google.
+
