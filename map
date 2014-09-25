@@ -8,6 +8,7 @@ local res = require "ss1.res"
 local map = require "ss1.map"
 local gamesys = require "ss1.gamesys"
 local pretty = require "ss1.map.pretty"
+local names = require "ss1.names"
 
 flags.register("help", "h", "?") {
   help = "display this text";
@@ -208,24 +209,28 @@ local function main(...)
     level = tonumber(level)
     assert(level and level >= 0 and level <= 15, "invalid level index")
 
-    map = map.load(rf, level)
-    table.insert(index, map)
+    if flag.html_only then
+      table.insert(index, { level = level, name = names.levels[level] })
+    else
+      map = map.load(rf, level)
+      table.insert(index, map)
 
-    drawTiles(map)
-    local objects = drawObjects(map)
+      drawTiles(map)
+      local objects = drawObjects(map)
 
-    local data = {
-      INDEX = level;
-      BASENAME = tostring(level);
-      WIDTH = map.info.width;
-      HEIGHT = map.info.height;
-      SCALE = 16;
-      TILE_INFO = tileinfo(map);
-      OBJECT_INFO = table.concat(objects, ",\n    ");
-      WALLS = commit();
-      LEVEL_TITLE = map.name;
-    }
-    io.writefile(prefix .. "/" .. level .. ".js", js:interpolate(data))
+      local data = {
+        INDEX = level;
+        BASENAME = tostring(level);
+        WIDTH = map.info.width;
+        HEIGHT = map.info.height;
+        SCALE = 16;
+        TILE_INFO = tileinfo(map);
+        OBJECT_INFO = table.concat(objects, ",\n    ");
+        WALLS = commit();
+        LEVEL_TITLE = map.name;
+      }
+      io.writefile(prefix .. "/" .. level .. ".js", js:interpolate(data))
+    end
   end
   print()
 
