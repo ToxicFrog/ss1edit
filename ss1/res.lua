@@ -161,7 +161,7 @@ function res.load(filename)
   fd:close()
 
   -- sort the TOC by ID
-  list.sort(self.toc, function(x,y) return x.id < y.id end)
+  table.sort(self.toc, function(x,y) return x.id < y.id end)
 
   return setmetatable(self, mt)
 end
@@ -199,10 +199,17 @@ function res:save(filename)
   fd:close()
 end
 
-function res:chunks()
+function res:chunks(...)
+  local toc = {...}
+  if #toc == 0 then
+    toc = table.map(self.toc, f "x => x.id")
+  end
+
   return coroutine.wrap(function()
-    for _,chunk in ipairs(self.toc) do
-      coroutine.yield(chunk.id, chunk)
+    for _,id in ipairs(toc) do
+      if self.byid[id] then
+        coroutine.yield(id, self.byid[id])
+      end
     end
   end)
 end

@@ -9,16 +9,16 @@ local res = require "ss1.res"
 local HELP_TEXT = [[
 Usage: res <mode> <args>
 Modes:
-    l <file>             
+    l <file>
         list file contents
     x <file> <prefix> [chunk...]
         extract file contents to prefix/<chunk id>
         if no chunks specified, unpack entire file
-    c (not implemented) 
+    c (not implemented)
         pack chunks into new file
     d <infile> <outfile>
         decompress all chunks in infile and store in outfile
-    u <file> <prefix> [chunk...] 
+    u <file> <prefix> [chunk...]
       update chunks already present in file
       read chunks from prefix/<chunk id>
       if no chunks specified, is a no-op! FIXME..
@@ -27,14 +27,14 @@ Modes:
 local mode = {}
 
 -- List
-function mode.l(file)
+function mode.l(file, ...)
   local rf = res.load(file)
 
   printf("Comment: %s\n", rf.comment)
   printf("File contains %u chunks\n", rf.count)
 
   printf("id      id      size    type        packed  dir\n")
-  for id,chunk in rf:chunks() do
+  for id,chunk in rf:chunks(unpack(table.map({...}, tonumber))) do
     printf("%05u   %04x    %-7u %-11s %-8s%s\n", id, id,
       chunk.size,
       chunk.typename,
@@ -52,8 +52,8 @@ function mode.x(file, prefix, ...)
     prefix = ""
   end
 
-  for id,chunk in rf:chunks() do
     if chunk.data then
+  for id,chunk in rf:chunks(unpack(table.map({...}, tonumber))) do
       local fd = io.open(prefix .. tostring(chunk.id), "wb")
       fd:write(chunk.data)
       fd:close()
@@ -70,7 +70,7 @@ end
 function mode.u(infile, outfile, prefix, ...)
   local rf = res.load(infile)
 
-  for _,id in ipairs(list.map({...}, tonumber)) do
+  for _,id in ipairs(table.map({...}, tonumber)) do
     if rf:get(id) then
       local data = assert(io.open(prefix .. "/" .. tostring(id), "rb")):read("*a")
       rf:get(id).data = data
