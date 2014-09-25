@@ -600,6 +600,9 @@ gratings. Each entry is 14 bytes long:
 0004    int16   "Next" link for slot list
 0006    int16   ?? trigger cross-ref
 0008    int16   Message
+                This seems to be an index into chunk 2161 -- add 7 and that
+                gives you the index of the subchunk containing the message to
+                display when the player fails to open the door.
 000A    int8    Access required 0-31
 
 
