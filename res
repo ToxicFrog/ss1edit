@@ -39,7 +39,7 @@ function mode.l(file, ...)
       chunk.size,
       chunk.typename,
       chunk.compressed and tostring(chunk.packed_size) or "",
-      chunk.dir and "yes" or "")
+      chunk.dir and tostring(#chunk.subchunks) or "")
   end
 end
 
