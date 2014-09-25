@@ -16,6 +16,16 @@ local typenames = {
   [0x30] = "map";
 }
 
+local RES_TOC = [[
+  %d * {
+    id:u2
+    size:u3
+    [1|x6 dir:b1 compressed:b1]
+    packed_size:u3
+    type:u1
+  }
+]]
+
 -- decompress a compressed chunk
 local function decompress(data, unpacksize)
   local words = coroutine.wrap(function()
@@ -104,79 +114,89 @@ local function decompress(data, unpacksize)
 end
 
 function res.load(filename)
-  local RES_TOCENTRY = [[%d * { id:u2 size:u3 [1|x6 dir:b1 compressed:b1] packed_size:u3 type:u1 }]]
-    local toc_offs,chunk_offs
+  local toc_offs,chunk_offs
 
   local fd,err = io.open(filename, "rb")
   if not fd then return nil,err end
 
-    local self = {}
-    
-    -- read file header and TOC header
-    -- self.comment,toc_offs,self.count,chunk_offs = struct.unpack("z124 u4 @$2 u2 u4")
-    self.comment,toc_offs = vstruct.readvals("z124 u4", fd)
-    self.count,chunk_offs = vstruct.readvals("@%d u2 u4" % toc_offs, fd)
-    
-    -- read the entire TOC into memory
-    self.toc = vstruct.read(RES_TOCENTRY % self.count, fd)
-    self.byid = {}
+  local self = {}
 
-    -- prepare to unpack the chunk data
-    fd:seek("set", chunk_offs)
-    
-    for i,chunk in ipairs(self.toc) do
-      chunk.packed_data = vstruct.readvals("a4 s%d" % chunk.packed_size, fd)
+  -- read file header and TOC header
+  -- self.comment,toc_offs,self.count,chunk_offs = struct.unpack("z124 u4 @$2 u2 u4")
+  self.comment,toc_offs = vstruct.readvals("z124 u4", fd)
+  self.count,chunk_offs = vstruct.readvals("@%d u2 u4" % toc_offs, fd)
 
-      if chunk.compressed and chunk.dir then
-        eprintf("WARNING: skipping compressed chunk directory %05d (%04x)\n", chunk.id, chunk.id)
+  -- read the entire TOC into memory
+  self.toc = vstruct.read(RES_TOC % self.count, fd)
+  self.byid = {}
+
+  -- prepare to unpack the chunk data
+  fd:seek("set", chunk_offs)
+
+  for i,chunk in ipairs(self.toc) do
+    chunk.packed_data = vstruct.readvals("a4 s%d" % chunk.packed_size, fd)
+
+    if chunk.compressed and chunk.dir then
+      eprintf("WARNING: skipping compressed chunk directory %05d (%04x)\n", chunk.id, chunk.id)
     elseif chunk.compressed then
       chunk.data = decompress(chunk.packed_data, chunk.size)
-      else
-        chunk.data = chunk.packed_data
-      end
-
-      chunk.typename = typenames[chunk.type] or "unknown"
-      self.byid[chunk.id] = chunk
+    else
+      chunk.data = chunk.packed_data
     end
 
-    -- sort the TOC by ID
-    list.sort(self.toc, function(x,y) return x.id < y.id end)
-    
-    return setmetatable(self, mt)
+    if chunk.dir then
+      -- Unpack subchunks.
+      local count = vstruct.readvals("u2", chunk.data)
+      local toc = vstruct.read("@2 %d * u4" % (count+1), chunk.data)
+      chunk.subchunks = {}
+      for i=1,count do
+        chunk.subchunks[i] = vstruct.readvals("@%d s%d" % {toc[i], toc[i+1] - toc[i]}, chunk.data)
+      end
+    end
+
+    chunk.typename = typenames[chunk.type] or "unknown"
+    self.byid[chunk.id] = chunk
+  end
+
+  fd:close()
+
+  -- sort the TOC by ID
+  list.sort(self.toc, function(x,y) return x.id < y.id end)
+
+  return setmetatable(self, mt)
 end
 
 function res:save(filename)
-  local RES_TOCENTRY = [[%d * { id:u2 size:u3 [1|x6 dir:b1 compressed:b1] packed_size:u3 type:u1 }]]
-    local toc_offs,chunk_offs
+  local toc_offs,chunk_offs
 
   local fd,err = io.open(filename, "wb")
   if not fd then return nil,err end
 
-    -- write the header. write 0 for offset to TOC, we'll fill that in later.
-    vstruct.write("z124 u4", fd, { self.comment, 0 })
+  -- write the header. write 0 for offset to TOC, we'll fill that in later.
+  vstruct.write("z124 u4", fd, { self.comment, 0 })
 
-    -- write chunk data
-    for i,chunk in ipairs(self.toc) do
-      -- resolve chunk information
-      chunk.compressed = false
-      chunk.size = #chunk.data
-      chunk.packed_size = chunk.size
-      chunk.packed_data = chunk.data
+  -- write chunk data
+  for i,chunk in ipairs(self.toc) do
+    -- resolve chunk information
+    chunk.compressed = false
+    chunk.size = #chunk.data
+    chunk.packed_size = chunk.size
+    chunk.packed_data = chunk.data
 
-      vstruct.write("a4 s%d" % chunk.size, fd, { chunk.data })
-    end
+    vstruct.write("a4 s%d" % chunk.size, fd, { chunk.data })
+  end
 
-    -- write TOC
-    vstruct.write("a4", fd, {})
-    local toc_offs = fd:seek("cur", 0)
-    vstruct.write("u2 u4", fd, { #self.toc, 128 })
-    vstruct.write(RES_TOCENTRY % #self.toc, fd, self.toc)
+  -- write TOC
+  vstruct.write("a4", fd, {})
+  local toc_offs = fd:seek("cur", 0)
+  vstruct.write("u2 u4", fd, { #self.toc, 128 })
+  vstruct.write(RES_TOC % #self.toc, fd, self.toc)
 
-    -- write TOC pointer
-    vstruct.write("@124 u4", fd, { toc_offs })
-    
-    -- commit
-    fd:close()
+  -- write TOC pointer
+  vstruct.write("@124 u4", fd, { toc_offs })
+
+  -- commit
+  fd:close()
 end
 
 function res:chunks()
