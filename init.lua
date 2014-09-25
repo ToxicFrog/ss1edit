@@ -1,7 +1,6 @@
 local name = (...)
 
 require (name..'.table')
-require (name..'.list')
 require (name..'.string')
 require (name..'.math')
 require (name..'.misc')

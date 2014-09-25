@@ -17,26 +17,18 @@ getmetatable(io.stdout).__type = function() return "file" end
 
 -- printf(format, ...)
 function printf(...)
-	return fprintf(io.stdout,...)
+	return io.stdout:printf(...)
 end
 
 -- printf to standard error
 function eprintf(...)
-	return fprintf(io.stderr, ...)
-end
-
--- fprintf(file, format, ...)
-function fprintf(fout, ...)
-	return fout:write(string.format(...))
-end
-
--- string sprintf(format, ...)
-function sprintf(...)
-	return string.format(...)
+	return io.stderr:printf(...)
 end
 
 -- bind to io tables, so that file:printf(...) becomes legal
-getmetatable(io.stdout).__index.printf = fprintf
+getmetatable(io.stdout).__index.printf = function(self, ...)
+  return self:write(string.format(...))
+end
 
 -- "safe require", returns nil,error if require fails rather than
 -- throwing an error
