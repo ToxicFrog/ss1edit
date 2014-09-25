@@ -9,16 +9,36 @@ local map = require "ss1.map"
 local gamesys = require "ss1.gamesys"
 local pretty = require "ss1.map.pretty"
 
-local HELP_TEXT = [[
-Usage: map <archive> <prefix> [levels...]
+flags.register("help", "h", "?") {
+  help = "display this text";
+}
 
-    <archive> is the path to ARCHIVE.DAT.
-    <prefix> is the prefix for the generated map files; the map for
-    level N will be named prefixNN.html.
-    <levels> is a list of level numbers, from 0 to 15; if omitted,
-    all levels will be mapped. (Level 0 is Deck R; levels 1-9 are
-     the corresponding decks, and 10-15 are cyberspace and groves)
-]]
+flags.register("res", "r") {
+  help = "use this resfile as input";
+  type = flags.string;
+}
+
+flags.register("prefix", "p") {
+  help = "directory to save maps to";
+  type = flags.string;
+  default = ".";
+}
+
+flags.register("html-only") {
+  help = "generate a new view page but do not update level data";
+}
+
+flags.register("html-file", "o") {
+  help = "save view page under this name (default is map.html)";
+  type = flags.string;
+  default = "map.html";
+}
+
+flags.register("levels", "l") {
+  help = "include only these levels in the output (default is to include all)";
+  type = flags.list;
+  default = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 };
+}
 
 local output = {}
 
@@ -164,31 +184,22 @@ local function drawObjects(map)
   return objects
 end
 
-local function main(archive, prefix, ...)
-  local levels = {...}
-  local index = false
+local function main(...)
+  local opts = flags.parse(...)
+  local levels = flag.levels
+  local prefix = flag.prefix
+  local index = {}
 
-  if not prefix then
-    print(HELP_TEXT)
-    return
+  if flag.help then
+    return flags.help()
   end
 
-  if levels[1] == "index" then
-    index = {}
-    table.remove(levels, 1)
-  end
-
-  if #levels == 0 or levels[1] == "all" then
-    index = {}
-    levels = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 }
-  end
-
-  print("Loading template...")
+  print("Loading templates...")
   local html = io.readfile("map.html")
   local js = io.readfile("map.js")
 
   print("Loading ARCHIVE.DAT...")
-  local rf = assert(res.load(archive))
+  local rf = assert(res.load(flags.require "res"))
 
   io.write("Processing levels:")
   for i,level in ipairs(levels) do
@@ -198,14 +209,14 @@ local function main(archive, prefix, ...)
     assert(level and level >= 0 and level <= 15, "invalid level index")
 
     map = map.load(rf, level)
+    table.insert(index, map)
 
     drawTiles(map)
     local objects = drawObjects(map)
 
-    local basename = (prefix .. level):gsub("^.*/","");
     local data = {
       INDEX = level;
-      BASENAME = basename;
+      BASENAME = tostring(level);
       WIDTH = map.info.width;
       HEIGHT = map.info.height;
       SCALE = 16;
@@ -214,29 +225,23 @@ local function main(archive, prefix, ...)
       WALLS = commit();
       LEVEL_TITLE = map.name;
     }
-    io.writefile(prefix .. level .. ".js", js:interpolate(data))
-
-    if index then
-      table.insert(index, map)
-    end
+    io.writefile(prefix .. "/" .. level .. ".js", js:interpolate(data))
   end
   print()
 
-  -- write index
-  if index then
-    print("Writing viewer HTML")
-    io.writefile(prefix .. "map.html", html:interpolate {
-      DEFAULT_LEVEL = index[1].level;
-      ALL_LEVELS = table.concat(table.mapv(index, function(map) return "%d: true" % map.level end), ",");
-      LEVEL_SELECT = table.concat(
-        table.mapv(
-          index,
-          function(map)
-            return '<option value="%d">%02d - %s</option>'
-              % { map.level, map.level, map.name } end),
-        "\n            ");
-    })
-  end
+  -- write map.html
+  print("Writing " .. flag.html_file)
+  io.writefile(prefix .. "/" .. flag.html_file, html:interpolate {
+    DEFAULT_LEVEL = index[1].level;
+    ALL_LEVELS = table.concat(table.mapv(index, function(map) return "%d: true" % map.level end), ",");
+    LEVEL_SELECT = table.concat(
+      table.mapv(
+        index,
+        function(map)
+          return '<option value="%d">%02d - %s</option>'
+            % { map.level, map.level, map.name } end),
+      "\n            ");
+  })
 end
 
 return main(...)
