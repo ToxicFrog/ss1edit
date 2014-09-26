@@ -1,10 +1,11 @@
 local name = (...)
 
-require (name..'.table')
-require (name..'.string')
+require (name..'.flags')
+require (name..'.io')
 require (name..'.math')
 require (name..'.misc')
-require (name..'.io')
+require (name..'.string')
+require (name..'.table')
 
 local unpack = unpack
 local coroutine = coroutine
@@ -31,4 +32,3 @@ memoize = (function(f) return f(f) end)(function(f)
 		return findmemo(memos[argc], {}, ...)
 	end
 end)
-
