@@ -1,9 +1,12 @@
 SRCS=$(shell find . -name "*.lua")
 
-all: maps/map.html maps/ss1maps.zip
+all: maps/map.html maps/ss1maps.zip maps/*.js
 
-maps/map.html: map ARCHIVE.RES map.html map.js
-	./map ARCHIVE.RES maps/
+maps/{0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15}.js: map ARCHIVE.RES map.js
+	./map --res ARCHIVE.RES --prefix maps
+
+maps/map.html: map map.html
+	./map --res ARCHIVE.RES --prefix maps --html-only
 
 maps/ss1maps.zip: maps/*.html maps/*.js maps/*.png
 	zip -9 -r maps/ss1maps.zip maps/ -x ss1maps.zip
@@ -14,4 +17,4 @@ map: $(SRCS)
 # Generate a decompressed version of ARCHIVE.DAT to make subsequent runs
 # much, much faster. You will of course have to provide your own ARCHIVE.DAT.
 ARCHIVE.RES: ARCHIVE.DAT
-	./res d ARCHIVE.DAT ARCHIVE.RES
+	./res --decompress --res ARCHIVE.DAT -o ARCHIVE.RES
