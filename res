@@ -53,6 +53,10 @@ flags.register("in-place", "i") {
   help = "modify the resfile in-place (for update and decompress)";
 }
 
+flags.register("subchunks") {
+  help = "extract subchunks into directories";
+}
+
 local mode = {}
 
 -- List
