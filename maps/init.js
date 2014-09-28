@@ -4,8 +4,13 @@ var map
 
 if (window.location.hash != "") {
   var hash = window.location.hash.substr(1).split(",")
-  DEFAULT = parseInt(hash[0])
+  var first = parseInt(hash[0])
+  DEFAULT = isNaN(first) ? DEFAULT : first
   for (var i=0; i < hash.length; ++i) {
+    if (hash[i] == '*') {
+      for (k in levels) maps[k] = true
+      break
+    }
     maps[hash[i]] = levels[hash[i]]
   }
 } else {
