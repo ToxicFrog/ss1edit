@@ -11,7 +11,9 @@ Note that unpacking compressed resource files - especially ARCHIVE.DAT, which co
 
 ## Installation
 
-You'll need Lua 5.2 installed (or LuaJIT 2.0.0 or later -- the beta versions won't work.) All other dependencies are pulled in via submodules:
+You'll need Lua 5.2 installed (or LuaJIT 2.0.0 or later -- the beta versions won't work). For some features, you will also need luafilesystem; if you're using LuaForWindows or LuaDist, that should come built-in. Otherwise, install it via your package manager or LuaRocks.
+
+ All other dependencies are pulled in via submodules:
 
     git clone git://github.com/toxicfrog/ss1edit.git
     cd ss1edit

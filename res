@@ -57,7 +57,25 @@ flags.register("subchunks") {
   help = "extract subchunks into directories";
 }
 
+flags.register("hex-ids", "X") {
+  help = "name extracted files using hexadecimal rather than base-10 IDs";
+  key = "idformat"; value = "x%04X";
+  default = "%05d";
+}
+
 local mode = {}
+
+local function extension(chunk)
+  if chunk.typename ~= "unknown" then
+    return "ss1"..chunk.typename
+  else
+    return "ss1x%02X" % chunk.type
+  end
+end
+
+local function filename(chunk)
+  return (flag.idformat..".%s") % { chunk.id, extension(chunk) }
+end
 
 -- List
 function mode.list(...)
@@ -67,9 +85,10 @@ function mode.list(...)
   printf("Comment: %s\n", rf.comment)
   printf("File contains %u chunks\n", rf.count)
 
-  printf("id      id      size    type        packed  dir\n")
-  for id,chunk in rf:chunks(unpack(table.map({...}, tonumber))) do
-    printf("%05u   %04x    %-7u %-11s %-8s%s\n", id, id,
+  printf("   id    size      type  packed   dir\n")
+  for id,chunk in rf:chunks(...) do
+    printf(flag.idformat .. "  %6u  %8s  %6s  %4s\n",
+      id,
       chunk.size,
       chunk.typename,
       chunk.compressed and tostring(chunk.packed_size) or "",
@@ -85,14 +104,14 @@ function mode.extract(...)
 
   for id,chunk in rf:chunks(unpack(table.map({...}, tonumber))) do
     if chunk.dir and flag "subchunks" then
-      require("lfs").mkdir(prefix.."/"..tostring(chunk.id))
+      local dir = "%s/%s" % { prefix, filename(chunk) }
+      require("lfs").mkdir(dir)
       for index,subchunk in ipairs(chunk.subchunks) do
-        io.writefile(prefix.."/"..tostring(chunk.id).."/"..tostring(index-1), subchunk)
+        io.writefile(("%s/"..flag.idformat) % { dir, index-1 }, subchunk)
       end
+      io.writefile("%s/data" % dir, chunk.data)
     else
-      local fd = io.open(prefix .. "/" .. tostring(chunk.id), "wb")
-      fd:write(chunk.data)
-      fd:close()
+      io.writefile("%s/%s" % { prefix, filename(chunk) }, chunk.data)
     end
   end
 end
@@ -106,8 +125,7 @@ function mode.update(...)
 
   for _,id in ipairs(table.map({...}, tonumber)) do
     if rf:get(id) then
-      local data = assert(io.open(prefix .. "/" .. tostring(id), "rb")):read("*a")
-      rf:get(id).data = data
+      rf:get(id).data = assert(io.readfile("%s/%d" % { prefix, id }))
     else
       error("Attempted to add chunk "..id.." that does not exist in file!")
     end

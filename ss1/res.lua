@@ -5,14 +5,14 @@ local res = {}
 local mt = { __index = res }
 
 local typenames = {
-  [0x00] = "palette/data";
+  [0x00] = "palette";
   [0x01] = "text";
   [0x02] = "bitmap";
   [0x03] = "font";
   [0x04] = "video";
   [0x07] = "sound";
-  [0x0F] = "3d model";
-  [0x11] = "audio log";
+  [0x0F] = "model";
+  [0x11] = "voice";
   [0x30] = "map";
 }
 
