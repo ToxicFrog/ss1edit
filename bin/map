@@ -20,7 +20,7 @@ flags.register("res", "r") {
 }
 
 flags.register("prefix", "p") {
-  help = "directory to save maps to";
+  help = "directory to save maps to and load templates from";
   type = flags.string;
   default = ".";
 }
@@ -196,8 +196,8 @@ local function main(...)
   end
 
   print("Loading templates...")
-  local html = io.readfile("map.html")
-  local js = io.readfile("map.js")
+  local html = io.readfile("%s/template.html" % prefix)
+  local js = io.readfile("%s/template.js" % prefix)
 
   print("Loading ARCHIVE.DAT...")
   local rf = assert(res.load(flags.require "res"))

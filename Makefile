@@ -2,11 +2,11 @@ SRCS=$(shell find . -name "*.lua")
 
 all: maps/map.html maps/ss1maps.zip maps/*.js
 
-maps/{0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15}.js: map ARCHIVE.RES map.js
-	./map --res ARCHIVE.RES --prefix maps
+maps/{0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15}.js: bin/map ARCHIVE.RES map/template.js
+	bin/map --res ARCHIVE.RES --prefix maps
 
-maps/map.html: map map.html
-	./map --res ARCHIVE.RES --prefix maps --html-only
+maps/map.html: bin/map maps/template.html
+	bin/map --res ARCHIVE.RES --prefix maps --html-only
 
 maps/ss1maps.zip: maps/*.html maps/*.js maps/*.png
 	zip -9 -r maps/ss1maps.zip maps/ -x ss1maps.zip
