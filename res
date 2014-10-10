@@ -102,7 +102,7 @@ function mode.extract(...)
   local prefix = flag.prefix
   local rf = res.load(file)
 
-  for id,chunk in rf:chunks(unpack(table.map({...}, tonumber))) do
+  for id,chunk in rf:chunks(...) do
     if chunk.dir and flag "subchunks" then
       local dir = "%s/%s" % { prefix, filename(chunk) }
       require("lfs").mkdir(dir)
@@ -123,7 +123,7 @@ function mode.update(...)
   local prefix = flag.prefix
   local rf = res.load(infile)
 
-  for _,id in ipairs(table.map({...}, tonumber)) do
+  for _,id in ipairs {...} do
     if rf:get(id) then
       rf:get(id).data = assert(io.readfile("%s/%d" % { prefix, id }))
     else
@@ -145,6 +145,10 @@ mode.help = flags.help
 
 local function main(...)
   local opts = flags.parse(...)
+  for i,chunk in ipairs(opts) do
+    opts[i] = assert(tonumber(opts[i]),
+      "can't convert argument '%s' into a chunk ID -- did you mean to use --res?" % opts[i])
+  end
   return mode[opts.mode](unpack(opts))
 end
 
