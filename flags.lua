@@ -115,7 +115,9 @@ function flags.parse(...)
     end
     local info = flags.registered[flag]
 
-    if not info.needs_value then
+    if not info then
+      error("unrecognized option '--%s'" % flag)
+    elseif not info.needs_value then
       error("option '%s' doesn't allow an argument")
     elseif invert then
       error("option '%s' requires an argument and cannot be inverted with --no")
@@ -133,7 +135,9 @@ function flags.parse(...)
     end
     local info = flags.registered[flag]
 
-    if not info.needs_value then
+    if not info then
+      error("unrecognized option '--%s'" % flag)
+    elseif not info.needs_value then
       set(info, not invert)
       return 1
     end
