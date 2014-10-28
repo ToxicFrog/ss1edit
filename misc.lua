@@ -55,3 +55,9 @@ function partial(f, ...)
 	local arg = (...)
 	return partial(function(...) return f(arg, ...) end, select(2, ...))
 end
+
+if lfs then
+	function lfs.exists(path)
+		return lfs.attributes(path, "mode") ~= nil
+	end
+end
