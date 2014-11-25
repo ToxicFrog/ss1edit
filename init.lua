@@ -7,6 +7,10 @@ require (name..'.misc')
 require (name..'.string')
 require (name..'.table')
 
+if lfs then
+	require (name..'.lfs')
+end
+
 local unpack = unpack
 local coroutine = coroutine
 
