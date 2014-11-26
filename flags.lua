@@ -48,6 +48,7 @@ function flags.register(...)
   flag.type = flags.boolean
   flag.aliases = aliases
   for _,alias in ipairs(aliases) do
+    assert(not flags.registered[alias], "Flag '"..alias.."' defined in multiple places!")
     flags.registered[alias] = flag
   end
   flags.registered[flag.key] = flag
