@@ -13,7 +13,7 @@ function lfs.normalize(path)
 end
 
 local _attributes = lfs.attributes
-function lfs.attributes(path)
+function lfs.attributes(path, ...)
   path = lfs.normalize(path)
   if windows then
     -- Windows stat() is kind of awful. If the path has a trailing slash, it
@@ -24,7 +24,7 @@ function lfs.attributes(path)
     path = path:gsub("/$", "/.")
   end
 
-  return _attributes(path)
+  return _attributes(path, ...)
 end
 
 function lfs.exists(path)
