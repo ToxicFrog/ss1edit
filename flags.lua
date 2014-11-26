@@ -32,6 +32,7 @@ flags = {
   name = (arg and arg[0]) or "(unknown)";
   max_length = 0;
 }
+flags.parsed = flags.defaults
 
 local function asId(str)
   return (str:gsub("^(%d)", "_%1"):gsub("%W", "_"))
@@ -50,6 +51,8 @@ function flags.register(...)
     flags.registered[alias] = flag
   end
   flags.registered[flag.key] = flag
+
+  assert(not (flag.default ~= nil and flag.required), "Required flags must not have default values")
 
   flags.max_length = math.max(flags.max_length, unpack(table.map(aliases, string.len)))
 
@@ -83,12 +86,10 @@ function flags.help()
 end
 
 function flags.parse(...)
-  local opts = setmetatable({}, {__index = flags.defaults })
+  local opts = setmetatable({}, { __index = flags.defaults })
   local argv = {...}
   local skip = 0
   local i = 1
-
-  flags.parsed = opts
 
   local function set(info, value)
     if rawget(opts, info.key) ~= nil and not info.repeated then
@@ -204,6 +205,7 @@ function flags.parse(...)
     if flag.required then flags.require(flag.key) end
   end
 
+  flags.parsed = opts
   return opts
 end
 
@@ -219,9 +221,6 @@ function flags.require(key)
 end
 
 function flags.get(key)
-  if not flags.parsed then
-    error("attempt to read command line flag value before flags are parsed")
-  end
   return flags.parsed[key]
 end
 
