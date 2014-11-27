@@ -36,9 +36,9 @@ function table.merge(dst, src, dupes)
 		elseif dupes == "ignore" then
 			-- pass
 		elseif dupes == "error" then
-			error("Duplicate key %s while merging tables" % tostring(k))
+			error("Duplicate key '"..tostring(k).."' while merging tables")
 		else
-			error("Unknown duplicate key resolution mode %s" % tostring(dupes))
+			error("Unknown duplicate key resolution mode '"..tostring(dupes).."'")
 		end
 	end
 	return dst

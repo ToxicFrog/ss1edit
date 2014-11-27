@@ -1,4 +1,4 @@
-local name = (...)
+local name = (...):gsub("%.init$", "")
 
 require (name..'.flags')
 require (name..'.io')

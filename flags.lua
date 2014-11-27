@@ -44,7 +44,7 @@ function flags.register(...)
 
   local flag = {}
   flag.key = asId(aliases[1])
-  flag.name = (#aliases[1] == 1 and "-%s" or "--%s") % aliases[1]
+  flag.name = (#aliases[1] == 1 and "-%s" or "--%s"):format(aliases[1])
   flag.type = flags.boolean
   flag.aliases = aliases
   for _,alias in ipairs(aliases) do
@@ -74,7 +74,7 @@ end
 
 function flags.help()
   local seen = {}
-  local template = "%%ds  %s" % (flags.max_length + 4)
+  local template = string.format("%%%ds  %%s", flags.max_length + 4)
   for k,v in pairs(flags.registered) do
     if not seen[v] then
       seen[v] = true
@@ -95,9 +95,9 @@ function flags.parse(...)
   local function set(info, value)
     if rawget(opts, info.key) ~= nil and not info.repeated then
       if info.seen then
-        error("option '%s' repeated multiple times" % info.name)
+        error("option '"..info.name.."' repeated multiple times")
       else
-        error("option '%s' incompatible with earlier options" % info.name)
+        error("option '"..info.name.."' incompatible with earlier options")
       end
     elseif info.value ~= nil then
       opts[info.key] = info.value
@@ -118,11 +118,11 @@ function flags.parse(...)
     local info = flags.registered[flag]
 
     if not info then
-      error("unrecognized option '--%s'" % flag)
+      error("unrecognized option '"..flag.."'")
     elseif not info.needs_value then
-      error("option '%s' doesn't allow an argument")
+      error("option '--"..flag.."' doesn't allow an argument")
     elseif invert then
-      error("option '%s' requires an argument and cannot be inverted with --no")
+      error("option '--"..flag.."' requires an argument and cannot be inverted with --no")
     end
 
     set(info, value)
@@ -138,7 +138,7 @@ function flags.parse(...)
     local info = flags.registered[flag]
 
     if not info then
-      error("unrecognized option '--%s'" % flag)
+      error("unrecognized option '--"..flag.."'")
     elseif not info.needs_value then
       set(info, not invert)
       return 1
@@ -155,13 +155,13 @@ function flags.parse(...)
       local flag = arg:sub(1,1)
       local info = flags.registered[flag]
       if not info then
-        error("unrecognized option '-%s'" % flag)
+        error("unrecognized option '-"..flag.."'")
       elseif not info.needs_value then
         -- Boolean flag; its mere presence or absense sets it.
         set(info, not invert)
       elseif invert then
         -- Non-boolean flag, but they tried to invert it with +
-        error("option '-%s' requires an argument and cannot be inverted with +" % flag)
+        error("option '-"..flag.."' requires an argument and cannot be inverted with +")
       else
         -- Non-boolean flag; collect value and assign.
         if #arg > 1 then
@@ -213,9 +213,9 @@ end
 function flags.require(key)
   local info = flags.registered[key]
   if not info then
-    error("attempt to require unknown option '%s'" % key)
+    error("attempt to require unknown option '"..key.."'")
   elseif not flags.parsed[key] then
-    error("required option '%s' not specified" % info.name)
+    error("required option '"..info.name.."' not specified")
   else
     return flags.parsed[key]
   end
@@ -241,7 +241,7 @@ function flags:string(s)
 end
 
 function flags:number(n)
-  return tonumber(n) or error("option '%s' requires a numeric argument" % n)
+  return tonumber(n) or error("option '"..self.name.."' requires a numeric argument")
 end
 
 function flags:list(s)
