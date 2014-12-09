@@ -31,7 +31,7 @@ end
 function table.merge(dst, src, dupes)
 	dupes = dupes or "overwrite"
 	for k,v in pairs(src) do
-		if not dst[k] or dupes == "overwrite" then
+		if dst[k] == nil or dupes == "overwrite" then
 			dst[k] = v
 		elseif dupes == "ignore" then
 			-- pass
