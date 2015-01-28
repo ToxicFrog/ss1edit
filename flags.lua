@@ -106,7 +106,7 @@ function flags.parse(...)
     end
     info.seen = true
     if info.set then
-      info.set()
+      info.set(info.key, opts[info.key])
     end
   end
 
@@ -165,7 +165,7 @@ function flags.parse(...)
       else
         -- Non-boolean flag; collect value and assign.
         if #arg > 1 then
-          set(info, arg.sub[2])
+          set(info, arg:sub(2))
           return 1
         else
           set(info, next)
@@ -174,6 +174,11 @@ function flags.parse(...)
       end
     end
     return 1
+  end
+
+  -- clear the 'seen' bit on all flags
+  for _,flag in pairs(flags.registered) do
+    flag.seen = false
   end
 
   -- parse command line arguments
@@ -214,7 +219,7 @@ function flags.require(key)
   local info = flags.registered[key]
   if not info then
     error("attempt to require unknown option '"..key.."'")
-  elseif not flags.parsed[key] then
+  elseif not info.seen then
     error("required option '"..info.name.."' not specified")
   else
     return flags.parsed[key]
@@ -225,25 +230,20 @@ function flags.get(key)
   return flags.parsed[key]
 end
 
-flag = setmetatable({}, {
-  __index = function(_, key) return flags.parsed[key] end;
-  __newindex = function(_, key, value) flags.parsed[key] = value end;
-  __call = function(_, key) return flags.parsed[key] end;
-})
-
 -- Type functions. --
-function flags:boolean(b)
-  return b
+function flags.boolean(flag, arg)
+  -- As a special case, flags.boolean is passed either true or false
+  return arg
 end
 
-function flags:string(s)
-  return s
+function flags.string(flag, arg)
+  return arg
 end
 
-function flags:number(n)
-  return tonumber(n) or error("option '"..self.name.."' requires a numeric argument")
+function flags.number(flag, arg)
+  return tonumber(arg) or error("option '"..flag.."' requires a numeric argument")
 end
 
-function flags:list(s)
-  return {s:split(",")}
+function flags.list(flag, arg)
+  return {arg:split(",")}
 end
