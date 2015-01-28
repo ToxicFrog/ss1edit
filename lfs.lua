@@ -46,6 +46,7 @@ end
 -- for the OS it's running on, e.g. no trailing slashes on windows -- it's up
 -- to the caller to ensure this!
 function lfs.rmkdir(path)
+  path = lfs.normalize(path)
   if lfs.exists(path) then
     return true
   end
