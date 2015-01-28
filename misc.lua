@@ -1,7 +1,27 @@
--- new global functions, either replacing existing ones or providing new
--- ones for convenience
--- replacements: pairs, ipairs, type
--- new: printf, fprintf, eprintf, sprintf, srequire, L
+-- Assorted global functions that don't belong in their own file.
+
+memoize = (function(f) return f(f) end)(function(f)
+	local memos = {}
+	local function findmemo(memo, args, first, ...)
+		local argv = { ... }
+		if #argv == 0 then
+			if memo[first] == nil then
+				args[#args+1] = first
+				memo[first] = { f(unpack(args)) }
+			end
+			return unpack(memo[first])
+		else
+			args[#args+1] = first
+			memo[first] = memo[first] or {}
+			return findmemo(memo[first], args, ...)
+		end
+	end
+	return function(...)
+		local argc = #({...})
+		memos[argc] = memos[argc] or {}
+		return findmemo(memos[argc], {}, ...)
+	end
+end)
 
 -- new version of type() that supports the __type metamethod
 rawtype = type
