@@ -13,8 +13,8 @@ flags.register(nil) {
   type = flags.number;
 }
 
-Default type is boolean, meaning that -f, --foo, or --foo=true are all valid;
-at parse time, it will also accept +f, --no-foo, or --foo=false to disable it.
+Default type is boolean, meaning that -f --foo (set) +f --no-foo (unset) are
+valid.
 
 If type is anything other than boolean, it requires an argument, e.g. -f bar
 or --foo=bar.
@@ -44,25 +44,27 @@ function flags.register(...)
 
   local flag = {}
   flag.key = asId(aliases[1])
+  flag.help = ""
   flag.name = (#aliases[1] == 1 and "-%s" or "--%s"):format(aliases[1])
   flag.type = flags.boolean
   flag.aliases = aliases
   for _,alias in ipairs(aliases) do
     assert(not flags.registered[alias], "Flag '"..alias.."' defined in multiple places!")
     flags.registered[alias] = flag
+    flags.max_length = math.max(flags.max_length, #alias)
   end
   flags.registered[flag.key] = flag
 
   assert(not (flag.default ~= nil and flag.required), "Required flags must not have default values")
-
-  flags.max_length = math.max(flags.max_length, unpack(table.map(aliases, string.len)))
 
   return flags.configure(flag)
 end
 
 function flags.configure(flag)
   return function(init)
-    table.merge(flag, init, "overwrite")
+    for k,v in pairs(init) do
+      flag[k] = v
+    end
     if flag.type ~= flags.boolean then
       flag.needs_value = true
     end
@@ -78,9 +80,9 @@ function flags.help()
   for k,v in pairs(flags.registered) do
     if not seen[v] then
       seen[v] = true
-      printf(template, "", v.help.."\r")
+      io.write(template:format("", v.help.."\r"))
       for _,alias in ipairs(v.aliases) do
-        printf(template, (#alias == 1 and "-" or "--")..alias, "\n")
+        io.write(template:format((#alias == 1 and "-" or "--")..alias, "\n"))
       end
     end
   end
@@ -244,6 +246,17 @@ function flags.number(flag, arg)
   return tonumber(arg) or error("option '"..flag.."' requires a numeric argument")
 end
 
-function flags.list(flag, arg)
-  return {arg:split(",")}
+function flags.listOf(type, separator)
+  return function(flag, arg)
+    local vals = {}
+    local start = 1
+    for stop in function() return arg:find(separator, start, true) end do
+      table.insert(vals, type(flag, arg:sub(start, stop-1)))
+      start = stop+1
+    end
+    table.insert(vals, type(flag, arg:sub(start)))
+    return vals
+  end
 end
+
+flags.list = flags.listOf(flags.string, ",")

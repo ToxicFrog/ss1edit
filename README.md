@@ -295,8 +295,6 @@ Pretty-print `t` and all of it subtables in an indented, human-readable form. If
 
 This is a library to hopefully remove the pain from processing command line arguments. It supports both long and short flags, with and without arguments, and respects the convention of separating flags from positional arguments with `--`.
 
-Unlike the other modules, this module requires that the `table` and `string` modules be loaded.
-
 #### Terminology ####
 
 A *flag* is a command line option starting with `-` or `--`. A *flag argument* (or just *argument*) is a parameter associated with a flag. A *positional argument* is a command line argument that is not a flag and not associated with any flag. For example, in the following command line:
