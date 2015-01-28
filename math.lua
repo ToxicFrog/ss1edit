@@ -1,13 +1,18 @@
 -- math-related functions
 
+-- convert binary string to number
+function math.bin(n)
+  return tonumber(n, 2)
+end
+
 -- convert octal string to number
 function math.oct(n)
 	return tonumber(n, 8)
 end
 
--- convert binary string to number
-function math.bin(n)
-	return tonumber(n, 2)
+-- convert hex string to number
+function math.hex(n)
+  return tonumber(n, 16)
 end
 
 -- degree-based trig:
