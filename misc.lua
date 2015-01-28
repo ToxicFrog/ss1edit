@@ -15,21 +15,6 @@ end
 -- update file metatable
 getmetatable(io.stdout).__type = function() return "file" end
 
--- printf(format, ...)
-function printf(...)
-	return io.stdout:printf(...)
-end
-
--- printf to standard error
-function eprintf(...)
-	return io.stderr:printf(...)
-end
-
--- bind to io tables, so that file:printf(...) becomes legal
-getmetatable(io.stdout).__index.printf = function(self, ...)
-  return self:write(string.format(...))
-end
-
 -- "safe require", returns nil,error if require fails rather than
 -- throwing an error
 function srequire(...)
