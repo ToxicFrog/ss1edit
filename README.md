@@ -16,7 +16,7 @@
 
 This is a collection of utility functions for Lua that I use in some of my programs. You may find it useful.
 
-It is organized into a number of modules; these modules are (with the exception of `flags`) independent of each other, so you can load only the ones you need.
+It is organized into a number of modules; these modules are independent of each other, so you can load only the ones you need.
 
 Note that this library does various bad things such as *modifying the metatables for built in types*, *overwriting builtin functions* and *unconditionally creating new globals*. There is currently no way to disable this behaviour except by not loading the modules that do these things.
 
@@ -88,6 +88,12 @@ Reads and returns the contents of the file `path`.
     io.writefile(path, data)
 
 Writes `data` to the file `path`. The file is created if it didn't already exist, and overwritten if it did.
+
+-------
+
+    io.exists(file, [mode])
+
+Checks if `file` can be opened with the given `mode` (default `'r'`). This is not as good as the lfs version -- in particular, if the file exists but you cannot open it in any mode due to permissions, this function can never return true -- but it doesn't require LFS to be installed.
 
 -------
 

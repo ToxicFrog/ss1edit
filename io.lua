@@ -25,3 +25,11 @@ function io.writefile(name, data)
   fd:write(data)
   fd:close()
 end
+
+function io.exists(name, mode)
+  local fd = io.open(name, mode or 'r')
+  if fd then
+    fd:close()
+    return true
+  end
+end
