@@ -9,6 +9,7 @@
   Math -- math.lua
   Tables and Lists -- table.lua
   Command Line Flag Parsing -- flags.lua
+  Logging -- logging.lua
 3. License
 
 
@@ -430,6 +431,20 @@ Returns the default value associated with the flag `name`.
 
 As `flags.get`, but raises an error if the flag was not specified on the most recently parsed command line.
 
+
+### Logging -- logging.lua ###
+
+This module categorizes log messages into five levels: error, warning, info, debug, and trace.
+
+If the `flags` module is loaded, it registers two command line flags: `--log-level`, which can be any of the above, and `--log-to`, which is the name of a file to write logs to. (The default is to log at warning level and write logs to stdout.)
+
+If `flags` is not loaded, it always logs to stdout and the log level is set from the `LOG_LEVEL` environment variable, or warning otherwise.
+
+------
+
+    log.{error,warning,info,debug,trace}(format, ...)
+
+Logs a message with the given level. The arguments will be fed to string.format and the result prefixed with the specified log level and the call site.
 
 ## 3. License
 
