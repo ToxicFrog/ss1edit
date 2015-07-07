@@ -22,3 +22,9 @@ for k,v in ipairs({ "cos", "sin", "tan", "tan2" }) do
 	math["da"..v] = function(r) return math.deg(math["a"..v](r)) end
 end
 math.dtan2 = nil
+
+function math.bound(min, n, max)
+  return math.max(
+    math.min(n, max),
+    min)
+end
