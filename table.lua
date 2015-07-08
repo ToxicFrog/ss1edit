@@ -81,7 +81,10 @@ function table.dump(T)
 		if ref[v] then return ref[v] end
 
 		local t = type(v)
-		if t == 'nil'
+		local mt = getmetatable(v)
+		if mt and mt.__repr then
+			return mt.__repr(v)
+		elseif t == 'nil'
 			or t == 'boolean'
 			or t == 'number'
 		then
