@@ -28,3 +28,7 @@ function math.bound(min, n, max)
     math.min(n, max),
     min)
 end
+
+local mt = {}
+debug.setmetatable(0, mt)
+mt.__index = math
