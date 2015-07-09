@@ -23,18 +23,6 @@ memoize = (function(f) return f(f) end)(function(f)
 	end
 end)
 
--- new version of type() that supports the __type metamethod
-rawtype = type
-function type(obj)
-	local mt = getmetatable(obj)
-	if mt and rawget(mt, "__type") then
-		return rawget(mt, "__type")(obj)
-	end
-	return rawtype(obj)
-end
--- update file metatable
-getmetatable(io.stdout).__type = function() return "file" end
-
 -- "safe require", returns nil,error if require fails rather than
 -- throwing an error
 function srequire(...)
@@ -60,3 +48,26 @@ function partial(f, ...)
 	local arg = (...)
 	return partial(function(...) return f(arg, ...) end, select(2, ...))
 end
+
+-- New versions of pairs, ipairs, and type that respect the corresponding
+-- metamethods.
+do
+	local function metamethod_wrap(f, name)
+		return function(v)
+			local mm = rawget(getmetatable(v) or {}, name)
+			if mm then
+				return mm(v)
+			end
+			return f(v)
+		end
+	end
+	rawtype = type
+	type = metamethod_wrap(type, "__type")
+	if _VERSION:match("Lua 5.1") then
+		pairs = metamethod_wrap(pairs, "__pairs")
+		ipairs = metamethod_wrap(ipairs, "__ipairs")
+	end
+end
+
+-- update file metatable with __type
+getmetatable(io.stdout).__type = function() return "file" end
