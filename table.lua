@@ -48,8 +48,9 @@ end
 -- of the table passed to table.dump
 -- analogous to string.dump() on functions
 function table.dump(T)
-	dump = "local loadstring = loadstring\nsetfenv(1, {})\n\n"
-	ref = {}
+	local dump = "local loadstring = loadstring\nsetfenv(1, {})\n\n"
+	local ref = {}
+	local ref_n = 0
 
 	local getref
 
@@ -65,7 +66,8 @@ function table.dump(T)
 	end
 
 	local function append_table(T)
-		ref[T] = tostring(T):gsub("table: ", "table_")
+		ref[T] = "table_ref_"..ref_n
+		ref_n = ref_n + 1
 
 		local S = string.format("%s = {\n", ref[T])
 		for k,v in pairs(T) do
