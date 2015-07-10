@@ -54,25 +54,15 @@ function table.dump(T)
 
 	local getref
 
-	local function check_kv(k,v)
-		for _,val in ipairs { k, v } do
-			if type(val) == 'coroutine'
-				or type(val) == 'userdata'
-			then
-				return false
-			end
-		end
-		return true
-	end
-
 	local function append_table(T)
 		ref[T] = "table_ref_"..ref_n
 		ref_n = ref_n + 1
 
 		local S = string.format("%s = {\n", ref[T])
 		for k,v in pairs(T) do
-			if check_kv(k,v) then
-				S = S..string.format("\t[%s] = %s;\n", getref(k), getref(v))
+			k,v = getref(k),getref(v)
+			if k and v then
+				S = S..string.format("\t[%s] = %s;\n", k, v)
 			end
 		end
 
@@ -102,8 +92,7 @@ function table.dump(T)
 			append_table(v)
 			return ref[v]
 		else
-			-- error
-			error "Something bad has happened in table.dump()"
+			return nil
 		end
 	end
 
