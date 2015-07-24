@@ -71,3 +71,14 @@ end
 
 -- update file metatable with __type
 getmetatable(io.stdout).__type = function() return "file" end
+
+-- Allow string formatting in assert and error
+do
+	local _assert,_error = assert,error
+	function assert(exp, err, ...)
+		return _assert(exp, err and err:format(...))
+	end
+	function error(err, ...)
+		return _error(err and err:format(...))
+	end
+end
