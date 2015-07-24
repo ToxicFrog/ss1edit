@@ -174,3 +174,10 @@ function table.map(t, f)
 	end
 	return tprime
 end
+
+-- Return a list of table keys in unspecified order
+function table.keys(t)
+	local r = {}
+	for k in pairs(t) do r[#r+1] = k end
+	return r
+end
