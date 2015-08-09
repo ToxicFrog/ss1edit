@@ -24,6 +24,7 @@ function io.writefile(name, data)
   local fd = assert(io.open(name, "wb"))
   assert(fd:write(data))
   fd:close()
+  return true
 end
 
 function io.exists(name, mode)
