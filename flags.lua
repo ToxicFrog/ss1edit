@@ -95,13 +95,7 @@ function flags.parse(...)
   local i = 1
 
   local function set(info, value)
-    if rawget(opts, info.key) ~= nil and not info.repeated then
-      if info.seen then
-        error("option '"..info.name.."' repeated multiple times")
-      else
-        error("option '"..info.name.."' incompatible with earlier options")
-      end
-    elseif info.value ~= nil then
+    if info.value ~= nil then
       opts[info.key] = info.value
     else
       opts[info.key] = info.type(info.name, value)
