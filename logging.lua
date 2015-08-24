@@ -1,6 +1,7 @@
 local LOG_LEVEL = 2 -- WARNING
 local OUT = io.stdout
 local set_log_level
+local flush
 
 if flags then
   flags.register "log-level" {
@@ -13,6 +14,11 @@ if flags then
     type = flags.string;
     help = "File to log to. Defaults to stdout.";
     set = function(k, file) OUT = assert(io.open(file, 'w')) end;
+  }
+  flags.register "log-flush" {
+    help = "Immediately flush all log lines to disk; useful with tail -f.";
+    default = false;
+    set = function(k, f) flush = f end;
   }
 end
 
@@ -40,6 +46,9 @@ local function logger(level, name)
   return function(format, ...)
     if level > LOG_LEVEL then return end
     OUT:write(string.format("%s %s] "..format.."\n", name, caller(), ...))
+    if flush then
+      OUT:flush()
+    end
   end
 end
 
