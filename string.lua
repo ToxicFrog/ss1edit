@@ -23,12 +23,12 @@ function string.split(s, pat, max)
 	local count = 0
 	local i = 1
 	local result = { 1 }
-	
+
 	local function splitter(sof, eof)
 		result[#result] = s:sub(result[#result], sof-1)
 		result[#result+1] = eof
 	end
-	
+
 	if pat == "" then return s end
 
 	s:gsub("()"..pat.."()", splitter, max)
@@ -52,7 +52,7 @@ end
 function string.rfind (s, pattern, rinit, plain)
 	-- if rinit is set, we basically trim the last rinit characters from the string
 	s = s:sub(rinit, -1)
-	
+
 	local old_R = {}
 	local R = { s:find(pattern, 1, plain) }
 
@@ -79,7 +79,7 @@ function string.interpolate(str, data, seeall)
 		oldmt = getmetatable(data)
 		setmetatable(data, { __index = getfenv(2) })
 	end
-	
+
 	local function do_interp(key)
 		key = key:sub(2,-2)
 		local format = key:match([[|([^|'"%]%[]*)$]])
@@ -99,10 +99,29 @@ function string.interpolate(str, data, seeall)
 	repeat
 		str,count = str:gsub('%$(%b{})', do_interp)
 	until count == 0
-	
+
 	if seeall then
 		setmetatable(data, oldmt)
 	end
-	
+
 	return str
+end
+
+-- Cut string into lines of no more than n characters, splitting on whitespace
+-- and hyphens. Force split on newline.
+function string:wrap(n)
+	local buf = {}
+	local line = ''
+
+	for ws,word in self:gmatch('([%s-]*)([^%s-]+)') do
+		if #line + #ws + #word > n or ws:match('\n') then
+			table.insert(buf, line)
+			line,ws = '',''
+		end
+		line = line..ws..word
+	end
+	if #line > 0 then
+		table.insert(buf, line)
+	end
+	return buf
 end
