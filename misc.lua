@@ -79,3 +79,9 @@ end
 function errorf(err, ...)
 	return error(err:format(...))
 end
+
+-- Get field from metatable, return nil if no metatable
+function getmetafield(v, k)
+	local mt = getmetatable(v)
+	return mt and mt[k]
+end
