@@ -23,7 +23,7 @@ for k,v in ipairs({ "cos", "sin", "tan", "tan2" }) do
 end
 math.dtan2 = nil
 
-function math.bound(min, n, max)
+function math.bound(n, min, max)
   return math.max(
     math.min(n, max),
     min)

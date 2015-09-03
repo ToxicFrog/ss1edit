@@ -69,15 +69,23 @@ do
 	end
 end
 
--- update file metatable with __type
-getmetatable(io.stdout).__type = function() return "file" end
-
 -- formatting-aware versions of assert and error
-function assertf(exp, err, ...)
-	return assert(exp, err:format(...))
-end
-function errorf(err, ...)
-	return error(err:format(...))
+do
+	-- We call it 'assertf' because things like assert(call()) are common, and
+	-- if call() returns a bunch of stuff format() will get confused.
+	-- This is more for 'assert(precondition, error, ...)' style usage.
+	-- Maybe it should be called check() instead?
+	function assertf(exp, err, ...)
+		return assert(exp, err:format(...))
+	end
+
+	local _error = error
+	function error(err, ...)
+		if select('#', ...) > 0 then
+			return error(err:format(...))
+		end
+		return _error(err)
+	end
 end
 
 -- Get field from metatable, return nil if no metatable

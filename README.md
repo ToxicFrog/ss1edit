@@ -29,13 +29,31 @@ This library is organized into a number of individual modules. None of them have
 
 ### Global Functions -- misc.lua ###
 
-This module creates a number of global functions that don't belong in any other module.
+This module creates a number of global functions that don't belong in any other module. It also overrides some existing functions.
+
+-------
+
+    assertf(exp, err, ...)
+
+As `assert(exp, err:format(...))`. This isn't particularly useful for turning 'soft errors' into 'hard errors' as in `assertf(io.read(...))`, because the error returned by the call may not be format-clean; it's mainly intended for runtime checks, as in `assertf(precondition, err, ...)`. (Perhaps it should be called `check()` instead?)
+
+-------
+
+    error(err, ...)
+
+As stock `error`, but if the `...` is nonempty, calls `err:format(...)` and then throws the result.
 
 -------
 
     f(body)
 
 Concise creation of simple anonymous functions. `f "x => not x"` is converted into `function(x) return not x end`. Note that this uses `loadstring` and thus the resulting function is *not* lexically scoped inside `f`'s caller; in particular, this means that it has no upvalues.
+
+-------
+
+    getmetafield(v, k)
+
+As `getmetatable(v)[k]`, except that it returns `nil` rather than throwing if `v` has no metatable.
 
 -------
 
@@ -48,6 +66,13 @@ Returns a version of fn that is memoized; that is to say, return values from fn 
     partial(f, ...)
 
 Return a function based on f with the given arguments already applied, such that `partial(f, x)(...)` is equivalent to `f(x, ...)`.
+
+-------
+
+    pairs(v)
+    ipairs(v)
+
+These are defined only if running under Lua 5.1, and are equivalent to the Lua 5.2 versions that respect the `__pairs` and `__ipairs` metamethods.
 
 -------
 
@@ -82,13 +107,13 @@ Equivalent to `file:write(string.format(...))`.
 
     io.readfile(path)
 
-Reads and returns the contents of the file `path`.
+Reads and returns the contents of the file `path`. Raises an error on failure.
 
 -------
 
     io.writefile(path, data)
 
-Writes `data` to the file `path`. The file is created if it didn't already exist, and overwritten if it did.
+Writes `data` to the file `path`. The file is created if it didn't already exist, and overwritten if it did. Raises an error on failure.
 
 -------
 
@@ -204,10 +229,17 @@ The default for `pattern` is `%s`, i.e. whitespace; the default for `max` is inf
 
 Returns a copy of s with all leading and trailing whitespace removed.
 
+-------
+
+    string.wrap(s, cols)
+
+Wrap `s` to fit within `cols` columns; returns a table of individual lines. It inserts linebreaks only on whitespace or hyphens, so text containing very long words may not wrap well, resulting in lines that are still longer than `cols`.
 
 ### Math -- math.lua ###
 
-A few convenience trig functions, all added to the global `math` table.
+A few convenience functions, all added to the global `math` table.
+
+Additionally, it sets `math` as the `__index` for all numbers, so expressions like `x:floor()` will work.
 
 -------
 
@@ -234,6 +266,11 @@ Versions of `sin`, `cos` and `tan` that take arguments in degrees rather than in
 
 Versions of `asin`, `acos`, `atan`, and `atan2` that return values in degrees rather than in radians.
 
+-------
+
+    math.bound(n, min, max)
+
+If `min` ≤ `n` ≤ `max`, returns `n`. Otherwise returns whichever of `min` or `max` is closer to `n`.
 
 ### Tables and Lists -- table.lua ###
 
@@ -259,6 +296,12 @@ To save and load a table, you would do something like this:
     T = loadstring(saved)()
 
 Note that since this outputs executable Lua code, you should use it only in circumstances where people tampering with the output is not a concern. In particular, you probably shouldn't use this for network communications, or for configuration files for setuid programs, or the like.
+
+--------
+
+    table.keys(t)
+
+Returns a list of all the keys in `t`, in unspecified order.
 
 --------
 
@@ -359,7 +402,6 @@ Register a boolean flag. The flag name is the first argument; subsequent argumen
         type = flags.boolean;
         default = nil;
         required = false;
-        repeated = false;
         key = nil;
         value = nil;
         help = "";
@@ -379,10 +421,6 @@ Set the default value of the flag. If the flag is not specified on the command l
     required = false
 
 If true, `flags.parse()` will raise an error if the given flag is not specified on the command line, even if it has a default value.
-
-    repeated = false
-
-If true, multiple flags affecting this key (including multiple copies of this flag) are allowed on the command line. If false, this will result in an error.
 
     key = nil
 
@@ -434,11 +472,13 @@ As `flags.get`, but raises an error if the flag was not specified on the most re
 
 ### Logging -- logging.lua ###
 
-This module categorizes log messages into five levels: error, warning, info, debug, and trace.
+This module categorizes log messages into five levels: error, warning, info, debug, and trace. By default it logs to stdout and sets the log level based on the `LOG_LEVEL` environment variable, or warning otherwise.
 
-If the `flags` module is loaded, it registers two command line flags: `--log-level`, which can be any of the above, and `--log-to`, which is the name of a file to write logs to. (The default is to log at warning level and write logs to stdout.)
+If the `flags` module is loaded, it also registers three command line flags.
 
-If `flags` is not loaded, it always logs to stdout and the log level is set from the `LOG_LEVEL` environment variable, or warning otherwise.
+  * `--log-level` sets the log level, and overrides the `LOG_LEVEL` environment variable.
+  * `--log-to` is the name of a file to write logs to. Logs will be appended to this file instead of stdout. It will not truncate the file if it already exists.
+  * `--log-flush` causes it to fflush() the log after each write. This slows things down, but is useful when using `tail -f` on the log file.
 
 ------
 
