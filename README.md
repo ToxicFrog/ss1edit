@@ -486,6 +486,18 @@ If the `flags` module is loaded, it also registers three command line flags.
 
 Logs a message with the given level. The arguments will be fed to string.format and the result prefixed with the specified log level and the call site.
 
+------
+
+    log.setlevel(level)
+
+Sets the logging level. `level` can be either a number (lower numbers result in more logging; 1, `error`, is the lowest) or a string (one of the above mentioned log levels).
+
+------
+
+    log.hook(prefix, message)
+
+If defined, this is called just before each message is logged. `prefix` is the prefix added by the logging library, containing the log level and call site; `message` is the user-provided message. This can be used to, e.g., send logs over the network, or log to both an in-game console and an external file.
+
 ## 3. License
 
 Copyright © 2014 Ben "ToxicFrog" Kelly, Google Inc.

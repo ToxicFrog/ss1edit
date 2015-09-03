@@ -1,6 +1,5 @@
 local LOG_LEVEL = 2 -- WARNING
 local OUT = io.stdout
-local set_log_level
 local flush
 
 if flags then
@@ -8,7 +7,7 @@ if flags then
     type = flags.string;
     help = "Maximum level to log at (error, warning, info, debug, or trace).";
     default = os.getenv("LOG_LEVEL") or "warning";
-    set = function(k, level) return set_log_level(level) end;
+    set = function(k, level) return log.setlevel(level) end;
   }
   flags.register "log-to" {
     type = flags.string;
@@ -25,7 +24,7 @@ end
 log = {}
 
 local log_levels = { "error", "warning", "info", "debug", "trace" }
-function set_log_level(log_level)
+function log.setlevel(log_level)
   if tonumber(log_level) then
     LOG_LEVEL = tonumber(log_level) return
   end
@@ -34,7 +33,7 @@ function set_log_level(log_level)
       LOG_LEVEL = i return
     end
   end
-  log.warning("set_log_level called with invalid log-level: %s", tostring(log_level))
+  log.warning("log.setlevel called with invalid log-level: %s", tostring(log_level))
 end
 
 local function caller()
@@ -45,7 +44,10 @@ end
 local function logger(level, name)
   return function(format, ...)
     if level > LOG_LEVEL then return end
-    OUT:write(string.format("%s %s] "..format.."\n", name, caller(), ...))
+    local prefix = ("%s %s]"):format(name, caller())
+    local suffix = format:format(...)
+    log.hook(prefix, suffix)
+    OUT:write(prefix .. ' ' .. suffix .. '\n')
     if flush then
       OUT:flush()
     end
@@ -56,4 +58,6 @@ for i,level in ipairs(log_levels) do
   log[level] = logger(i, level:upper():sub(1,1))
 end
 
-set_log_level(os.getenv("LOG_LEVEL") or "warning")
+function log.hook(prefix, message) end
+
+log.setlevel(os.getenv("LOG_LEVEL") or "warning")
