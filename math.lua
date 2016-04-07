@@ -1,5 +1,7 @@
 -- math-related functions
 
+inf = math.huge
+
 -- convert binary string to number
 function math.bin(n)
   return tonumber(n, 2)
