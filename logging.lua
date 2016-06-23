@@ -58,6 +58,12 @@ for i,level in ipairs(log_levels) do
   log[level] = logger(i, level:upper():sub(1,1))
 end
 
+local _fatal = logger(0, 'F')
+function log.fatal(...)
+  _fatal(...)
+  error(string.format(...))
+end
+
 function log.hook(prefix, message) end
 
 log.setlevel(os.getenv("LOG_LEVEL") or "warning")
