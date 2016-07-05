@@ -93,3 +93,8 @@ function getmetafield(v, k)
 	local mt = getmetatable(v)
 	return mt and mt[k]
 end
+
+-- As tonumber/tostring, but casts to bool
+function toboolean(v)
+	return not not v
+end
