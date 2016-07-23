@@ -78,7 +78,13 @@ These are defined only if running under Lua 5.1, and are equivalent to the Lua 5
 
     srequire(module)
 
-Equivalent to `require`, but returns `nil,error` on failure rather than throwing.
+"Safe require". Equivalent to `require`, but returns `nil,error` on failure rather than throwing.
+
+-------
+
+    toboolean(v)
+
+Returns the truth-value of `v`; this is `false` for false or nil and `true` for everything else (including the empty string, the empty table, and 0).
 
 -------
 
@@ -239,7 +245,7 @@ Wrap `s` to fit within `cols` columns; returns a table of individual lines. It i
 
 A few convenience functions, all added to the global `math` table.
 
-Additionally, it sets `math` as the `__index` for all numbers, so expressions like `x:floor()` will work.
+Additionally, it sets `math` as the `__index` for all numbers, so expressions like `x:floor()` will work, and sets math.huge as the value of the global `inf`.
 
 -------
 
@@ -485,6 +491,12 @@ If the `flags` module is loaded, it also registers three command line flags.
     log.{error,warning,info,debug,trace}(format, ...)
 
 Logs a message with the given level. The arguments will be fed to string.format and the result prefixed with the specified log level and the call site.
+
+------
+
+    log.fatal(format, ...)
+
+Equivalent to `log.error`, but after logging, throws an error containing the log message.
 
 ------
 
