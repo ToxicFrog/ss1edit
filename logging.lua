@@ -12,7 +12,7 @@ if flags then
   flags.register "log-to" {
     type = flags.string;
     help = "File to log to. Defaults to stdout.";
-    set = function(k, file) OUT = assert(io.open(file, 'w')) end;
+    set = function(k, file) OUT = assert(io.open(file, 'a')) end;
   }
   flags.register "log-flush" {
     help = "Immediately flush all log lines to disk; useful with tail -f.";
