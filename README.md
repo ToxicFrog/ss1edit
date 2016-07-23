@@ -426,7 +426,7 @@ Set the default value of the flag. If the flag is not specified on the command l
 
     required = false
 
-If true, `flags.parse()` will raise an error if the given flag is not specified on the command line, even if it has a default value.
+If true, `flags.parse()` will raise an error if the given flag is not specified on the command line. You cannot set both `default` and `required` on the same flag.
 
     key = nil
 
@@ -434,7 +434,7 @@ Store the flag's value in this key rather than using the flag's canonical name.
 
     value = nil
 
-If the flag is present on the command line, store this value instead of the flag's actual value. Most useful with boolean flags when you actually want them to store a special value in some other flag (by using this in conjunction with `key`).
+If the flag is present on the command line, store this value instead of the flag's actual value. Most useful with boolean flags when you actually want them to store a special value in some other flag (by using this in conjunction with `key`). For example, you could make `--log-to-stderr` an alias for `--log-to=/dev/stderr` with `key = "log_to"; value = "/dev/stderr"`.
 
     help = ""
 
