@@ -359,7 +359,7 @@ A *flag* is a command line option starting with `-` or `--`. A *flag argument* (
 
 The flags are `l`, `all`, and `sort`; `sort` has the flag argument `time`; and the positional arguments are `foo` and `bar`.
 
-A *flag name* is the lua identifier associated with a flag, and is derived from the first argument to `flags.register` by replacing any characters that would make an invalid identifier with `_`. For example, the flag name of `verbose` is `verbose`, and the flag name of `log-all` is `log_all`. This is done so that you can use them as field accessors, e.g:
+A *flag key* is the lua identifier associated with a flag, and is derived from the first argument to `flags.register` by replacing any characters that would make an invalid identifier with `_`. For example, the flag key of `verbose` is `verbose`, and the flag key of `log-all` is `log_all`. This is done so that you can use them as field accessors, e.g:
 
     flags.register('log-all')
     local opts = flags.parse(...)
@@ -395,6 +395,11 @@ Flags with base-10 numbers as arguments. The argument is fed to `tonumber` and a
 
 A comma-separated list of strings.
 
+------
+
+    flags.listOf(type, separator)
+
+A function for creating list types. `type` must be a type function as defined above, and `separator` a single character to split on. `flags.list` is defined as `flags.listOf(flags.string, ',')`; you can use `listOf` to define lists of other types, such as numbers.
 
 #### Flags API ####
 
@@ -454,14 +459,20 @@ Output help text automatically generated from the set of registered flags.
 
     flags.parse(...)
 
-Parse the given arguments as the command line. Sets `flags.parsed` to the options parsed and returns it.
+Parse the given arguments as the command line. Sets `flags.parsed` to the options parsed and returns it. The returned value will not be changed by future calls to `flags.parse()`, but the value of `flags.parsed` will be.
 
 ------
 
-    flags.parsed[name]
-    flags.get(name)
+    flags.parsed[key]
+    flags.get(key)
 
-Returns the parsed value associated with the flag `name`. If no flag parsing has happened yet, or if the flag was not specified, returns the default value.
+Returns the parsed value associated with the given flag key. If no flag parsing has happened yet, or if the flag was not specified, returns the default value.
+
+------
+
+    flags 'name'
+
+Returns the parsed value associated with the given flag *name*. This is the preferred way to get "current" flag values. Note that this uses the name, not the key; given a flag `--log-level`, `flags.parsed.log_level`, `flags.get('log_level')`, and `flags 'log-level'` are all equivalent.
 
 ------
 
