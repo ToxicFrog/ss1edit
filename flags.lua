@@ -41,7 +41,7 @@ function flags.register(...)
 
   local flag = {}
   flag.key = asId(aliases[1])
-  flag.help = ""
+  flag.help = "(no help text)"
   flag.name = (#aliases[1] == 1 and "-%s" or "--%s"):format(aliases[1])
   flag.type = flags.boolean
   flag.aliases = aliases
@@ -73,17 +73,27 @@ function flags.configure(flag)
 end
 
 function flags.help()
-  local seen = {}
-  local template = string.format("%%%ds  %%s", flags.max_length + 4)
+  local template = string.format("%%%ds%%s%%s", flags.max_length + 4)
+  local seen,defs,buf = {},{},{}
+
   for k,v in pairs(flags.registered) do
     if not seen[v] then
       seen[v] = true
-      io.write(template:format("", v.help.."\r"))
-      for _,alias in ipairs(v.aliases) do
-        io.write(template:format((#alias == 1 and "-" or "--")..alias, "\n"))
-      end
+      table.insert(defs, v)
     end
   end
+  table.sort(defs, function(x,y) return x.name < y.name end)
+
+  for _,def in ipairs(defs) do
+    table.insert(buf, template:format(def.name, '  ', def.help))
+    for i=2,#def.aliases do
+      local alias = def.aliases[i]
+      alias = ((#alias == 1) and '-' or '--')..alias
+      table.insert(buf, template:format(alias, '', ''))
+    end
+  end
+
+  return table.concat(buf, '\n')
 end
 
 local function setFlag(info, value)

@@ -453,7 +453,7 @@ A function that will be called when the flag is set, passed the flag's canonical
 
     flags.help()
 
-Output help text automatically generated from the set of registered flags.
+Returns a string containing help text for all currently registered flags, suitable for output to the terminal.
 
 ------
 

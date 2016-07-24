@@ -1,45 +1,51 @@
 require 'flags'
 
-flags.register ('boolean-flag', 'b', 'bool') {
-  help = "Boolean flag.";
-}
-
-flags.register ('number-flag', 'n') {
-  help = "Numeric flag.";
-  type = flags.number;
-  default = 4;
-}
-
-flags.register ('set-number-to-five') {
-  key = 'number_flag';
-  value = 5;
-}
-
-flags.register ('string-flag', 's') {
-  help = "String flag.";
-  type = flags.string;
-}
-
-flags.register 'string-list-flag' {
-  help = "List[String] flag.";
-  type = flags.list;
-}
-
-flags.register ('number-list-flag', 'L') {
-  help = "List[Number] flag.";
-  type = flags.listOf(flags.number, ':');
-}
-
-flags.register ('required-flag', 'r') {
-  required = true;
-}
-
 TestFlags = {}
 
+function TestFlags:setUp()
+  flags.registered,flags.defaults = {},{}
+  flags.parsed = flags.defaults
+
+  flags.register ('boolean-flag', 'b', 'bool') {
+    help = "Boolean flag.";
+  }
+
+  flags.register ('number-flag', 'n') {
+    help = "Numeric flag.";
+    type = flags.number;
+    default = 4;
+  }
+
+  flags.register ('set-number-to-five') {
+    key = 'number_flag';
+    value = 5;
+    help = "Same as --number-flag=5"
+  }
+
+  flags.register ('string-flag', 's') {
+    help = "String flag.";
+    type = flags.string;
+  }
+
+  flags.register 'string-list-flag' {
+    help = "List[String] flag.";
+    type = flags.list;
+  }
+
+  flags.register ('number-list-flag', 'L') {
+    help = "List[Number] flag.";
+    type = flags.listOf(flags.number, ':');
+  }
+
+  flags.register ('required-flag', 'r') {
+    required = true;
+  }
+end
+
 function TestFlags:testDefaultValue()
-  lu.assertEquals(4, flags 'number-flag')
-  lu.assertEquals(4, flags.get('number_flag'))
-  lu.assertEquals(4, flags.parsed.number_flag)
+  lu.assertEquals(flags 'number-flag', 4)
+  lu.assertEquals(flags.get('number_flag'), 4)
+  lu.assertEquals(flags.parsed.number_flag, 4)
 end
 
 function TestFlags:testParseErrors()
@@ -130,4 +136,22 @@ function TestFlags:testRegistrationErrors()
   lu.assertErrorMsgContains(
     'must not have default values',
     flag, { default = true, required = true })
+end
+
+local HELP_TEXT = [[
+        --boolean-flag  Boolean flag.
+                    -b
+                --bool
+         --number-flag  Numeric flag.
+                    -n
+    --number-list-flag  List[Number] flag.
+                    -L
+       --required-flag  (no help text)
+                    -r
+  --set-number-to-five  Same as --number-flag=5
+         --string-flag  String flag.
+                    -s
+    --string-list-flag  List[String] flag.]]
+function TestFlags:testHelpText()
+  lu.assertEquals(flags.help(), HELP_TEXT)
 end
