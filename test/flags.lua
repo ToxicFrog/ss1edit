@@ -1,0 +1,133 @@
+require 'flags'
+
+flags.register ('boolean-flag', 'b', 'bool') {
+  help = "Boolean flag.";
+}
+
+flags.register ('number-flag', 'n') {
+  help = "Numeric flag.";
+  type = flags.number;
+  default = 4;
+}
+
+flags.register ('set-number-to-five') {
+  key = 'number_flag';
+  value = 5;
+}
+
+flags.register ('string-flag', 's') {
+  help = "String flag.";
+  type = flags.string;
+}
+
+flags.register 'string-list-flag' {
+  help = "List[String] flag.";
+  type = flags.list;
+}
+
+flags.register ('number-list-flag', 'L') {
+  help = "List[Number] flag.";
+  type = flags.listOf(flags.number, ':');
+}
+
+flags.register ('required-flag', 'r') {
+  required = true;
+}
+
+TestFlags = {}
+
+function TestFlags:testDefaultValue()
+  lu.assertEquals(4, flags 'number-flag')
+  lu.assertEquals(4, flags.get('number_flag'))
+  lu.assertEquals(4, flags.parsed.number_flag)
+end
+
+function TestFlags:testParseErrors()
+  -- required flag missing
+  lu.assertErrorMsgContains(
+    "Required command line flag '--required-flag' was not provided.",
+    flags.parse, '--boolean-flag')
+
+  -- unexpected flag found
+  lu.assertErrorMsgContains(
+    "unrecognized option",
+    flags.parse, '--no-such-flag')
+
+  -- can't invert non-boolean flag
+  lu.assertErrorMsgContains(
+    "cannot be inverted",
+    flags.parse, '--no-number-flag')
+  lu.assertErrorMsgContains(
+    "cannot be inverted",
+    flags.parse, '+n')
+
+  -- non-boolean flag requires an argument
+  lu.assertErrorMsgContains(
+    "requires an argument",
+    flags.parse, '--string-flag')
+
+  -- boolean flag doesn't permit an argument
+  lu.assertErrorMsgContains(
+    "doesn't allow an argument",
+    flags.parse, '--boolean-flag=true')
+
+  -- argument of wrong type
+  lu.assertErrorMsgContains(
+    "requires a numeric argument",
+    flags.parse, '--number-flag=asdf')
+end
+
+local function checkFlagValues()
+  lu.assertEquals(flags 'boolean-flag', true)
+  lu.assertEquals(flags 'number-flag', 6)
+  lu.assertEquals(flags 'string-flag', 'kittens')
+  lu.assertEquals(flags 'string-list-flag', { 'Epsilon', 'Suzie' })
+  lu.assertEquals(flags 'number-list-flag', { 1, 2, 3 })
+  lu.assertEquals(flags 'required-flag', false)
+end
+local cmdlines = {
+  { name = "long dense options";
+    '--boolean-flag', '--number-flag=6', '--string-flag=kittens',
+    '--string-list-flag=Epsilon,Suzie', '--number-list-flag=1:2:3',
+    '--no-required-flag'
+  };
+  { name = "short dense options";
+    '-b', '-n6', '-skittens', '--string-list-flag=Epsilon,Suzie',
+    '-L1:2:3', '+r'
+  };
+  { name = "long sparse options";
+    '--bool', '--number-flag', '6', '--string-flag', 'kittens',
+    '--string-list-flag', 'Epsilon,Suzie', '--number-list-flag', '1:2:3',
+    '--no-required-flag'
+  };
+  { name = "short sparse options";
+    '-b', '-n', '6', '-s', 'kittens', '--string-list-flag', 'Epsilon,Suzie',
+    '-L1:2:3', '+r'
+  };
+}
+for _,argv in ipairs(cmdlines) do
+  TestFlags['testParseSuccess: '..argv.name] = function(self)
+    flags.parse(unpack(argv))
+    checkFlagValues()
+  end
+end
+
+function TestFlags:testKeyValueOverride()
+  flags.parse('-r', '--set-number-to-five')
+  lu.assertEquals(flags 'number_flag', 5)
+end
+
+function TestFlags:testRegistrationErrors()
+  lu.assertErrorMsgContains(
+    'defined in multiple places',
+    flags.register, 'boolean-flag')
+
+  local flag = flags.register 'test-flag'
+  lu.assertErrorMsgContains(
+    "Can't set both key= and default=",
+    flag, { default = true, key = 'number_flag' })
+
+  lu.assertErrorMsgContains(
+    'must not have default values',
+    flag, { default = true, required = true })
+end

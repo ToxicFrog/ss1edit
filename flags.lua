@@ -67,6 +67,8 @@ function flags.configure(flag)
       flags.defaults[flag.key] = flag.default
     end
     assert(not (flag.default ~= nil and flag.required), "Required flags must not have default values")
+    assert(not (flag.default ~= nil and flag.key ~= asId(flag.aliases[1])),
+      "Can't set both key= and default= on the same flag; set the default on the flag the key points at instead")
   end
 end
 
@@ -85,9 +87,12 @@ function flags.help()
 end
 
 local function setFlag(info, value)
+  assert(value ~= nil, "Flag '"..info.name.."' requires an argument, but none was provided")
+
   if info.value ~= nil then
     value = info.value
   end
+  value = info.type(info.name, value)
   flags.parsed[info.key] = value
 
   if info.set then
@@ -142,6 +147,7 @@ local function parseLong(arg, next)
     setFlag(info, not invert)
     return true
   end
+  assert(not invert, "option '--"..flag.."' requires an argument and cannot be inverted with --no")
 
   setFlag(info, next())
   return true
@@ -149,7 +155,7 @@ end
 
 -- Parse a short option or a block of short options, e.g. -tvf or -o foo.
 local function parseShort(arg, next)
-  local invert,flags = arg:match("^([-+])(.+)")
+  local invert,arg = arg:match("^([-+])(.+)")
   if not invert then return false end
 
   invert = invert == "+"
@@ -158,20 +164,20 @@ local function parseShort(arg, next)
     local info = flags.registered[flag]
     if not info then
       assert(false, "unrecognized option '-"..flag.."'")
-      -- we just silently skip this, since there's no realistic way to insert
-      -- it into the parsed arguments list.
-    elseif not info.needs_value then
+    elseif info.needs_value then
+      assert(not invert, "option '-"..flag.."' requires an argument and cannot be inverted with +")
+
+      -- Flag with required argument; everything here after the flag is the
+      -- argument.
+      local val = arg:sub(idx)
+      if #val == 0 then val = next() end
+
+      setFlag(info, val)
+      return true
+    else
       -- Boolean flag; its mere presence or absense sets it.
       setFlag(info, not invert)
     end
-    assert(not invert, "option '-"..flag.."' requires an argument and cannot be inverted with +")
-
-    -- Flag with required argument; everything here after the flag is the
-    -- argument.
-    local val = arg:sub(idx)
-    if #val == 0 then val = next() end
-
-    setFlag(info, val)
   end
   return true
 end
@@ -268,7 +274,7 @@ function flags.string(flag, arg)
 end
 
 function flags.number(flag, arg)
-  return tonumber(arg) or error("option '"..flag.."' requires a numeric argument")
+  return (assert(tonumber(arg), "option '"..flag.."' requires a numeric argument"))
 end
 
 -- listOf is a type function constructor; it's used as (e.g.)
