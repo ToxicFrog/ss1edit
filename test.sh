@@ -1,5 +1,6 @@
 #!/bin/bash
 
+LUA=${LUA:=luajit}
 COLOURIZE='
   BEGIN             { flag=0; suite=""; new_suite="" }
   (flag)            { print $0; next }
@@ -12,4 +13,4 @@ COLOURIZE='
   /^===========/    { print $0; flag=1 }
 '
 
-luajit test/all.lua -v -o text | awk "$COLOURIZE"
+$LUA test/all.lua -v -o text | awk "$COLOURIZE"

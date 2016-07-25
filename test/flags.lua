@@ -1,5 +1,8 @@
 require 'flags'
 
+-- 5.3 compatibility
+local unpack = unpack or table.unpack
+
 TestFlags = {}
 
 function TestFlags:setUp()
