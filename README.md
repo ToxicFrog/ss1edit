@@ -155,7 +155,7 @@ Returns true if the named file or directory exists, and false otherwise. A conve
 
     lfs.dirname(path)
 
-As the POSIX utility `dirname`, returns `path` with the trailing path element
+As the POSIX utility `dirname`, returns `path` with the trailing path element removed.
 
 -------
 

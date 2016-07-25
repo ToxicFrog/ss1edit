@@ -1,6 +1,5 @@
 #!/bin/bash
 
-LUA=${LUA:=luajit}
 COLOURIZE='
   BEGIN             { flag=0; suite=""; new_suite="" }
   (flag)            { print $0; next }
@@ -13,4 +12,12 @@ COLOURIZE='
   /^===========/    { print $0; flag=1 }
 '
 
-$LUA test/all.lua -v -o text | awk "$COLOURIZE"
+if [[ $LUA ]]; then
+  $LUA test/all.lua -v -o text | awk "$COLOURIZE"
+else
+  set -o pipefail
+  for LUA in lua5.1 lua5.2 lua5.3 luajit; do
+    echo "==== testing $LUA ===="
+    $LUA test/all.lua -v -o text | awk "$COLOURIZE" || break
+  done
+fi
