@@ -57,12 +57,6 @@ As `getmetatable(v)[k]`, except that it returns `nil` rather than throwing if `v
 
 -------
 
-    memoize(fn)
-
-Returns a version of fn that is memoized; that is to say, return values from fn are cached, and when called again with the same arguments, the cached value is returned. Memoize is itself memoized.
-
--------
-
     partial(f, ...)
 
 Return a function based on f with the given arguments already applied, such that `partial(f, x)(...)` is equivalent to `f(x, ...)`.
