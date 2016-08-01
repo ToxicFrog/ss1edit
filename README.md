@@ -105,6 +105,27 @@ Equivalent to `file:write(string.format(...))`.
 
 -------
 
+    io.exists(file, [mode])
+
+Checks if `file` can be opened with the given `mode` (default `'r'`). This is not as good as the lfs version -- in particular, if the file exists but you cannot open it in any mode due to permissions, this function can never return true -- but it doesn't require LFS to be installed.
+
+-------
+
+    io.memfile([string])
+
+Creates and returns a file object backed by a string rather than a file on disk. `string` is the initial contents of the memfile; if not specified, `""` is used.
+
+Memfiles behave equivalently to normal files, with the following exceptions:
+
+ * `memfile:write()` and `memfile:read()` only take a single argument
+ * `memfile:setvbuf()` does nothing; memfiles are always fully buffered
+ * `memfile:close()` returns the contents of the memfile and renders it unusable for further calls
+ * A new method is added, `memfile:str()`, which returns the contents as a string
+
+These are generally not as fast as real files (which have C implementations of their methods and are backed by optimized system calls and the system block cache). In particular, if you have a real file, reading it all into memory and then turning it into a memfile will get you *worse* performance than just accessing it directly. It is intended for use when you need a file-like API, but either can't use a file, or value the convenience of not needing one over raw performance.
+
+-------
+
     io.readfile(path)
 
 Reads and returns the contents of the file `path`. Raises an error on failure.
@@ -114,12 +135,6 @@ Reads and returns the contents of the file `path`. Raises an error on failure.
     io.writefile(path, data)
 
 Writes `data` to the file `path`. The file is created if it didn't already exist, and overwritten if it did. Raises an error on failure.
-
--------
-
-    io.exists(file, [mode])
-
-Checks if `file` can be opened with the given `mode` (default `'r'`). This is not as good as the lfs version -- in particular, if the file exists but you cannot open it in any mode due to permissions, this function can never return true -- but it doesn't require LFS to be installed.
 
 -------
 

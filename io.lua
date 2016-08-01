@@ -34,3 +34,6 @@ function io.exists(name, mode)
     return true
   end
 end
+
+local name = (...):gsub("%.io$", "")
+io.memfile = require(name..'.memfile')
