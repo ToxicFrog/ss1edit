@@ -2,14 +2,14 @@
 
 1. Introduction
 2. Modules
-  Global Functions -- misc.lua
-  IO -- io.lua
-  LuaFilesystem -- lfs.lua
-  Strings -- string.lua
-  Math -- math.lua
-  Tables and Lists -- table.lua
-  Command Line Flag Parsing -- flags.lua
-  Logging -- logging.lua
+  1. Global Functions -- misc.lua
+  2. IO -- io.lua
+  3. LuaFilesystem -- lfs.lua
+  4. Strings -- string.lua
+  5. Math -- math.lua
+  6. Tables and Lists -- table.lua
+  7. Command Line Flag Parsing -- flags.lua
+  8. Logging -- logging.lua
 3. License
 
 
@@ -27,7 +27,7 @@ Note that this library does various bad things such as *modifying the metatables
 This library is organized into a number of individual modules. None of them have any additional dependencies, although some enable additional features if certain other libraries (such as lfs) are loaded first. You can also load the entire library at once via `init.lua`.
 
 
-### Global Functions -- misc.lua ###
+### 2.1. Global Functions -- misc.lua ###
 
 This module creates a number of global functions that don't belong in any other module. It also overrides some existing functions.
 
@@ -87,7 +87,7 @@ Returns the truth-value of `v`; this is `false` for false or nil and `true` for 
 Identical to the builtin, except that if v has a __type metamethod, it calls that instead and returns the result. Original type is still available as `rawtype`.
 
 
-### IO -- io.lua ###
+### 2.2. IO -- io.lua ###
 
 This module modifies the `io` library by adding new functions, and modifies the `__index` for file objects so that `:printf` is callable on them as a method.
 
@@ -124,6 +124,8 @@ Memfiles behave equivalently to normal files, with the following exceptions:
 
 These are generally not as fast as real files (which have C implementations of their methods and are backed by optimized system calls and the system block cache). In particular, if you have a real file, reading it all into memory and then turning it into a memfile will get you *worse* performance than just accessing it directly. It is intended for use when you need a file-like API, but either can't use a file, or value the convenience of not needing one over raw performance.
 
+Note that you can't use memfiles to pass to `io.output()` or `io.input()`; the lua standard library typechecks those and only accepts real files.
+
 -------
 
     io.readfile(path)
@@ -142,7 +144,7 @@ Writes `data` to the file `path`. The file is created if it didn't already exist
 
 Equivalent to `io.stdout:printf(fmt, ...)`.
 
-### LuaFilesystem -- lfs.lua ###
+### 2.3. LuaFilesystem -- lfs.lua ###
 
 This module contains extension for the LuaFilesystem library, which it assumes is present in the global `lfs`. It is only loaded through `init.lua` if `lfs` is already available; if you load it directly, you are responsible for making sure `lfs` is loaded first!
 
@@ -179,7 +181,7 @@ As the POSIX utility `dirname`, returns `path` with the trailing path element re
 Recursive mkdir, akin to `mkdir -p`. Unlike `lfs.mkdir`, this will create any missing intermediate directories, and will succeed even if the destination directory already exists.
 
 
-### Strings -- string.lua ###
+### 2.4. Strings -- string.lua ###
 
 This adds several functions to the `string` table, and also modifies the metatable for strings by adding a `__mod` metamethod. As with the standard string library, all of these functions are available as methods on individual strings as well.
 
@@ -250,7 +252,7 @@ Returns a copy of s with all leading and trailing whitespace removed.
 
 Wrap `s` to fit within `cols` columns; returns a table of individual lines. It inserts linebreaks only on whitespace or hyphens, so text containing very long words may not wrap well, resulting in lines that are still longer than `cols`.
 
-### Math -- math.lua ###
+### 2.5. Math -- math.lua ###
 
 A few convenience functions, all added to the global `math` table.
 
@@ -287,7 +289,7 @@ Versions of `asin`, `acos`, `atan`, and `atan2` that return values in degrees ra
 
 If `min` ≤ `n` ≤ `max`, returns `n`. Otherwise returns whichever of `min` or `max` is closer to `n`.
 
-### Tables and Lists -- table.lua ###
+### 2.6. Tables and Lists -- table.lua ###
 
     table.copy(table, depth)
 
@@ -356,7 +358,7 @@ Equivalent to `print(table.tostring(t))`.
 Pretty-print `t` and all of it subtables in an indented, human-readable form. If the same table appears multiple times it will print the table pointer but not any of its contents on occurences after the first. This does not generate output in a form the interpreter will understand; if you are trying to serialize a table, use table.dump.
 
 
-### Command Line Flag Parsing -- flags.lua ###
+### 2.7. Command Line Flag Parsing -- flags.lua ###
 
 This is a library to hopefully remove the pain from processing command line arguments. It supports both long and short flags, with and without arguments, and respects the convention of separating flags from positional arguments with `--`.
 
@@ -496,7 +498,7 @@ Returns the default value associated with the flag `name`.
 As `flags.get`, but raises an error if the flag was not specified on the most recently parsed command line.
 
 
-### Logging -- logging.lua ###
+### 2.8. Logging -- logging.lua ###
 
 This module categorizes log messages into five levels: error, warning, info, debug, and trace. By default it logs to stdout and sets the log level based on the `LOG_LEVEL` environment variable, or warning otherwise.
 
