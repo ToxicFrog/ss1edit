@@ -1,6 +1,6 @@
 -- printf(format, ...)
 function printf(...)
-  return io.stdout:printf(...)
+  return io.output():printf(...)
 end
 
 -- printf to standard error
@@ -35,5 +35,4 @@ function io.exists(name, mode)
   end
 end
 
-local name = (...):gsub("%.io$", "")
-io.memfile = require(name..'.memfile')
+io.memfile = require((...):gsub('io$', 'memfile'))

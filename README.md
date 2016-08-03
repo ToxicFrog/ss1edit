@@ -142,7 +142,7 @@ Writes `data` to the file `path`. The file is created if it didn't already exist
 
     printf(fmt, ...)
 
-Equivalent to `io.stdout:printf(fmt, ...)`.
+Equivalent to `io.output():printf(fmt, ...)`.
 
 ### 2.3. LuaFilesystem -- lfs.lua ###
 

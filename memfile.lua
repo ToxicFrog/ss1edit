@@ -4,6 +4,9 @@ local memfile = {}
 local memfile_mt = {
   __index = memfile;
   __type = function() return "memfile" end;
+  __tostring = function(self)
+    return ("memfile:%d/%d"):format(self._pos, #self._str)
+  end;
 }
 local dead_memfile_mt = {
   __index = function() error("Attempt to index a closed memfile") end;
@@ -13,6 +16,7 @@ local dead_memfile_mt = {
 -- current contents of the memfile.
 function memfile:close()
   local str = self:str()
+  self._pos,self._str = nil,nil
   setmetatable(self, dead_memfile_mt)
   return str
 end
@@ -40,7 +44,7 @@ function memfile:flush()
     -- its location.
     self._str = self._str:sub(1, self._pos)
       .. buf
-      .. self._str:sub(self.pos + #buf + 1)
+      .. self._str:sub(self._pos + #buf + 1)
   end
 
   self._pos = self._pos + #buf

@@ -1,8 +1,7 @@
 lu = require('test.luaunit')
 
 require 'test.misc'
--- io requires something like memfile to test. Can probably adapt cursor
--- from vstruct for this (and share code between util and vstruct).
+require 'test.io'
 -- lfs requires mocking out lfs.
 -- strings
 -- math
