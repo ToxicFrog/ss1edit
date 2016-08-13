@@ -69,7 +69,7 @@ do
 	local _error = error
 	function error(err, ...)
 		if select('#', ...) > 0 then
-			return error(err:format(...))
+			return _error(err:format(...))
 		end
 		return _error(err)
 	end

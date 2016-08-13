@@ -187,9 +187,9 @@ This adds several functions to the `string` table, and also modifies the metatab
 
 -------
 
-    str:tonumber()
+    str:tonumber(...)
 
-Equivalent to `tonumber(str)`.
+Equivalent to `tonumber(str, ...)`.
 
 -------
 
@@ -206,14 +206,12 @@ Returns the number of (non-overlapping) ocurrences of pattern in string.
 
 -------
 
-    string.interpolate(s, data, seeall)
+    string.interpolate(s, data)
 
-Searches `s` for sequences of the form `${expr}` or `${expr|format}` and recursively expands them. This is effectively the same as replacing `${expr}` with the result of `tostring(dostring(expr))`, and `${expr|format}` with the result of `string.format(format, dostring(expr))`, except that any `${...}` sequences in `expr` itself will be expanded before `expr` is evaluated, and any `${...}` sequences in the result of the expansion will themselves be expanded.
+Searches `s` for sequences of the form `${key}` or `${key|format}` and recursively expands them. This is effectively the same as replacing `${key}` with the result of `tostring(data['key'])`, and `${key|format}` with the result of `string.format(format, data['key'])`, except that any `${...}` sequences in `key` itself will be expanded first, and any `${...}` sequences in the result of the expansion will themselves be expanded.
 
-When evaluating `expr`, `data` is used as the environment; if `seeall` is true, failed lookups in `data` will fall back to the caller's environment.
-
-    > str = "The Lua version is ${_VERSION}, and I am currently using ${collectgarbage 'count'|%d}KB of memory."
-    > print(str:interpolate(_G))
+    > str = "The Lua version is ${ver}, and I am currently using ${mem|%d}KB of memory."
+    > print(str:interpolate { ver = _VERSION, mem = collectgarbage 'count' })
     The Lua version is Lua 5.1, and I am currently using 22KB of memory.
 
 -------
@@ -226,7 +224,7 @@ Equivalent to table.concat( {...}, separator)
 
     string.rfind(s, pattern, init, plain)
 
-Equivalent to string.find(), but returns the -last- occurence of the pattern in the string (ie, searches in reverse). Init can be either positive or negative and has the same meaning as in other string functions in either case.
+Equivalent to string.find(), but finds the -last- occurence of the pattern in the string (ie, searches in reverse). Init can be either positive or negative and has the same meaning as in other string functions in either case.
 
 -------
 
@@ -238,7 +236,10 @@ Splits s into multiple substrings by removing all occurrences of pattern, and re
 
 would return "one","two","three". Note that there is no enclosing table; the results are returned directly.
 
-The default for `pattern` is `%s`, i.e. whitespace; the default for `max` is infinity.
+The default for `pattern` is `%s+`, i.e. runs of whitespace; the default for `max` is infinity.
+
+Note that directly adjacent separators will be considered to separate the empty string, including separators appearing at the start and end of input; for example, `string.split(';;', ';')` will return `'','',''`, three empty strings -- the ones before, between, and after the separators.
+
 
 -------
 

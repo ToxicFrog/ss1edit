@@ -1,6 +1,7 @@
 -- new string-related functions, all of them placed in table string
 -- and thus callable with str:foo()
--- split, trim, join, rfind, count, interpolate
+
+local unpack = unpack or table.unpack
 
 -- so you can s:tonumber()
 string.tonumber = tonumber
@@ -50,8 +51,7 @@ end
 
 -- rfind - as string.find() only backwards
 function string.rfind (s, pattern, rinit, plain)
-	-- if rinit is set, we basically trim the last rinit characters from the string
-	s = s:sub(rinit, -1)
+	s = s:sub(1, rinit)
 
 	local old_R = {}
 	local R = { s:find(pattern, 1, plain) }
@@ -73,38 +73,27 @@ end
 
 -- string.interpolate - take a string with ${...} interpolation expressions in it,
 -- and a table of stuff to resolve them in terms of
-function string.interpolate(str, data, seeall)
-	local oldmt
-	if seeall then
-		oldmt = getmetatable(data)
-		setmetatable(data, { __index = getfenv(2) })
-	end
+function string:interpolate(data)
+	local function do_interp(keyfmt)
+		keyfmt = keyfmt:sub(2,-2)
+		local key,format = keyfmt:match('^(.*)|([^|]+)')
+		if not key then key,format = keyfmt,nil end
 
-	local function do_interp(key)
-		key = key:sub(2,-2)
-		local format = key:match([[|([^|'"%]%[]*)$]])
+		key = key:interpolate(data)
+		local value = data[key]
 		if format then
-			key = key:gsub([[|[^|'"%]%[]*$]], "")
+			return string.format(format, value)
+		else
+			return tostring(value)
 		end
-		local sfn = "return "..key
-		sfn = sfn:interpolate(data)
-		local fn = assert(load(sfn, "generated interpolator", "t", data))
-		if format then
-			return format:format(fn())
-		end
-		return tostring(fn())
 	end
 
 	local count
 	repeat
-		str,count = str:gsub('%$(%b{})', do_interp)
+		self,count = self:gsub('%$(%b{})', do_interp)
 	until count == 0
 
-	if seeall then
-		setmetatable(data, oldmt)
-	end
-
-	return str
+	return self
 end
 
 -- Cut string into lines of no more than n characters, splitting on whitespace
@@ -112,13 +101,17 @@ end
 function string:wrap(n)
 	local buf = {}
 	local line = ''
+	self = self:trim()
 
-	for ws,word in self:gmatch('([%s-]*)([^%s-]+)') do
+	for ws,word in self:gmatch('(%s*)([^%s-]*%-*)') do
 		if #line + #ws + #word > n or ws:match('\n') then
-			table.insert(buf, line)
-			line,ws = '',''
+			if #line > 0 then
+				table.insert(buf, line)
+			end
+			line = word
+		else
+			line = line .. ws .. word
 		end
-		line = line..ws..word
 	end
 	if #line > 0 then
 		table.insert(buf, line)

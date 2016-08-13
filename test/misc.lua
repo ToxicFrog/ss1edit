@@ -55,7 +55,7 @@ function TestMisc:test_pairs_metamethods()
 end
 
 function TestMisc:test_srequire()
-  lu.assertEquals(srequire 'string', string)
+  lu.assertEquals(srequire 'debug', debug)
   local r,e = srequire('no.such.module')
   lu.assertNil(r)
   lu.assertStrContains(e, "module 'no.such.module' not found")
