@@ -47,7 +47,6 @@ end
 
 function TestFlags:testDefaultValue()
   lu.assertEquals(flags 'number-flag', 4)
-  lu.assertEquals(flags.get('number_flag'), 4)
   lu.assertEquals(flags.parsed.number_flag, 4)
 end
 
@@ -84,6 +83,12 @@ function TestFlags:testParseErrors()
   lu.assertErrorMsgContains(
     "requires a numeric argument",
     flags.parse, '--number-flag=asdf')
+
+  -- post hoc require() of a flag
+  flags.parse('--no-required-flag')
+  lu.assertErrorMsgContains(
+    "Required command line flag '--boolean-flag' was not provided",
+    flags.require, 'boolean-flag')
 end
 
 local function checkFlagValues()

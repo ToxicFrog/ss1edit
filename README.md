@@ -379,6 +379,92 @@ A *flag key* is the lua identifier associated with a flag, and is derived from t
 
 A *flag type* is the type of the value associated with a flag, which defaults to boolean. This library implements this with *type functions*, which are responsible for taking the flag argument parsed from the command line (which is, of necessity, a string) and either returning a value of the appropriate type or raising an error.
 
+#### Flags API ####
+
+    flags.register(name, ...)
+
+Register a boolean flag. The flag name is the first argument; subsequent arguments are aliases, e.g. `flags.register('verbose', 'v')`.
+
+------
+
+    flags.register(name, ...) {
+        type = flags.boolean;
+        default = nil;
+        required = false;
+        key = nil;
+        value = nil;
+        help = "";
+        set = function(k, v) end;
+    }
+
+Register a flag with non-default settings. The settings listed are all optional and are detailed below; the values listed are the default values.
+
+    type = flags.boolean
+
+Set the type of the flag. See *flag type functions* below.
+
+    default = nil
+
+Set the default value of the flag. If the flag is not specified on the command line, it will have this value.
+
+    required = false
+
+If true, `flags.parse()` will raise an error if the given flag is not specified on the command line. You cannot set both `default` and `required` on the same flag.
+
+    key = nil
+
+Store the flag's value in this key rather than using a key derived from the flag's canonical name.
+
+    value = nil
+
+If the flag is present on the command line, store this value instead of the flag's actual value. Most useful with boolean flags when you actually want them to store a special value in some other flag (by using this in conjunction with `key`). For example, you could make `--log-to-stderr` an alias for `--log-to=/dev/stderr` with `key = "log_to"; value = "/dev/stderr"`.
+
+    help = ""
+
+The help text for the flag, used by `flags.help()`.
+
+    set = function(k, v) end
+
+A function that will be called when the flag is set, passed the flag's canonical name and the value it was just set to.
+
+------
+
+    flags.help()
+
+Returns a string containing help text for all currently registered flags, suitable for output to the terminal.
+
+------
+
+    flags.parse(...)
+
+Parse the given arguments as the command line. Sets `flags.parsed` to the options parsed and returns it. The returned value will not be changed by future calls to `flags.parse()`, but the value of `flags.parsed` will be.
+
+------
+
+    flags.parsed
+
+A table containing the values associated with the latest call to `flags.parse`. Keys are the flag keys; values are the parsed values, or the default value for flags which were not present at parse time. Positional arguments are assigned to the numeric indexes, in the same order they originally appeared on the command line.
+
+If no flag parsing has happened yet, there are no positional arguments, and all flags have their default values.
+
+------
+
+    flags 'name'
+
+Returns the parsed value associated with the given flag *name*. This is the preferred way to get "current" flag values. Note that this uses the name, not the key; given a flag `--log-level`, `flags.parsed.log_level`, `flags.get('log_level')`, and `flags 'log-level'` are all equivalent. Unlike reading `flags.parsed`, this will raise an error if you request the value of a flag that doesn't exist.
+
+------
+
+    flags.defaults[name]
+
+Returns the default value associated with the flag `name`.
+
+------
+
+    flags.require(name)
+
+As `flags 'name'`, but raises an error if the flag was not specified on the most recently parsed command line. You can use this to make flags that are not mandatory at parse time (via `required = true`) mandatory at access time, e.g. to enforce a "if this flag is specified, these other flags must also be present" relationship.
+
 #### Flag Type Functions ####
 
 The library comes with four builtin type functions, detailed below. Writing your own is as simple as defining a `function foo_type(flag, arg)` that takes the flag name and flag argument as arguments, and returns the value that should actually be set in the options.
@@ -412,91 +498,6 @@ A comma-separated list of strings.
     flags.listOf(type, separator)
 
 A function for creating list types. `type` must be a type function as defined above, and `separator` a single character to split on. `flags.list` is defined as `flags.listOf(flags.string, ',')`; you can use `listOf` to define lists of other types, such as numbers.
-
-#### Flags API ####
-
-    flags.register(name, ...)
-
-Register a boolean flag. The flag name is the first argument; subsequent arguments are aliases, e.g. `flags.register('verbose', 'v')`.
-
-------
-
-    flags.register(name, ...) {
-        type = flags.boolean;
-        default = nil;
-        required = false;
-        key = nil;
-        value = nil;
-        help = "";
-        set = function(k, v) end;
-    }
-
-Register a flag with non-default settings. The settings listed are all optional and are detailed below; the values listed are the default values.
-
-    type = flags.boolean
-
-Set the type of the flag. See *flag type functions* above.
-
-    default = nil
-
-Set the default value of the flag. If the flag is not specified on the command line, it will have this value.
-
-    required = false
-
-If true, `flags.parse()` will raise an error if the given flag is not specified on the command line. You cannot set both `default` and `required` on the same flag.
-
-    key = nil
-
-Store the flag's value in this key rather than using the flag's canonical name.
-
-    value = nil
-
-If the flag is present on the command line, store this value instead of the flag's actual value. Most useful with boolean flags when you actually want them to store a special value in some other flag (by using this in conjunction with `key`). For example, you could make `--log-to-stderr` an alias for `--log-to=/dev/stderr` with `key = "log_to"; value = "/dev/stderr"`.
-
-    help = ""
-
-The help text for the flag, used by `flags.help()`.
-
-    set = function(k, v) end
-
-A function that will be called when the flag is set, passed the flag's canonical name and the value it was just set to.
-
-------
-
-    flags.help()
-
-Returns a string containing help text for all currently registered flags, suitable for output to the terminal.
-
-------
-
-    flags.parse(...)
-
-Parse the given arguments as the command line. Sets `flags.parsed` to the options parsed and returns it. The returned value will not be changed by future calls to `flags.parse()`, but the value of `flags.parsed` will be.
-
-------
-
-    flags.parsed[key]
-    flags.get(key)
-
-Returns the parsed value associated with the given flag key. If no flag parsing has happened yet, or if the flag was not specified, returns the default value.
-
-------
-
-    flags 'name'
-
-Returns the parsed value associated with the given flag *name*. This is the preferred way to get "current" flag values. Note that this uses the name, not the key; given a flag `--log-level`, `flags.parsed.log_level`, `flags.get('log_level')`, and `flags 'log-level'` are all equivalent.
-
-------
-
-    flags.defaults[name]
-
-Returns the default value associated with the flag `name`.
-
-------
-
-    flags.require(name)
-
-As `flags.get`, but raises an error if the flag was not specified on the most recently parsed command line.
 
 
 ### 2.8. Logging -- logging.lua ###

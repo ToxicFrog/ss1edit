@@ -212,7 +212,7 @@ local function parseOne(arg, next)
   end
 end
 
-local function parseArgs(undefok, argv)
+local function parseArgs(argv)
   flags.parsed = setmetatable({}, { __index = flags.defaults })
 
   local i = 0
@@ -238,30 +238,23 @@ local function parseArgs(undefok, argv)
 end
 
 function flags.parse(...)
-  return parseArgs(false, {...})
-end
-
-function flags.parsePartial(...)
-  return parseArgs(true, {...})
+  return parseArgs({...})
 end
 
 function flags.require(key)
   local info = flags.registered[key]
   if not info then
-    error("attempt to require unknown option '"..key.."'")
+    error("Attempt to require value of unknown command line flag '"..key.."'.")
   end
   local value = rawget(flags.parsed, key)
-  return assert(value ~= nil, "required option '"..info.name.."' not specified")
+  return assert(value ~= nil, "Required command line flag '"..info.name.."' was not provided.")
 end
 
-function flags.get(key)
-  return flags.parsed[key]
-end
 setmetatable(flags, {
   __call = function(self, name)
     return flags.parsed[
       assert(flags.registered[name],
-        "Attempt to access unknown command line flag '"..name.."'")
+        "Attempt to get value of unknown command line flag '"..name.."'.")
       .key
     ]
   end;
