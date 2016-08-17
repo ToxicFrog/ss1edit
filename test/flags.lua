@@ -50,42 +50,53 @@ function TestFlags:testDefaultValue()
   lu.assertEquals(flags.parsed.number_flag, 4)
 end
 
+function TestFlags:testAllowMissing()
+  -- Without allow_missing=true, this would throw.
+  lu.assertEquals(flags.parse({'--boolean-flag'}, false, true),
+                  {boolean_flag = true})
+end
+
+function TestFlags:testAllowUndefined()
+  lu.assertEquals(flags.parse({'a', 'b', '-r', '-s', 'foo', '--bar'}, true),
+                  {'a', 'b', '--bar', required_flag = true, string_flag = 'foo'})
+end
+
 function TestFlags:testParseErrors()
   -- required flag missing
   lu.assertErrorMsgContains(
     "Required command line flag '--required-flag' was not provided.",
-    flags.parse, '--boolean-flag')
+    flags.parse, {'--boolean-flag'})
 
   -- unexpected flag found
   lu.assertErrorMsgContains(
     "unrecognized option",
-    flags.parse, '--no-such-flag')
+    flags.parse, {'--no-such-flag'})
 
   -- can't invert non-boolean flag
   lu.assertErrorMsgContains(
     "cannot be inverted",
-    flags.parse, '--no-number-flag')
+    flags.parse, {'--no-number-flag'})
   lu.assertErrorMsgContains(
     "cannot be inverted",
-    flags.parse, '+n')
+    flags.parse, {'+n'})
 
   -- non-boolean flag requires an argument
   lu.assertErrorMsgContains(
     "requires an argument",
-    flags.parse, '--string-flag')
+    flags.parse, {'--string-flag'})
 
   -- boolean flag doesn't permit an argument
   lu.assertErrorMsgContains(
     "doesn't allow an argument",
-    flags.parse, '--boolean-flag=true')
+    flags.parse, {'--boolean-flag=true'})
 
   -- argument of wrong type
   lu.assertErrorMsgContains(
     "requires a numeric argument",
-    flags.parse, '--number-flag=asdf')
+    flags.parse, {'--number-flag=asdf'})
 
   -- post hoc require() of a flag
-  flags.parse('--no-required-flag')
+  flags.parse{'--no-required-flag'}
   lu.assertErrorMsgContains(
     "Required command line flag '--boolean-flag' was not provided",
     flags.require, 'boolean-flag')
@@ -121,13 +132,13 @@ local cmdlines = {
 }
 for _,argv in ipairs(cmdlines) do
   TestFlags['testParseSuccess: '..argv.name] = function(self)
-    flags.parse(unpack(argv))
+    flags.parse(argv)
     checkFlagValues()
   end
 end
 
 function TestFlags:testKeyValueOverride()
-  flags.parse('-r', '--set-number-to-five')
+  flags.parse{'-r', '--set-number-to-five'}
   lu.assertEquals(flags 'number_flag', 5)
 end
 

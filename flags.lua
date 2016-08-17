@@ -116,7 +116,7 @@ end
 
 -- Parse a long option with associated value, e.g. --log-level=debug; the
 -- first argument is the flag name, the second everything after the =.
-local function parseLongWithValue(arg)
+local function parseLongWithValue(arg, allow_undefined)
   local flag,value = arg:match("^%-%-([^=]+)=(.*)")
   if not flag then return false end
 
@@ -128,7 +128,7 @@ local function parseLongWithValue(arg)
   local info = flags.registered[flag]
 
   if not info then
-    assert(false, "unrecognized option '"..flag.."'")
+    assert(allow_undefined, "unrecognized option '"..flag.."'")
     return false
   end
   assert(info.needs_value, "option '--"..flag.."' doesn't allow an argument")
@@ -139,7 +139,7 @@ local function parseLongWithValue(arg)
 end
 
 -- Parse a long option with no attached value.
-local function parseLong(arg, next)
+local function parseLong(arg, next, allow_undefined)
   local flag = arg:match("^%-%-(..+)")
   if not flag then return false end
 
@@ -151,7 +151,7 @@ local function parseLong(arg, next)
   local info = flags.registered[flag]
 
   if not info then
-    assert(false, "unrecognized option '--"..flag.."'")
+    assert(allow_undefined, "unrecognized option '--"..flag.."'")
     return false
   elseif not info.needs_value then
     setFlag(info, not invert)
@@ -164,7 +164,7 @@ local function parseLong(arg, next)
 end
 
 -- Parse a short option or a block of short options, e.g. -tvf or -o foo.
-local function parseShort(arg, next)
+local function parseShort(arg, next, allow_undefined)
   local invert,arg = arg:match("^([-+])(.+)")
   if not invert then return false end
 
@@ -173,7 +173,8 @@ local function parseShort(arg, next)
   for flag,idx in arg:gmatch("(.)()") do
     local info = flags.registered[flag]
     if not info then
-      assert(false, "unrecognized option '-"..flag.."'")
+      assert(allow_undefined, "unrecognized option '-"..flag.."'")
+      return false
     elseif info.needs_value then
       assert(not invert, "option '-"..flag.."' requires an argument and cannot be inverted with +")
 
@@ -197,7 +198,7 @@ local function parsePositional(arg)
   return true
 end
 
-local function parseOne(arg, next)
+local function parseOne(arg, next, allow_undefined)
   if arg == "--" then
     -- signifies end of flags; everything after this is a positional even if it
     -- looks like a flag.
@@ -205,14 +206,14 @@ local function parseOne(arg, next)
       -- FIXME append to argv
     end
   else
-    return parseLongWithValue(arg, next)
-      or parseLong(arg, next)
-      or parseShort(arg, next)
+    return parseLongWithValue(arg, next, allow_undefined)
+      or parseLong(arg, next, allow_undefined)
+      or parseShort(arg, next, allow_undefined)
       or parsePositional(arg, next)
   end
 end
 
-local function parseArgs(argv)
+function flags.parse(argv, allow_undefined, allow_missing)
   flags.parsed = setmetatable({}, { __index = flags.defaults })
 
   local i = 0
@@ -223,30 +224,25 @@ local function parseArgs(argv)
 
   -- parse command line arguments
   for arg in next_arg do
-    parseOne(arg, next_arg)
+    parseOne(arg, next_arg, allow_undefined)
   end
 
   -- check that all mandatory arguments are provided
-  for _,info in pairs(flags.registered) do
-    if info.required then
-      assert(flags.parsed[info.key] ~= nil,
-             "Required command line flag '"..info.name.."' was not provided.")
+  for name,info in pairs(flags.registered) do
+    if info.required and not allow_missing then
+      flags.require(name)
     end
   end
 
   return flags.parsed
 end
 
-function flags.parse(...)
-  return parseArgs({...})
-end
-
-function flags.require(key)
-  local info = flags.registered[key]
+function flags.require(name)
+  local info = flags.registered[name]
   if not info then
-    error("Attempt to require value of unknown command line flag '"..key.."'.")
+    error("Attempt to require value of unknown command line flag '"..name.."'.")
   end
-  local value = rawget(flags.parsed, key)
+  local value = rawget(flags.parsed, info.key)
   return assert(value ~= nil, "Required command line flag '"..info.name.."' was not provided.")
 end
 

@@ -435,9 +435,15 @@ Returns a string containing help text for all currently registered flags, suitab
 
 ------
 
-    flags.parse(...)
+    flags.parse(argv, allow_undefined, allow_missing)
 
 Parse the given arguments as the command line. Sets `flags.parsed` to the options parsed and returns it. The returned value will not be changed by future calls to `flags.parse()`, but the value of `flags.parsed` will be.
+
+`argv` should be a sequence of string arguments. Other entries in the table (if any) are ignored, and the table is not modified.
+
+`allow_undefined`, if true, makes the library permissive of unknown command line flags; rather than raising an error, they will be considered positional arguments. This is *usually* not what you want, but can be useful when you want to do early parsing of command line options before all flags are registered.
+
+`allow_missing`, if true, makes the library permissive of absent command line flags even if they have `required = true` in the flag definition. This can be useful if you don't have the complete command line yet, but want to parse what you do have.
 
 ------
 
