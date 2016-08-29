@@ -542,6 +542,12 @@ Equivalent to `log.error`, but after logging, throws an error containing the log
 
 ------
 
+    log.setfile(fd)
+
+Sets the logging output file. The default is `io.stdout`. It may be useful to change this to `io.stderr` if (e.g.) you use stdout for user interaction but don't want to log to a file.
+
+------
+
     log.setlevel(level)
 
 Sets the logging level. `level` can be either a number (lower numbers result in more logging; 1, `error`, is the lowest) or a string (one of the above mentioned log levels).

@@ -36,6 +36,10 @@ function log.setlevel(log_level)
   log.warning("log.setlevel called with invalid log-level: %s", tostring(log_level))
 end
 
+function log.setfile(fd)
+  OUT = fd
+end
+
 local function caller()
   local frame = debug.getinfo(3)
   return frame.source .. ":" .. frame.currentline
