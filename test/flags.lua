@@ -174,3 +174,21 @@ local HELP_TEXT = [[
 function TestFlags:testHelpText()
   lu.assertEquals(flags.help(), HELP_TEXT)
 end
+
+function TestFlags:testMapStringString()
+  flags.register ('ssmap') {
+    type = flags.map;
+  }
+  lu.assertEquals(
+    flags.parse({ '--ssmap=foo=waffles,bar=kittens' }, true, true),
+    { ssmap = { foo = 'waffles'; bar = 'kittens' } })
+end
+
+function TestFlags:testMapNumberList()
+  flags.register ('nlmap') {
+    type = flags.mapOf(flags.number, flags.list, ';', ':');
+  }
+  lu.assertEquals(
+    flags.parse({ '--nlmap=10:a,b,c;20:d,e,f;30:g,h,i' }, true, true),
+    { nlmap = { [10] = {'a','b','c'}; [20] = {'d','e','f'}; [30] = {'g','h','i'} } })
+end

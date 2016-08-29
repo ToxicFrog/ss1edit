@@ -294,3 +294,31 @@ end
 
 -- This covers the most common case (comma-separated list of strings).
 flags.list = flags.listOf(flags.string, ",")
+
+-- mapOf is a type constructor for k-v maps
+-- K and V are the key and value types
+-- assigner is the = in k=v
+-- separator is the character that seperates different k=v entries
+function flags.mapOf(K, V, separator, assigner)
+  separator = separator or ','
+  assigner = assigner or '='
+
+  local KVList = flags.listOf(flags.string, separator)
+  local kv_pattern = '([^'..assigner..']+)'..assigner..'(.*)'
+  return function(flag, arg)
+    local kvs = KVList(flag, arg)
+    local map = {}
+    for _,kv in ipairs(kvs) do
+      local key,value = kv:match(kv_pattern)
+      assert(key and value,
+        "entry '"..kv..
+        "' in value for '"..flag..
+        "' could not be parsed as a key-value pair using pattern '"..kv_pattern.."'")
+      map[K(flag, key)] = V(flag, value)
+    end
+    return map
+  end
+end
+
+-- The most common case: string => string map
+flags.map = flags.mapOf(flags.string, flags.string)

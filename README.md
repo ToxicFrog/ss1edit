@@ -505,6 +505,18 @@ A comma-separated list of strings. This is a convenience function for `flags.lis
 
 A function for creating list types. `type` must be a type function as defined above, and `separator` a single character to split on. The flag will be parsed into a sequence of values of the given type, suitable for use with `ipairs`. `separator` is optional and defaults to `','`.
 
+------
+
+    flags.map
+
+A comma-separated list of `key=value` map entries, such as `--map-flag=cats=rule,dogs=drool`. This is a convenience function for `flags.mapOf(flags.string, flags.string, ',', '=')`.
+
+------
+
+    flags.mapOf(key_type, value_type, separator, assigner)
+
+A key-value map, with the specified key types, separator (the character between the k-v pairs), and assigner (the character between the key and the value). The key and value types should by type functions (such as `flags.string` or `flags.number`) which will be called to parse the key and value. `separator` defaults to `','`, and `assigner` to `'='`.
+
 
 ### 2.8. Logging -- logging.lua ###
 
