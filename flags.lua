@@ -279,6 +279,7 @@ end
 -- listOf is a type function constructor; it's used as (e.g.)
 --   type = flags.listOf(flags.number, ",")
 function flags.listOf(type, separator)
+  separator = separator or ','
   return function(flag, arg)
     local vals = {}
     local start = 1

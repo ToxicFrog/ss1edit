@@ -374,7 +374,7 @@ The flags are `l`, `all`, and `sort`; `sort` has the flag argument `time`; and t
 A *flag key* is the lua identifier associated with a flag, and is derived from the first argument to `flags.register` by replacing any characters that would make an invalid identifier with `_`. For example, the flag key of `verbose` is `verbose`, and the flag key of `log-all` is `log_all`. This is done so that you can use them as field accessors, e.g:
 
     flags.register('log-all')
-    local opts = flags.parse(...)
+    local opts = flags.parse {...}
     if opts.log_all then ....
 
 A *flag type* is the type of the value associated with a flag, which defaults to boolean. This library implements this with *type functions*, which are responsible for taking the flag argument parsed from the command line (which is, of necessity, a string) and either returning a value of the appropriate type or raising an error.
@@ -497,13 +497,13 @@ Flags with base-10 numbers as arguments. The argument is fed to `tonumber` and a
 
     flags.list
 
-A comma-separated list of strings.
+A comma-separated list of strings. This is a convenience function for `flags.listOf(flags.string, ',')`.
 
 ------
 
     flags.listOf(type, separator)
 
-A function for creating list types. `type` must be a type function as defined above, and `separator` a single character to split on. `flags.list` is defined as `flags.listOf(flags.string, ',')`; you can use `listOf` to define lists of other types, such as numbers.
+A function for creating list types. `type` must be a type function as defined above, and `separator` a single character to split on. The flag will be parsed into a sequence of values of the given type, suitable for use with `ipairs`. `separator` is optional and defaults to `','`.
 
 
 ### 2.8. Logging -- logging.lua ###
