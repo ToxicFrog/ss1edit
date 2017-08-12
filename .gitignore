@@ -1,0 +1,6 @@
+maps/[0-9].js
+maps/1[0-9].js
+maps/*.zip
+work/
+patch/
+
