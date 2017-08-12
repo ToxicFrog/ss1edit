@@ -79,7 +79,7 @@ local function extension(chunk)
 end
 
 local function filename(chunk)
-  return (flag.idformat..".%s") % { chunk.id, extension(chunk) }
+  return ('%s/'..flag.idformat..".%s") % { flag.prefix, chunk.id, extension(chunk) }
 end
 
 -- List
@@ -104,19 +104,18 @@ end
 -- eXtract
 function mode.extract(...)
   local file = flags.require "res"
-  local prefix = flag.prefix
   local rf = res.load(file)
 
   for id,chunk in rf:chunks(...) do
     if chunk.dir and flag "subchunks" then
-      local dir = "%s/%s" % { prefix, filename(chunk) }
+      local dir = filename(chunk)
       require("lfs").mkdir(dir)
       for index,subchunk in ipairs(chunk.subchunks) do
         io.writefile(("%s/"..flag.idformat) % { dir, index-1 }, subchunk)
       end
       io.writefile("%s/data" % dir, chunk.data)
     else
-      io.writefile("%s/%s" % { prefix, filename(chunk) }, chunk.data)
+      io.writefile(filename(chunk), chunk.data)
     end
   end
 end
@@ -129,8 +128,9 @@ function mode.update(...)
   local rf = res.load(infile)
 
   for _,id in ipairs {...} do
-    if rf:get(id) then
-      rf:get(id).data = assert(io.readfile("%s/%d" % { prefix, id }))
+    local chunk = rf:get(id)
+    if chunk then
+      chunk.data = assert(io.readfile(filename(chunk)))
     else
       error("Attempted to add chunk "..id.." that does not exist in file!")
     end
