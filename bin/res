@@ -1,6 +1,10 @@
-#!/usr/bin/env lua5.2
+#!/usr/bin/env luajit
 -- :mode=lua: --
 
+if jit then
+  jit.off()
+  bit32 = bit
+end
 
 package.path = "deps/?.lua;deps/?/init.lua;" .. package.path
 
