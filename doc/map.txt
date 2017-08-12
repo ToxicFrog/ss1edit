@@ -31,13 +31,17 @@ terminated string and nothing else. In ARCHIVE.DAT, it contains the text
 "Starting Game" followed by 114 bytes of additional data, the purpose of which
 is as yet unknown.
 
-4001 looks like it might be player state information? It starts wtih the player's
-name. I should look in here for game settings and player coordinate information.
+    Chunk 4001 contains player state and difficulty information:
 
-Player position is stored at offset 0x006E in chunk 4001:
-
-006e    uint16      player X
-0070    uint16      player Y
+0000    char[]      player name
+...
+0015    uint8       combat difficulty
+0016    uint8       mission difficulty
+0017    uint8       puzzle difficulty
+0018    uint8       c/space difficulty
+...
+006e    uint16      player X coordinate
+0070    uint16      player Y coordinate
 
 As with object positions in the master object table, the high byte is the tile
 coordinate and the low byte is the sub-tile coordinate.
