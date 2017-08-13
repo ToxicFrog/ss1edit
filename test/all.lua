@@ -6,7 +6,7 @@ require 'test.io'
 require 'test.string'
 -- math
 -- table
--- logging also requires memfile, I think
+require 'test.logging'
 require 'test.flags'
 
 runner = lu.LuaUnit.new()

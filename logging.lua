@@ -41,15 +41,34 @@ function log.setfile(fd)
   OUT = fd
 end
 
-local function caller()
-  local frame = debug.getinfo(3)
-  return frame.source .. ":" .. frame.currentline
+-- Find the innermost (lua) call site. C frames will be elided. If there are no
+-- Lua frames in the stack, returns '!C code'.
+local function caller(depth)
+  local frame = debug.getinfo(depth)
+  if not frame then
+    return 'C code'
+  elseif frame.currentline == -1 then
+    return caller(depth+2) -- +2 because we're about to recurse, adding a stack frame
+  end
+
+  local source = frame.source
+  if source:sub(1,1) == '@' then -- filename
+    source = source:sub(2)
+  elseif source:sub(1,1) == '=' then -- source code
+    source = '(string "' .. source:sub(2,11) .. '...")'
+  end
+
+  if frame.currentline > 0 then
+    return source .. ':' .. frame.currentline
+  else
+    return source
+  end
 end
 
-local function logger(level, name)
+local function logger(level, name, depth)
   return function(format, ...)
     if level > LOG_LEVEL then return end
-    local prefix = ("%s %s]"):format(name, caller())
+    local prefix = ("%s [%s]"):format(name, caller(depth))
     local suffix = format:format(...)
     log.hook(prefix, suffix)
     OUT:write(prefix .. ' ' .. suffix .. '\n')
@@ -60,13 +79,13 @@ local function logger(level, name)
 end
 
 for i,level in ipairs(log_levels) do
-  log[level] = logger(i, level:upper():sub(1,1))
+  log[level] = logger(i, level:upper():sub(1,1), 3)
 end
 
-local _fatal = logger(0, 'F')
+local _fatal = logger(0, 'F', 4)
 function log.fatal(...)
   _fatal(...)
-  error(string.format(...))
+  error(string.format(...), 3)
 end
 
 function log.hook(prefix, message) end
