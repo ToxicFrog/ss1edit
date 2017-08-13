@@ -47,10 +47,9 @@ do
 
 	-- We only need this on Lua 5.1 (5.2+ have it built in). But LuaJIT may also
 	-- have it built in, depending on compilation option.
-	-- If jit is not defined, we're running in stock 5.1. If it is, but so is
-	-- math.mod, we're running luajit without 5.2 extensions (turning on the
-	-- extensions removes math.mod). In either case we need to enable this.
-	if _VERSION:match("Lua 5.1") and (not jit or math.mod) then
+	-- If jit is defined, we're running in luajit. If 5.2 extensions are enabled,
+	-- table.pack will be defined.
+	if _VERSION:match("Lua 5.1") or (jit and not table.pack) then
 		pairs = metamethod_wrap(pairs, "__pairs")
 		ipairs = metamethod_wrap(ipairs, "__ipairs")
 	end
