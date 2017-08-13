@@ -12,7 +12,7 @@ if flags then
   flags.register "log-to" {
     type = flags.string;
     help = "File to log to. Defaults to stdout.";
-    set = function(k, file) OUT = assert(io.open(file, 'a')) end;
+    set = function(k, file) return log.setfile(assert(io.open(file, 'a'))) end;
   }
   flags.register "log-flush" {
     help = "Immediately flush all log lines to disk; useful with tail -f.";
@@ -24,6 +24,7 @@ end
 log = {}
 
 local log_levels = { "error", "warning", "info", "debug", "trace" }
+
 function log.setlevel(log_level)
   if tonumber(log_level) then
     LOG_LEVEL = tonumber(log_level) return
