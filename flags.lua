@@ -67,8 +67,6 @@ function flags.configure(flag)
       flags.defaults[flag.key] = flag.default
     end
     assert(not (flag.default ~= nil and flag.required), "Required flags must not have default values")
-    assert(not (flag.default ~= nil and flag.key ~= asId(flag.aliases[1])),
-      "Can't set both key= and default= on the same flag; set the default on the flag the key points at instead")
   end
 end
 

@@ -149,12 +149,14 @@ function TestFlags:testRegistrationErrors()
 
   local flag = flags.register 'test-flag'
   lu.assertErrorMsgContains(
-    "Can't set both key= and default=",
-    flag, { default = true, key = 'number_flag' })
-
-  lu.assertErrorMsgContains(
     'must not have default values',
     flag, { default = true, required = true })
+end
+
+function TestFlags:testKeyDefault()
+  flags.register 'v' { default = 1, key = 'verbosity', value = 2 }
+  lu.assertEquals(flags.parse {'-r'} .verbosity, 1)
+  lu.assertEquals(flags.parse {'-r', '-v'} .verbosity, 2)
 end
 
 local HELP_TEXT = [[
