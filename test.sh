@@ -12,12 +12,27 @@ COLOURIZE='
   /^===========/    { print $0; flag=1 }
 '
 
+function summarize {
+  while read _ _ lua _; do
+    read result
+    printf '%8s: %s\n' "$lua" "$result"
+  done
+}
+
 if [[ $LUA ]]; then
   $LUA test/all.lua -v -o text | awk "$COLOURIZE"
 else
-  set -o pipefail
+  > /tmp/$$.luaunit
   for LUA in lua5.1 lua5.2 lua5.3 luajit; do
-    echo "==== testing $LUA ===="
-    $LUA test/all.lua -v -o text | awk "$COLOURIZE" || break
+    echo ''
+    echo "==== testing $LUA ====" | tee -a /tmp/$$.luaunit
+    if type "$LUA" >/dev/null; then
+      $LUA test/all.lua -v -o text | tee -a /tmp/$$.luaunit | awk "$COLOURIZE"
+    else
+      echo "MISSING" >> /tmp/$$.luaunit
+    fi
   done
+  echo ''
+  echo '==== summary ===='
+  egrep '^(==== testing|Ran [0-9]+ tests|MISSING)' /tmp/$$.luaunit | summarize
 fi
