@@ -149,12 +149,17 @@ end
 mode.help = flags.help
 
 local function main(...)
-  local opts = flags.parse(...)
-  for i,chunk in ipairs(opts) do
-    opts[i] = assert(tonumber(opts[i]),
-      "can't convert argument '%s' into a chunk ID -- did you mean to use --res?" % opts[i])
+  flag = flags.parse {...}
+  if flag.mode == 'help' then
+    print('Usage: res (-d|-x|-l|-u) [-Xi] [-p prefix] [-r resfile] [-o outfile] [chunks...]\n')
+    print(flags.help())
+    return 0
   end
-  return mode[opts.mode](unpack(opts))
+  for i,chunk in ipairs(flag) do
+    flag[i] = assert(tonumber(flag[i]),
+      "can't convert argument '%s' into a chunk ID -- did you mean to use --res?" % flag[i])
+  end
+  return mode[flag.mode](unpack(flag))
 end
 
 return main(...)

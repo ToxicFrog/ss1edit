@@ -61,6 +61,14 @@ function TestFlags:testAllowUndefined()
                   {'a', 'b', '--bar', required_flag = true, string_flag = 'foo'})
 end
 
+function TestFlags:testFlagsRequire()
+  flags.parse {'-r', '--string-flag=foo'}
+  lu.assertEquals(flags.require "string-flag", "foo")
+  lu.assertErrorMsgContains(
+    "Required command line flag '--number-flag' was not provided.",
+    flags.require, 'number-flag')
+end
+
 function TestFlags:testParseErrors()
   -- required flag missing
   lu.assertErrorMsgContains(
