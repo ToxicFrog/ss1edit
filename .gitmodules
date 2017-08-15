@@ -1,6 +1,0 @@
-[submodule "lib/vstruct"]
-	path = deps/vstruct
-	url = git://github.com/toxicfrog/vstruct.git
-[submodule "lib/util"]
-	path = deps/util
-	url = git://github.com/toxicfrog/luautil.git
