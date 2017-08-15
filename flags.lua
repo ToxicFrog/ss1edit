@@ -241,7 +241,10 @@ function flags.require(name)
     error("Attempt to require value of unknown command line flag '"..name.."'.")
   end
   local value = rawget(flags.parsed, info.key)
-  return assert(value ~= nil, "Required command line flag '"..info.name.."' was not provided.")
+  if value ~= nil then
+    return value
+  end
+  error("Required command line flag '"..info.name.."' was not provided.")
 end
 
 setmetatable(flags, {
