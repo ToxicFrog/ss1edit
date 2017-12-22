@@ -107,7 +107,7 @@ function mode.extract(...)
   local rf = res.load(file)
 
   for id,chunk in rf:chunks(...) do
-    if chunk.dir and flag "subchunks" then
+    if chunk.dir and flag.subchunks then
       local dir = filename(chunk)
       require("lfs").mkdir(dir)
       for index,subchunk in ipairs(chunk.subchunks) do
