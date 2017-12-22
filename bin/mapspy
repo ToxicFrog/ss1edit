@@ -1,0 +1,51 @@
+#!/usr/bin/env lua5.2
+-- :mode=lua: --
+-- Small tool to generate a report breaking down object count by type and level,
+-- to answer questions like "how many guns are on deck 4" or the like.
+-- It looks like it also at one point called report_objects, which dumped
+-- all the object definitions from the object tables into individual files, which
+-- may be useful for reverse engineering the object tables.
+-- Run it with: mkdir object_report; mapspy ARCHIVE.DAT object_report
+
+require "util"
+local res = require "ss1.res"
+local map = require "ss1.map"
+local gamesys = require "ss1.gamesys"
+
+local sizes = {
+  [-2] = 27, [-1] = 10,
+  [0] = 8, 6, 40, 12,
+  6, 7, 9, 16,
+  16, 30, 14, 10,
+  28, 21, 46,
+}
+
+function report_objects(rf, map, class, prefix)
+  local count = 0
+  for i,obj in ipairs(map.objects) do
+    if obj.class == class then
+      count = count+1
+      --io.write(tostring(obj.detail_index.." "))
+    end
+  end
+  --print()
+  local chunk = rf:get(map.id + 10 + class)
+  --print(map.level, class, count, chunk.size)
+  io.writefile(prefix.."/"..tostring(class).."-"..tostring(map.level), chunk.data)
+end
+
+local function main(archive, prefix)
+  print("Loading ARCHIVE.DAT...")
+  local rf = assert(res.load(archive))
+
+  for offs,size in pairs(sizes) do
+    io.write(offs.."\t"..size.."\t|\t")
+    for level=0,9 do
+      local chunk = rf:get(4000 + 10 + level*100 + offs)
+      io.write(chunk.size/size.."\t")
+    end
+    print()
+  end
+end
+
+return main(...)
