@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+
+git subtree pull --prefix=deps/vstruct ~/devel/vstruct/.git master
+git subtree pull --prefix=deps/util ~/devel/luautil/.git master
