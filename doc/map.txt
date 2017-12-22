@@ -31,36 +31,8 @@ terminated string and nothing else. In ARCHIVE.DAT, it contains the text
 "Starting Game" followed by 114 bytes of additional data, the purpose of which
 is as yet unknown.
 
-    Chunk 4001 contains player state and difficulty information:
-
-0000    char[]      player name
-...
-0015    uint8       combat difficulty
-0016    uint8       mission difficulty
-0017    uint8       puzzle difficulty
-0018    uint8       c/space difficulty
-...
-006e    uint16      player X coordinate
-0070    uint16      player Y coordinate
-
-As with object positions in the master object table, the high byte is the tile
-coordinate and the low byte is the sub-tile coordinate.
-
-Resolution might be at 15A - it's 0 at 320x240 and 3 at 640x480 - and fullscreen
-flag at 196 - it's 0 in halfscreen and 2 in fullscreen. There's also 498, which
-is 0 in halfscreen and 1 in fullscreen.
-
-Question: where is starting position, etc stored in ARCHIVE.DAT? In a savegame
-it's in chunk 4001, but in the archive that chunk is all 00.
-
-Starting player position is
-    00 00 01 00 | 80 1e 80 16 | 67 00 c0 00
-Including four bytes on either side of the obvious x,y coordinates
-
-There are no chunks in archive.dat containing the sequence 80 1e 80 16.
-
-590 and 591 look like they change slightly when the shields are activated. If
-game flags aren't in 4001 they might be here.
+    Chunk 4001 contains player state information in save games, and all zeroes
+in ARCHIVE.DAT. For details on the save format, see save.md.
 
     ----------------
     Level Map Format
@@ -739,7 +711,9 @@ block from chunk 2180.
     The critters table, class 14
     ----------------------------
 
-Each entry is 46 bytes long and I have no idea what it's used for.
+Each entry is 46 bytes long and I have no idea what it's used for. It resides in
+chunk XX24.
+
 
     ------------------------------
     The surveillance control chunk
@@ -758,3 +732,8 @@ words 0-7 in this chunk. Thus if a screen has start frame 248, the first word in
 the surveillance control chunk is used as an object ID to look up an object
 whose position and orientation are then used to render a scene into a bitmap,
 which in turn is projected onto the screen.
+
+## Other chunks
+
+A map occupies chunks XX02 through XX53. Of these, chunks XX25-XX42 and XX44-
+XX53 have yet to be deciphered.
