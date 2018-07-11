@@ -32,7 +32,7 @@ A `pos16` is a 16-bit coordinate element; the low (first) byte is the position w
 
 The following fields have been identified in this chunk (all offsets in hex). Fields marked with `?` are likely (based on matching up chunk contents with player inventory) but have not yet been confirmed by editing them and seeing those edits reflected in-game.
 
-#### Game information
+### Game information
     0000    char[16?]   player name, null-terminated
     ...
     0015    uint8       combat difficulty
@@ -49,7 +49,10 @@ The following fields have been identified in this chunk (all offsets in hex). Fi
                         loaded.
     ...
 
-#### Hardware
+### Hardware
+
+These are version numbers; if a slot is 0 the player doesn't have that implant.
+
     02e9    uint8       infrared?
     02ea    uint8       target info?
     02eb    uint8       sensaround?
@@ -65,7 +68,10 @@ The following fields have been identified in this chunk (all offsets in hex). Fi
     02f6    uint8       jumpjet?
     02f7    uint8       status?
 
-#### Software
+### Software
+
+Likely version numbers for drill, pulser, and shield, and inventory count for turbo, decoy, and recall.
+
     02f8    uint8       drill?
     02f9    byte[3]     0?
     02fc    uint8       pulser?
@@ -77,7 +83,8 @@ The following fields have been identified in this chunk (all offsets in hex). Fi
     0304    uint8       decoy?
     0305    uint8       recall?
 
-#### Dermal Patches
+### Dermal Patches
+
     0329    uint8       STAMUP
     032a    uint8       SIGHT
     032b    uint8       BSERK
@@ -86,7 +93,8 @@ The following fields have been identified in this chunk (all offsets in hex). Fi
     032e    uint8       GENIUS
     032f    uint8       DETOX
 
-#### Explosives
+### Explosives
+
     0330    uint8       FRAG
     0331    uint8       EMP
     0332    uint8       GAS
@@ -95,7 +103,8 @@ The following fields have been identified in this chunk (all offsets in hex). Fi
     0335    uint8       NTRO
     0336    uint8       SHKR
 
-#### Position
+### Position
+
     0520    pos16       player X
     0222    byte[2]     ???
     0524    pos16       player Y

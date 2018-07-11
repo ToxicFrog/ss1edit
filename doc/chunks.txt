@@ -1,13 +1,28 @@
-================================================================================
-	SIGNIFICANT CHUNKS
-================================================================================
+# Chunk Index
 
-0x0024		Long object names
-				Each name is stored in the subchunk with index equal to the
-				index of the corresponding definition in the gamesys.
-				So, the riot gun is at index 4, and the Skorpion at 6.
-0x086A		Texture names
-0x086B		"can't use ____" messages for textures
-				Names/messages are stored in subchunk equal to texture ID
-0x086D		Short object names
-				As 0x0024
+This is an (incomplete) index of all chunks, by chunk ID. It is useful in looking up what a given ID is used for, or for figuring out which IDs are used for a given purpose without looking through all the more specific files.
+
+Chunk IDs are given in decimal because that's what LGS mostly seemed to work with (e.g. level chunk IDs repeat in groups of 1000 rather than groups of 0x400).
+
+## Strings
+
+      36  Long object names
+          Each name is stored in the subchunk with index equal to the
+          index of the corresponding definition in the gamesys.
+          So, the riot gun is at index 4, and the Skorpion at 6.
+    2154  Texture names
+    2155  "Can't use ____" messages for each texture
+    2157  Short object names (see chunk 36)
+
+## Maps & save data
+
+See map.txt for detailed information about which chunks hold what data in maps.
+
+    4000  Save file name (unknown data in ARCHIVE.DAT)
+    4001  Player information (in save files)
+    40xx  Deck R level map
+    4Lxx  Decks 1-9 (L=deck number)
+    50xx  SHODAN cyberspace
+    5Lxx  Delta, Alpha, and Beta Groves (L=1-3)
+    54xx  Deck 1/2 cyberspace
+    55xx  Other cyberspace
