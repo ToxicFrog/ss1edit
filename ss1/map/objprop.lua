@@ -26,7 +26,7 @@ local function load(self)
   -- table in the map, indexed by info_index
   -- I'm not sure what a non-terrible API for this looks like.
 
-  local buf = self.res:get(self.id + OFFSET).data
+  local buf = self.res:read(self.id + OFFSET)
   local objects = {}
   local details = {}
 
@@ -34,7 +34,7 @@ local function load(self)
     if formats[class] then
       details[class] = vstruct.array(
           formats[class],
-          self.res:get(self.id + 10 + class).data, 0)
+          self.res:read(self.id + 10 + class), 0)
     --else
     --  print("No format definition available for class %d (%d bytes)" % {
     --    class, self.res:get(self.id + 10 + class).size})

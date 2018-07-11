@@ -18,7 +18,7 @@ function map.load(rf, level)
       magic:s30
     ]]
 
-    return vstruct.read(MAP_INFO, rf:get(self.id + 4).data)
+    return vstruct.read(MAP_INFO, rf:read(self.id + 4))
   end
 
   local self = {

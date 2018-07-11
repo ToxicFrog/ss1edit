@@ -1,32 +1,36 @@
 local vstruct = require "vstruct"
 
 local res = {}
-
-local mt = { __index = res }
+res.__index = res
 
 local typenames = {
   [0x00] = "palette";
-  [0x01] = "text";
-  [0x02] = "bitmap";
+  [0x01] = "string";
+  [0x02] = "image";
   [0x03] = "font";
-  [0x04] = "video";
+  [0x04] = "animation";
   [0x07] = "sound";
   [0x0F] = "model";
-  [0x11] = "voice";
+  [0x11] = "movie";
   [0x30] = "map";
 }
+for k,v in pairs(typenames) do
+  if type(k) == 'number' then
+    typenames[v] = k
+  end
+end
 
 local RES_TOC = [[
   %d * {
     id:u2
     size:u3
-    [1|x6 dir:b1 compressed:b1]
+    [1|x6 compound:b1 compressed:b1]
     packed_size:u3
     type:u1
   }
 ]]
 
--- decompress a compressed chunk
+-- Decompress a compressed resource.
 local function decompress(data, unpacksize)
   local words = coroutine.wrap(function()
     local yield = coroutine.yield
@@ -113,84 +117,100 @@ local function decompress(data, unpacksize)
   return unpacked
 end
 
-function res.load(filename)
-  local toc_offs,chunk_offs
+-- Unpack a compound resource into a table.
+local function unpack_compound(data)
+  local data = vstruct.cursor(data)
+  local count = vstruct.readvals('u2', data)
+  local toc = vstruct.read('%d * u4' % (count+1), data)
 
+  local blocks = {}
+  for i=1,count do
+    blocks[i-1] = vstruct.readvals("@%d s%d" % {toc[i], toc[i+1] - toc[i]}, data)
+  end
+  return blocks
+end
+
+-- Pack a table into a compound resource.
+local function pack_compound(blocks)
+  local data = vstruct.cursor('')
+  local data_offs = 6 + 4 * (#blocks+1)
+  vstruct.write('u2', data, { #blocks+1 })
+  for i=0,#blocks do
+    vstruct.write('u4', data, { data_offs })
+    data_offs = data_offs + #blocks[i]
+  end
+  vstruct.write('u4 s s', data, { data_offs, blocks[0], table.concat(blocks, '') })
+  return data.str
+end
+
+function res.new(name)
+  local self = { name = name; data = {}; meta = {}; }
+  return setmetatable(self, res)
+end
+
+function res.load(filename)
   local fd,err = io.open(filename, "rb")
   if not fd then return nil,err end
 
-  local self = {}
+  local self = res.new(filename)
 
-  -- read file header and TOC header
-  -- self.comment,toc_offs,self.count,chunk_offs = struct.unpack("z124 u4 @$2 u2 u4")
+  -- Read file header.
+  local toc_offs
   self.comment,toc_offs = vstruct.readvals("z124 u4", fd)
-  self.count,chunk_offs = vstruct.readvals("@%d u2 u4" % toc_offs, fd)
 
-  -- read the entire TOC into memory
-  self.toc = vstruct.read(RES_TOC % self.count, fd)
-  self.byid = {}
+  -- Read TOC header, then read the entire TOC into memory.
+  local nrof_resources,data_offs = vstruct.readvals("@%d u2 u4" % toc_offs, fd)
+  local toc = vstruct.read(RES_TOC % nrof_resources, fd)
 
-  -- prepare to unpack the chunk data
-  fd:seek("set", chunk_offs)
+  -- Seek to start of resource data in preparation to read the resources.
+  -- N.b. in unmodified resfiles this may be a no-op, since usually the data
+  -- immediately follows the TOC. Files written by this library place the TOC
+  -- at the *end*, however, so this seek is necessary.
+  fd:seek("set", data_offs)
 
-  for i,chunk in ipairs(self.toc) do
-    chunk.packed_data = vstruct.readvals("a4 s%d" % chunk.packed_size, fd)
+  for _,meta in ipairs(toc) do
+    meta.typename = assertf(typenames[meta.type], "Resource %d has unknown type %d in %s",
+      meta.id, meta.type, self.name)
+    self.meta[meta.id] = meta
+    self.data[meta.id] = vstruct.readvals("a4 s%d" % meta.packed_size, fd)
 
-    if chunk.compressed and chunk.dir then
-      eprintf("WARNING: skipping compressed chunk directory %05d (%04x)\n", chunk.id, chunk.id)
-    elseif chunk.compressed then
-      chunk.data = decompress(chunk.packed_data, chunk.size)
-    else
-      chunk.data = chunk.packed_data
+    if meta.compound and meta.compressed then
+      error("No support for compressed compound resource %d in %s", meta.id, self.name)
     end
 
-    if chunk.dir then
-      -- Unpack subchunks.
-      local count = vstruct.readvals("u2", chunk.data)
-      local toc = vstruct.read("@2 %d * u4" % (count+1), chunk.data)
-      chunk.subchunks = {}
-      for i=1,count do
-        chunk.subchunks[i] = vstruct.readvals("@%d s%d" % {toc[i], toc[i+1] - toc[i]}, chunk.data)
-      end
+    if meta.compound then
+      self.data[meta.id] = unpack_compound(self.data[meta.id])
     end
-
-    chunk.typename = typenames[chunk.type] or "unknown"
-    self.byid[chunk.id] = chunk
   end
 
   fd:close()
 
-  -- sort the TOC by ID
-  table.sort(self.toc, function(x,y) return x.id < y.id end)
-
-  return setmetatable(self, mt)
+  return self
 end
 
 function res:save(filename)
-  local toc_offs,chunk_offs
-
   local fd,err = io.open(filename, "wb")
   if not fd then return nil,err end
 
-  -- write the header. write 0 for offset to TOC, we'll fill that in later.
+  -- Write the header. Write 0 for offset to TOC, we'll fill that in later.
   vstruct.write("z124 u4", fd, { self.comment, 0 })
 
-  -- write chunk data
-  for i,chunk in ipairs(self.toc) do
-    -- resolve chunk information
-    chunk.compressed = false
-    chunk.size = #chunk.data
-    chunk.packed_size = chunk.size
-    chunk.packed_data = chunk.data
-
-    vstruct.write("a4 s%d" % chunk.size, fd, { chunk.data })
+  -- Write the resource data and build the TOC in the same order.
+  local toc = {}
+  for id,meta in pairs(self.meta) do
+    table.insert(toc, meta)
+    if meta.compound then
+      vstruct.write("a4 s%d" % meta.packed_size, fd, { pack_compound(self.data[id]) })
+    else
+      vstruct.write("a4 s%d" % meta.packed_size, fd, { self.data[id] })
+    end
   end
 
   -- write TOC
   vstruct.write("a4", fd, {})
   local toc_offs = fd:seek("cur", 0)
-  vstruct.write("u2 u4", fd, { #self.toc, 128 })
-  vstruct.write(RES_TOC % #self.toc, fd, self.toc)
+  vstruct.write("u2 u4", fd, { #toc, 128 }) -- number of TOC entries and offset of file data
+  vstruct.write(RES_TOC % #toc, fd, toc)
 
   -- write TOC pointer
   vstruct.write("@124 u4", fd, { toc_offs })
@@ -199,23 +219,119 @@ function res:save(filename)
   fd:close()
 end
 
-function res:chunks(...)
-  local toc = {...}
-  if #toc == 0 then
-    toc = table.map(self.toc, f "x => x.id")
-  end
+local function readonly(t)
+  local mt = {
+    __index = t;
+    __newindex = function(self, key)
+      error("Attempt to set readonly field '%s' of table %s" % {
+        tostring(key), tostring(self)
+      })
+    end;
+    __pairs = function() return pairs(t) end;
+    __ipairs = function() return ipairs(t) end;
+  }
+  return setmetatable(t, mt)
+end
 
+-- Return an iterator over all resource metadata, equivalent to calling
+-- res:stat() on each entry.
+function res:ls()
   return coroutine.wrap(function()
-    for _,id in ipairs(toc) do
-      if self.byid[id] then
-        coroutine.yield(id, self.byid[id])
-      end
+    for id in pairs(self.meta) do
+      coroutine.yield(self:stat(id))
     end
   end)
 end
 
-function res:get(id)
-  return self.byid[id]
+-- Return an iterator over all resources and their contents.
+-- N.b. compressed resources will be decompressed as they are read. This is
+-- potentially expensive. use res:ls() if you just want the metadata.
+function res:contents()
+  return coroutine.wrap(function()
+    for id in pairs(self.meta) do
+      coroutine.yield(self:stat(id), self:read(id))
+    end
+  end)
+end
+
+-- Return (readonly) metadata about a resource.
+function res:stat(id)
+  assertf(self.meta[id],
+    "Attempt to read missing resource %d in resfile %s", id, self.name)
+  return readonly(self.meta[id])
+end
+
+-- Read a resource's data. Compressed resources are decompressed on the fly.
+function res:read(id)
+  assertf(self.meta[id],
+    "Attempt to read missing resource %d in resfile %s", id, self.name)
+  if self.meta[id].compound then
+    return table.copy(self.data[id])
+  elseif self.meta[id].compressed then
+    return decompress(self.data[id], self.meta[id].size)
+  else
+    return self.data[id]
+  end
+end
+
+-- res:write(id, data)
+-- Write data to an existing resource. Ensures that the metadata is correctly
+-- updated as well.
+function res:write(id, data)
+  assertf(self.meta[id],
+    "Attempt to write missing resource %d in resfile %s", id, self.name)
+  local meta = self.meta[id]
+
+  if type(data) == 'string' then
+    meta.size = #data
+    meta.compound = false
+  elseif type(data) == 'table' then
+    assertf(data[0], "Compound resource %d must contain at least one entry", id)
+    -- in-resource TOC is 6 bytes header/footer + 4 bytes per block
+    meta.size = 6 + 4 * (#data + 1)
+    meta.compound = true
+    for i=0,#data do
+      -- plus the size of each individual block
+      meta.size = meta.size + #data[i]
+    end
+  else
+    error("res.write: data must be a string or table")
+  end
+
+  self.data[id] = data
+  meta.packed_size = meta.size
+  meta.compressed = false
+end
+
+-- Create a new empty resource of the given type.
+function res:create(id, typeid)
+  assertf(not self.meta[id],
+    "Attempt to create resource %d, but that id is already used in %s", id, self.name)
+  assertf(typenames[type],
+    "Attempt to create resource %d with unrecognized type %s", id, tostring(typeid))
+
+  local typename
+  if type(typeid) == 'number' then
+    typename = typenames[typeid]
+  else
+    typeid,typename = typenames[typeid],typeid
+  end
+
+  self.meta = {
+    id = id;
+    type = typeid; typename = typename;
+    size = 0; packed_size = 0;
+    compound = false; compressed = false;
+  }
+  self.data = ''
+end
+
+-- Delete a resource.
+function res:delete(id)
+  assertf(self.meta[id],
+    "Attempt to delete missing resource %d from resfile %s", id, self.name)
+  self.meta[id] = nil
+  self.data[id] = nil
 end
 
 return res

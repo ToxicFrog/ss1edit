@@ -31,7 +31,7 @@ local MAP_TILES = [[
 ]]
 
 local function load(self)
-  local buf = self.res:get(self.id + OFFSET).data
+  local buf = self.res:read(self.id + OFFSET)
   return vstruct.read(MAP_TILES % {self.info.width, self.info.height}, buf)
 end
 

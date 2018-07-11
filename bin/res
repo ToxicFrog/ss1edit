@@ -70,16 +70,16 @@ flags.register("hex-ids", "X") {
 
 local mode = {}
 
-local function extension(chunk)
-  if chunk.typename ~= "unknown" then
-    return "ss1"..chunk.typename
+local function extension(meta)
+  if meta.typename ~= "unknown" then
+    return "ss1"..meta.typename
   else
-    return "ss1x%02X" % chunk.type
+    return "ss1x%02X" % meta.type
   end
 end
 
-local function filename(chunk)
-  return ('%s/'..flag.idformat..".%s") % { flag.prefix, chunk.id, extension(chunk) }
+local function filename(meta)
+  return ('%s/'..flag.idformat..".%s") % { flag.prefix, meta.id, extension(meta) }
 end
 
 -- List
@@ -88,16 +88,16 @@ function mode.list(...)
   local rf = res.load(file)
 
   printf("Comment: %s\n", rf.comment)
-  printf("File contains %u chunks\n", rf.count)
+  --printf("File contains %u chunks\n", rf.count)
 
   printf("   id    size      type  packed   dir\n")
-  for id,chunk in rf:chunks(...) do
+  for meta in rf:ls() do
     printf(flag.idformat .. "  %6u  %8s  %6s  %4s\n",
-      id,
-      chunk.size,
-      chunk.typename,
-      chunk.compressed and tostring(chunk.packed_size) or "",
-      chunk.dir and tostring(#chunk.subchunks) or "")
+      meta.id,
+      meta.size,
+      meta.typename,
+      meta.compressed and tostring(meta.packed_size) or "",
+      meta.compound and tostring(#rf:read(meta.id)+1) or "")
   end
 end
 
@@ -106,16 +106,15 @@ function mode.extract(...)
   local file = flags.require "res"
   local rf = res.load(file)
 
-  for id,chunk in rf:chunks(...) do
-    if chunk.dir and flag.subchunks then
-      local dir = filename(chunk)
+  for meta,data in rf:contents(...) do
+    if meta.compound and flag.subchunks then
+      local dir = filename(meta)
       require("lfs").mkdir(dir)
-      for index,subchunk in ipairs(chunk.subchunks) do
-        io.writefile(("%s/"..flag.idformat) % { dir, index-1 }, subchunk)
+      for index=0,#data do
+        io.writefile(("%s/"..flag.idformat) % { dir, index }, data[index])
       end
-      io.writefile("%s/data" % dir, chunk.data)
     else
-      io.writefile(filename(chunk), chunk.data)
+      io.writefile(filename(meta), data)
     end
   end
 end
@@ -128,12 +127,7 @@ function mode.update(...)
   local rf = res.load(infile)
 
   for _,id in ipairs {...} do
-    local chunk = rf:get(id)
-    if chunk then
-      chunk.data = assert(io.readfile(filename(chunk)))
-    else
-      error("Attempted to add chunk "..id.." that does not exist in file!")
-    end
+    rf:write(id, io.readfile(filename(rf:stat(id))))
   end
 
   rf:save(outfile)
@@ -143,6 +137,11 @@ function mode.decompress()
   local infile = flags.require "res"
   local outfile = flag.in_place and infile or flag.out or error("--decompress requires both --res and --out")
   local rf = res.load(infile)
+  for meta,data in rf:contents() do
+    if meta.compressed then
+      rf:write(meta.id, data)
+    end
+  end
   rf:save(outfile)
 end
 
@@ -157,7 +156,7 @@ local function main(...)
   end
   for i,chunk in ipairs(flag) do
     flag[i] = assert(tonumber(flag[i]),
-      "can't convert argument '%s' into a chunk ID -- did you mean to use --res?" % flag[i])
+      "can't convert argument '%s' into a resource ID -- did you mean to use --res?" % flag[i])
   end
   return mode[flag.mode](unpack(flag))
 end
