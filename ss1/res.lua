@@ -175,7 +175,7 @@ function res.load(filename)
     self.data[meta.id] = vstruct.readvals("a4 s%d" % meta.packed_size, fd)
 
     if meta.compound and meta.compressed then
-      error("No support for compressed compound resource %d in %s", meta.id, self.name)
+      error("No support for compressed compound resource %s in %s", meta.id, self.name)
     end
 
     if meta.compound then
@@ -257,14 +257,14 @@ end
 -- Return (readonly) metadata about a resource.
 function res:stat(id)
   assertf(self.meta[id],
-    "Attempt to read missing resource %d in resfile %s", id, self.name)
+    "Attempt to read missing resource %s in resfile %s", id, self.name)
   return readonly(self.meta[id])
 end
 
 -- Read a resource's data. Compressed resources are decompressed on the fly.
 function res:read(id)
   assertf(self.meta[id],
-    "Attempt to read missing resource %d in resfile %s", id, self.name)
+    "Attempt to read missing resource %s in resfile %s", id, self.name)
   if self.meta[id].compound then
     return table.copy(self.data[id])
   elseif self.meta[id].compressed then
@@ -279,14 +279,14 @@ end
 -- updated as well.
 function res:write(id, data)
   assertf(self.meta[id],
-    "Attempt to write missing resource %d in resfile %s", id, self.name)
+    "Attempt to write missing resource %s in resfile %s", id, self.name)
   local meta = self.meta[id]
 
   if type(data) == 'string' then
     meta.size = #data
     meta.compound = false
   elseif type(data) == 'table' then
-    assertf(data[0], "Compound resource %d must contain at least one entry", id)
+    assertf(data[0], "Compound resource %s must contain at least one entry", id)
     -- in-resource TOC is 6 bytes header/footer + 4 bytes per block
     meta.size = 6 + 4 * (#data + 1)
     meta.compound = true
@@ -306,9 +306,9 @@ end
 -- Create a new empty resource of the given type.
 function res:create(id, typeid)
   assertf(not self.meta[id],
-    "Attempt to create resource %d, but that id is already used in %s", id, self.name)
+    "Attempt to create resource %s, but that id is already used in %s", id, self.name)
   assertf(typenames[type],
-    "Attempt to create resource %d with unrecognized type %s", id, tostring(typeid))
+    "Attempt to create resource %s with unrecognized type %s", id, tostring(typeid))
 
   local typename
   if type(typeid) == 'number' then
@@ -329,7 +329,7 @@ end
 -- Delete a resource.
 function res:delete(id)
   assertf(self.meta[id],
-    "Attempt to delete missing resource %d from resfile %s", id, self.name)
+    "Attempt to delete missing resource %s from resfile %s", id, self.name)
   self.meta[id] = nil
   self.data[id] = nil
 end
