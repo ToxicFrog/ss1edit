@@ -10,12 +10,6 @@
 -- to get a TRNSTRNG.RES file containing the results of the patches in
 -- textures.txt and papers.txt.
 
--- startup code
-if jit then
-  -- jit.off()
-  bit32 = bit
-end
-
 package.path = "deps/?.lua;deps/?/init.lua;" .. package.path
 
 require "util"
@@ -45,15 +39,17 @@ local input = ...
 if input:match('%.RES$') then
   local rf = assert(res.load(input))
 
-  io.writefile('trnstrng.txt', [[
-  load 'work/CYBSTRNG.RES'
-  patch 'textures.txt'
-  patch 'papers.txt'
-  save 'work/TRNSTRNG.RES'
-  ]])
+  io.writefile('trans/trnstrng.txt', [[
+load 'CYBSTRNG.RES'
+patch 'textures.txt'
+patch 'papers.txt'
+patch 'logs.txt'
+save 'TRNSTRNG.RES'
+]])
 
-  io.writefile('textures.txt', trans.textures.unpack(rf))
-  io.writefile('papers.txt', trans.papers.unpack(rf))
+  for _,file in ipairs { 'textures', 'papers', 'logs' } do
+    io.writefile('trans/' .. file .. '.txt', trans[file](rf))
+  end
 else
   fn = assert(loadfile(input))
   setfenv(fn, loader_environment)

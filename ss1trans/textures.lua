@@ -1,7 +1,5 @@
-local textures = {}
+local ids = require 'ss1trans.ids'
 
-local TEX_NAMES = 2154
-local TEX_USE = 2155
 local TEX_HEADER = [[
 -- textures.txt: strings for wall, floor, and ceiling textures.
 -- `name` is what appears when you click on a texture.
@@ -22,9 +20,9 @@ texture {
 
 -- Given a resfile, unpacks the texture name and usage messages and returns
 -- a string containing them.
-function textures.unpack(rf)
-  local names = rf:read(TEX_NAMES)
-  local msgs = rf:read(TEX_USE)
+return function(rf)
+  local names = rf:read(ids.TEX_NAMES)
+  local msgs = rf:read(ids.TEX_MSGS)
   local textures = {} -- ordered list of textures and map (name => texture)
 
   for texid = 0,#names do
@@ -52,5 +50,3 @@ function textures.unpack(rf)
   end
   return table.concat(buf, '')
 end
-
-return textures

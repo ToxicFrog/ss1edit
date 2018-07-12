@@ -256,8 +256,9 @@ end
 
 -- Return (readonly) metadata about a resource.
 function res:stat(id)
-  assertf(self.meta[id],
-    "Attempt to read missing resource %s in resfile %s", id, self.name)
+  if not self.meta[id] then
+    return nil
+  end
   return readonly(self.meta[id])
 end
 

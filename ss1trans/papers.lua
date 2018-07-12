@@ -1,4 +1,4 @@
-local papers = {}
+local util = require 'ss1trans.util'
 
 local PAPER_START = 60
 local PAPER_END = 70
@@ -20,19 +20,14 @@ paper {
 ]]
 
 -- Given a resfile, unpacks the papers from it.
-function papers.unpack(rf)
+return function(rf)
   local buf = { PAPER_HEADER }
   for resid=PAPER_START,PAPER_END do
     local lines = rf:read(resid)
     local text = (lines[0] .. table.concat(lines, '')):gsub('%z', '')
-    local paper = {}
-    for line in text:gmatch('[^\n]+') do
-      table.insert(paper, '  %q;' % line)
-    end
+    local paper = util.format_lines('  %q;\n', text)
     table.insert(buf, PAPER_TEMPLATE:format(
-      lines[0]:sub(1,-2):gsub('\n', ''), resid, table.concat(paper, '\n')))
+      lines[0]:sub(1,-2):gsub('\n', ''), resid, paper))
   end
   return table.concat(buf, '')
 end
-
-return papers

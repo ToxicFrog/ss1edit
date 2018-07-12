@@ -1,17 +1,27 @@
-local repack = {}
+-- Environment for executing the edited repack scripts.
 
-local TEX_NAMES = 2154
-local TEX_USE = 2155
+local repack = {}
+local ids = require 'ss1trans.ids'
 
 function repack.texture(rf, tex)
-  local names = rf:read(TEX_NAMES)
-  local msgs = rf:read(TEX_USE)
+  local names = rf:read(ids.TEX_NAMES)
+  local msgs = rf:read(ids.TEX_MSGS)
   for _,texid in ipairs(tex.texids) do
     names[texid] = tex.name .. '\0'
     msgs[texid] = tex.use .. '\0'
   end
   rf:write(TEX_NAMES, names)
-  rf:write(TEX_USE, msgs)
+  rf:write(TEX_MSGS, msgs)
+end
+
+function repack.object(rf, obj)
+  local longnames = rf:read(ids.OBJ_LONG_NAMES)
+  local shortnames = rf:read(ids.OBJ_SHORT_NAMES)
+  longnames[obj.objid] = obj.name
+  shortnames[obj.objid] = obj.shortname
+  rf:write(ids.OBJ_LONG_NAMES, longnames)
+  rf:write(ids.OBJ_SHORT_NAMES, shortnames)
+  -- TODO: handle descriptions for those objects that have them
 end
 
 function repack.paper(rf, paper)
@@ -26,7 +36,7 @@ function repack.paper(rf, paper)
         table.insert(data, subline .. '\0')
       end
     end
-    if n ~= #paper and n > 0 then
+    if n ~= #paper then
       table.insert(data, '\n\0')
     end
   end
