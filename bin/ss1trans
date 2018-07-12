@@ -41,13 +41,14 @@ if input:match('%.RES$') then
 
   io.writefile('trans/trnstrng.txt', [[
 load 'CYBSTRNG.RES'
-patch 'textures.txt'
-patch 'papers.txt'
 patch 'logs.txt'
+patch 'objects.txt'
+patch 'papers.txt'
+patch 'textures.txt'
 save 'TRNSTRNG.RES'
 ]])
 
-  for _,file in ipairs { 'textures', 'papers', 'logs' } do
+  for _,file in ipairs { 'textures', 'papers', 'logs', 'objects' } do
     io.writefile('trans/' .. file .. '.txt', trans[file](rf))
   end
 else

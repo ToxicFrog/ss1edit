@@ -17,8 +17,8 @@ end
 function repack.object(rf, obj)
   local longnames = rf:read(ids.OBJ_LONG_NAMES)
   local shortnames = rf:read(ids.OBJ_SHORT_NAMES)
-  longnames[obj.objid] = obj.name
-  shortnames[obj.objid] = obj.shortname
+  longnames[obj.objid] = obj.name .. '\0'
+  shortnames[obj.objid] = obj.shortname .. '\0'
   rf:write(ids.OBJ_LONG_NAMES, longnames)
   rf:write(ids.OBJ_SHORT_NAMES, shortnames)
   -- TODO: handle descriptions for those objects that have them
