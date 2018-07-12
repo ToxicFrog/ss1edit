@@ -1,0 +1,61 @@
+#!/usr/bin/env luajit
+
+-- Translation tool for System Shock 1
+-- Converts a res file into a bunch of .txt files ready for editing, or vice versa.
+-- Try me with:
+--   ss1trans CYBSTRNG.RES
+--   $EDITOR textures.txt
+--   $EDITOR papers.txt
+--   ss1trans trnstrng.txt
+-- to get a TRNSTRNG.RES file containing the results of the patches in
+-- textures.txt and papers.txt.
+
+-- startup code
+if jit then
+  -- jit.off()
+  bit32 = bit
+end
+
+package.path = "deps/?.lua;deps/?/init.lua;" .. package.path
+
+require "util"
+local res = require "ss1.res"
+local trans = require "ss1trans"
+
+if select('#', ...) ~= 1 then
+  print('Usage: ss1trans (foo.res|foo.txt)')
+  return 1
+end
+
+local loader_environment = {
+  load = function(path) _RF = assert(res.load(path)) end;
+  save = function(path) _RF:save(path) end;
+  patch = function(path)
+    local fn = assert(loadfile(path))
+    local env = {}
+    for k,v in pairs(trans.repack) do
+      env[k] = function(data) return v(_RF, data) end
+    end
+    setfenv(fn, env)
+    fn()
+  end;
+}
+
+local input = ...
+if input:match('%.RES$') then
+  local rf = assert(res.load(input))
+
+  io.writefile('trnstrng.txt', [[
+  load 'work/CYBSTRNG.RES'
+  patch 'textures.txt'
+  patch 'papers.txt'
+  save 'work/TRNSTRNG.RES'
+  ]])
+
+  io.writefile('textures.txt', trans.textures.unpack(rf))
+  io.writefile('papers.txt', trans.papers.unpack(rf))
+else
+  fn = assert(loadfile(input))
+  setfenv(fn, loader_environment)
+  fn()
+end
