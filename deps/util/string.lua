@@ -98,7 +98,7 @@ end
 
 -- Cut string into lines of no more than n characters, splitting on whitespace
 -- and hyphens. Force split on newline.
-function string:wrap(n)
+function string:wrap(n, preserve_whitespace)
 	local buf = {}
 	local line = ''
 	self = self:trim()
@@ -108,7 +108,7 @@ function string:wrap(n)
 			if #line > 0 then
 				table.insert(buf, line)
 			end
-			line = word
+			line = (preserve_whitespace and ws or '') .. word
 		else
 			line = line .. ws .. word
 		end
