@@ -10,8 +10,8 @@ function repack.texture(rf, tex)
     names[texid] = tex.name
     msgs[texid] = tex.use
   end
-  rf:write(TEX_NAMES, names)
-  rf:write(TEX_MSGS, msgs)
+  rf:write(ids.TEX_NAMES, names)
+  rf:write(ids.TEX_MSGS, msgs)
 end
 
 function repack.object(rf, obj)
@@ -43,5 +43,21 @@ function repack.paper(rf, paper)
   table.insert(data, '')
   rf:write(paper.resid, data)
 end
+
+function repack.log(rf, log)
+  -- Similar to paper, but we have more metadata to worry about.
+  local data = {
+    rf:read(log.resid)[0], -- metadata; unchanged from original
+    log.title, log.sender, log.subject;
+  }
+  for _,line in ipairs(log.verbose) do
+    table.insert(data, line)
+  end
+  table.insert(data, '')
+  for _,line in ipairs(log.terse) do
+    table.insert(data, line)
+  end
+  table.insert(data, '')
+  end
 
 return repack
