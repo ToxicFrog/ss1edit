@@ -24,10 +24,10 @@ return function(rf)
   local buf = { PAPER_HEADER }
   for resid=PAPER_START,PAPER_END do
     local lines = rf:read(resid)
-    local text = (lines[0] .. table.concat(lines, '')):gsub('%z', '')
+    local text = (lines[0] .. table.concat(lines, ''))
     local paper = util.format_lines('  %q;\n', text)
     table.insert(buf, PAPER_TEMPLATE:format(
-      lines[0]:sub(1,-2):gsub('\n', ''), resid, paper))
+      lines[0]:gsub('\n', ' '), resid, paper))
   end
   return table.concat(buf, '')
 end

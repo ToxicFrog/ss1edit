@@ -27,8 +27,8 @@ return function(rf)
 
   for texid = 0,#names do
     -- strings are nul terminated
-    local name = names[texid]:sub(1,-2)
-    local msg = msgs[texid]:sub(1,-2)
+    local name = names[texid]
+    local msg = msgs[texid]
     local key = name .. '\n' .. msg
 
     if textures[key] then

@@ -30,118 +30,8 @@ local RES_TOC = [[
   }
 ]]
 
--- Decompress a compressed resource.
-local function decompress(data, unpacksize)
-  local words = coroutine.wrap(function()
-    local yield = coroutine.yield
-    local word,nbits = 0,0
-    for char in data:gmatch(".") do
-      word = bit32.bor(bit32.lshift(word, 8), char:byte())
-      nbits = nbits + 8
-
-      if nbits >= 14 then
-        nbits = nbits - 14
-        yield(bit32.band(bit32.rshift(word, nbits), 0x3FFF))
-      end
-    end
-  end)
-
-  local offs_token,len_token,org_token = {},{},{}
-
-  local unpacked = ""
-
-  local ntokens = 0
-  for i=0,16383 do
-    len_token[i] = 1
-    org_token[i] = -1
-  end
-
-  local byteptr,exptr = 0,0,0,0
-  for val in words do
-    if val == 0x3FFF then
-      if #unpacked < unpacksize then
-        eprintf("WARNING: unpack break early after %d/%d bytes due to STOP marker\n", #unpacked, unpacksize)
-      end
-      break
-    end
-
-    if val == 0x3FFE then
-      ntokens = 0
-      for i=0,16383 do
-        len_token[i] = 1
-        org_token[i] = -1
-      end
-      goto continue
-    end
-
-    if ntokens < 16384 then
-      offs_token[ntokens] = exptr
-      if val >= 0x100 then
-        org_token[ntokens] = val - 0x100
-      end
-      ntokens = ntokens +1
-    end
-
-    if val < 0x100 then
-      exptr = exptr + 1
-      unpacked = unpacked .. string.char(val)
-    else
-      val = val - 0x100
-
-      if len_token[val] == 1 then
-        if org_token[val] ~= -1 then
-          len_token[val] = len_token[val] + len_token[org_token[val]]
-        else
-          len_token[val] = len_token[val] + 1
-        end
-      end
-
-      local testbuf = unpacked:sub(offs_token[val] + 1, offs_token[val] + len_token[val])
-      if #testbuf < len_token[val] then
-        testbuf = testbuf .. string.char(0):rep(len_token[val] - #testbuf)
-      end
-
-      for i=1,len_token[val] do
-        unpacked = unpacked .. unpacked:sub(offs_token[val] + i, offs_token[val] + i)
-      end
-      exptr = exptr + len_token[val]
-
-      assert(#testbuf == len_token[val], "fencepost error")
-      --assert(testbuf == unpacked:sub(-#testbuf), "unpack boundary error")
-    end
-
-    ::continue::
-  end
-
-  assert(#unpacked == unpacksize, "buffer size mismatch: %d != %d" % { #unpacked, unpacksize })
-  return unpacked
-end
-
--- Unpack a compound resource into a table.
-local function unpack_compound(data)
-  local data = vstruct.cursor(data)
-  local count = vstruct.readvals('u2', data)
-  local toc = vstruct.read('%d * u4' % (count+1), data)
-
-  local blocks = {}
-  for i=1,count do
-    blocks[i-1] = vstruct.readvals("@%d s%d" % {toc[i], toc[i+1] - toc[i]}, data)
-  end
-  return blocks
-end
-
--- Pack a table into a compound resource.
-local function pack_compound(blocks)
-  local data = vstruct.cursor('')
-  local data_offs = 6 + 4 * (#blocks+1)
-  vstruct.write('u2', data, { #blocks+1 })
-  for i=0,#blocks do
-    vstruct.write('u4', data, { data_offs })
-    data_offs = data_offs + #blocks[i]
-  end
-  vstruct.write('u4 s s', data, { data_offs, blocks[0], table.concat(blocks, '') })
-  return data.str
-end
+local decompress = require 'ss1.res.decompress'
+local helpers = require 'ss1.res.helpers'
 
 function res.new(name)
   local self = { name = name; data = {}; meta = {}; }
@@ -179,7 +69,7 @@ function res.load(filename)
     end
 
     if meta.compound then
-      self.data[meta.id] = unpack_compound(self.data[meta.id])
+      self.data[meta.id] = helpers.unpack_compound(self.data[meta.id])
     end
   end
 
@@ -200,7 +90,7 @@ function res:save(filename)
   for id,meta in pairs(self.meta) do
     table.insert(toc, meta)
     if meta.compound then
-      vstruct.write("a4 s%d" % meta.packed_size, fd, { pack_compound(self.data[id]) })
+      vstruct.write("a4 s%d" % meta.packed_size, fd, { helpers.pack_compound(self.data[id]) })
     else
       vstruct.write("a4 s%d" % meta.packed_size, fd, { self.data[id] })
     end
@@ -217,20 +107,6 @@ function res:save(filename)
 
   -- commit
   fd:close()
-end
-
-local function readonly(t)
-  local mt = {
-    __index = t;
-    __newindex = function(self, key)
-      error("Attempt to set readonly field '%s' of table %s" % {
-        tostring(key), tostring(self)
-      })
-    end;
-    __pairs = function() return pairs(t) end;
-    __ipairs = function() return ipairs(t) end;
-  }
-  return setmetatable(t, mt)
 end
 
 -- Return an iterator over all resource metadata, equivalent to calling
@@ -255,15 +131,19 @@ function res:contents()
 end
 
 -- Return (readonly) metadata about a resource.
+-- If the resource does not exist, returns nil.
 function res:stat(id)
   if not self.meta[id] then
     return nil
   end
-  return readonly(self.meta[id])
+  return helpers.readonly(self.meta[id])
 end
 
 -- Read a resource's data. Compressed resources are decompressed on the fly.
-function res:read(id)
+-- Unlike stat, this throws if you attempt to read a missing resource.
+-- This returns the contents of the resource with no postprocessing of any kind,
+-- apart from decompression.
+function res:raw_read(id)
   assertf(self.meta[id],
     "Attempt to read missing resource %s in resfile %s", id, self.name)
   if self.meta[id].compound then
@@ -275,10 +155,22 @@ function res:read(id)
   end
 end
 
--- res:write(id, data)
+-- Like raw_read, but may do postprocessing to make the returned data easier to
+-- work with.
+-- At the moment this just means stripping the null termination from strings.
+function res:read(id)
+  return helpers.postprocess(self.meta[id], self:raw_read(id))
+end
+
+function res:write(id, data)
+  return self:raw_write(id, helpers.preprocess(self.meta[id], data))
+end
+
+-- res:raw_write(id, data)
 -- Write data to an existing resource. Ensures that the metadata is correctly
 -- updated as well.
-function res:write(id, data)
+-- No preprocessing of the data is done.
+function res:raw_write(id, data)
   assertf(self.meta[id],
     "Attempt to write missing resource %s in resfile %s", id, self.name)
   local meta = self.meta[id]

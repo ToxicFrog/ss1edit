@@ -53,11 +53,6 @@ return function(rf)
   for resid=LOG_START,LOG_END do
     if rf:stat(resid) then
       local lines = rf:read(resid)
-      for i=0,#lines do
-        -- Un-null-terminate strings.
-        -- TODO: do this in res instead?
-        lines[i] = lines[i]:sub(1,-2)
-      end
 
       local i = 4 -- start of verbose text
       local verbose_text = ''

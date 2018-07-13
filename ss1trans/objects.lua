@@ -29,7 +29,7 @@ return function(rf)
 
   for objid = 0,#longnames do
     table.insert(buf, OBJ_TEMPLATE:format(
-      longnames[objid]:sub(1,-2), objid, longnames[objid]:sub(1,-2), shortnames[objid]:sub(1,-2)))
+      longnames[objid], objid, longnames[objid], shortnames[objid]))
   end
 
   return table.concat(buf, '')
