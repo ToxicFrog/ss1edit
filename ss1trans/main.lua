@@ -10,48 +10,60 @@
 -- to get a TRNSTRNG.RES file containing the results of the patches in
 -- textures.txt and papers.txt.
 
-package.path = "?.lua;deps/?.lua;deps/?/init.lua;" .. package.path
+function main(...)
+  package.path = "?.lua;deps/?.lua;deps/?/init.lua;" .. package.path
 
-require "util"
-local res = require "ss1.res"
+  require "util"
+  local res = require "ss1.res"
 
-if select('#', ...) ~= 1 then
-  print('Usage: ss1trans (foo.res|foo.txt)')
-  return 1
+  if select('#', ...) ~= 1 then
+    print('Usage: ss1trans (foo.res|foo.txt)')
+    return 1
+  end
+
+  local loader_environment = {
+    load = function(path) _RF = assert(res.load(path)) end;
+    save = function(path) _RF:save(path) end;
+    patch = function(path)
+      local fn = assert(loadfile(path))
+      local env = {}
+      for k,v in pairs(require 'repack') do
+        env[k] = function(data) return v(_RF, data) end
+      end
+      setfenv(fn, env)
+      fn()
+    end;
+  }
+
+  local input = ...
+  if input:match('%.RES$') then
+    local rf = assert(res.load(input))
+
+    io.writefile('trnstrng.txt', [[
+  load 'CYBSTRNG.RES'
+  patch 'logs.txt'
+  patch 'objects.txt'
+  patch 'papers.txt'
+  patch 'textures.txt'
+  save 'TRNSTRNG.RES'
+  ]])
+
+    for _,file in ipairs { 'textures', 'papers', 'logs', 'objects' } do
+      io.writefile(file .. '.txt', require(file)(rf))
+    end
+  else
+    fn = assert(loadfile(input))
+    setfenv(fn, loader_environment)
+    fn()
+  end
 end
 
-local loader_environment = {
-  load = function(path) _RF = assert(res.load(path)) end;
-  save = function(path) _RF:save(path) end;
-  patch = function(path)
-    local fn = assert(loadfile(path))
-    local env = {}
-    for k,v in pairs(require 'repack') do
-      env[k] = function(data) return v(_RF, data) end
-    end
-    setfenv(fn, env)
-    fn()
-  end;
-}
-
-local input = ...
-if input:match('%.RES$') then
-  local rf = assert(res.load(input))
-
-  io.writefile('trnstrng.txt', [[
-load 'CYBSTRNG.RES'
-patch 'logs.txt'
-patch 'objects.txt'
-patch 'papers.txt'
-patch 'textures.txt'
-save 'TRNSTRNG.RES'
-]])
-
-  for _,file in ipairs { 'textures', 'papers', 'logs', 'objects' } do
-    io.writefile(file .. '.txt', require(file)(rf))
+if love then
+  -- love2d compatibility
+  function love.load(argv)
+    main(unpack(argv, 2)) -- drop first argument, since it's the name of the .love file
+    os.exit(0)
   end
 else
-  fn = assert(loadfile(input))
-  setfenv(fn, loader_environment)
-  fn()
+  main(...)
 end
