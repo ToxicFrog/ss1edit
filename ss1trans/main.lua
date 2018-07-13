@@ -10,11 +10,10 @@
 -- to get a TRNSTRNG.RES file containing the results of the patches in
 -- textures.txt and papers.txt.
 
-package.path = "deps/?.lua;deps/?/init.lua;" .. package.path
+package.path = "?.lua;deps/?.lua;deps/?/init.lua;" .. package.path
 
 require "util"
 local res = require "ss1.res"
-local trans = require "ss1trans"
 
 if select('#', ...) ~= 1 then
   print('Usage: ss1trans (foo.res|foo.txt)')
@@ -27,7 +26,7 @@ local loader_environment = {
   patch = function(path)
     local fn = assert(loadfile(path))
     local env = {}
-    for k,v in pairs(trans.repack) do
+    for k,v in pairs(require 'repack') do
       env[k] = function(data) return v(_RF, data) end
     end
     setfenv(fn, env)
@@ -39,7 +38,7 @@ local input = ...
 if input:match('%.RES$') then
   local rf = assert(res.load(input))
 
-  io.writefile('trans/trnstrng.txt', [[
+  io.writefile('trnstrng.txt', [[
 load 'CYBSTRNG.RES'
 patch 'logs.txt'
 patch 'objects.txt'
@@ -49,7 +48,7 @@ save 'TRNSTRNG.RES'
 ]])
 
   for _,file in ipairs { 'textures', 'papers', 'logs', 'objects' } do
-    io.writefile('trans/' .. file .. '.txt', trans[file](rf))
+    io.writefile(file .. '.txt', require(file)(rf))
   end
 else
   fn = assert(loadfile(input))

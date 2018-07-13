@@ -1,4 +1,4 @@
-local util = require 'ss1trans.util'
+local format_lines = require('helpers').format_lines
 
 -- local EMAIL_START = 2441
 -- local EMAIL_END = 2480
@@ -71,8 +71,8 @@ return function(rf)
       table.insert(buf, LOG_TEMPLATE:format(
         lines[1], lines[3], -- title and subject
         resid, lines[1], lines[2], lines[3],
-        util.format_lines('    %q;\n', verbose_text),
-        util.format_lines('    %q;\n', terse_text)))
+        format_lines('    %q;\n', verbose_text),
+        format_lines('    %q;\n', terse_text)))
     end
   end
   return table.concat(buf, '')

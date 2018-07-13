@@ -1,4 +1,4 @@
-local util = require 'ss1trans.util'
+local format_lines = require('helpers').format_lines
 
 local PAPER_START = 60
 local PAPER_END = 70
@@ -25,7 +25,7 @@ return function(rf)
   for resid=PAPER_START,PAPER_END do
     local lines = rf:read(resid)
     local text = (lines[0] .. table.concat(lines, ''))
-    local paper = util.format_lines('  %q;\n', text)
+    local paper = format_lines('  %q;\n', text)
     table.insert(buf, PAPER_TEMPLATE:format(
       lines[0]:gsub('\n', ' '), resid, paper))
   end

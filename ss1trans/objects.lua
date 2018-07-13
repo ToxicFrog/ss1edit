@@ -1,6 +1,6 @@
-local ids = require 'ss1trans.ids'
+local ids = require 'ids'
 
-local ids = require 'ss1trans.ids'
+local ids = require 'ids'
 
 local OBJ_HEADER = [[
 -- objects.txt: long and short names for in-game objects.

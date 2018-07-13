@@ -1,7 +1,7 @@
 -- Environment for executing the edited repack scripts.
 
 local repack = {}
-local ids = require 'ss1trans.ids'
+local ids = require 'ids'
 
 function repack.texture(rf, tex)
   local names = rf:read(ids.TEX_NAMES)

@@ -1,4 +1,4 @@
-local ids = require 'ss1trans.ids'
+local ids = require 'ids'
 
 local TEX_HEADER = [[
 -- textures.txt: strings for wall, floor, and ceiling textures.

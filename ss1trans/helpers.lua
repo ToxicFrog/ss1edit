@@ -1,6 +1,6 @@
-local util = {}
+local helpers = {}
 
-function util.format_lines(format, text)
+function helpers.format_lines(format, text)
   local t = {}
   for line in text:gmatch('[^\n]+') do
     table.insert(t, format % line)
@@ -8,4 +8,4 @@ function util.format_lines(format, text)
   return table.concat(t, '')
 end
 
-return util
+return helpers
