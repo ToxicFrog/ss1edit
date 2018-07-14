@@ -1,9 +1,12 @@
 # build process
-ss1trans-win64.zip: blank.zip ss1trans.exe
-	zip -0 -O ss1trans-win64.zip blank.zip ss1trans.exe
+ss1trans-win64.zip: blank.zip ss1trans.exe README.txt
+	zip -O ss1trans-win64.zip blank.zip ss1trans.exe README.txt
 
 ss1trans.exe: lovec.exe ss1trans.love
 	cat lovec.exe ss1trans.love > ss1trans.exe
+
+README.txt: ../ss1trans/README.txt
+	cp ../ss1trans/README.txt ./
 
 lovec.exe blank.zip: love-11.1-win64.zip
 	unzip love-11.1-win64.zip
