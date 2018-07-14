@@ -18,7 +18,7 @@ all supported. Support for other resources is in the works.
 Unpack the program wherever.
 
 To unpack a res file, just drag and drop it onto ss1trans.exe. A directory will
-be created next to the res file, with the same name ending in .D rather than
+be created next to the res file, with the same name ending in .d rather than
 .RES. All the text files are inside that directory.
 
 Edit them as you see fit. You may also want to use some kind of version control.

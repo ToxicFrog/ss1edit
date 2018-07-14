@@ -4,9 +4,9 @@
 -- Converts a res file into a bunch of .txt files ready for editing, or vice versa.
 -- Try me with:
 --   ss1trans CYBSTRNG.RES
---   $EDITOR textures.txt
---   $EDITOR papers.txt
---   ss1trans trnstrng.txt
+--   $EDITOR CYBSTRNG.d/textures.txt
+--   $EDITOR CYBSTRNG.d/papers.txt
+--   ss1trans CYBSTRNG.d
 -- to get a TRNSTRNG.RES file containing the results of the patches in
 -- textures.txt and papers.txt.
 
@@ -15,7 +15,7 @@ function main(...)
   local res = require "ss1.res"
 
   if select('#', ...) ~= 1 then
-    print('Run me by dragging a ___STRNG.RES file or ___STRNG.D directory onto ss1trans.exe')
+    print('Run me by dragging a ___STRNG.RES file or ___STRNG.d directory onto ss1trans.exe')
     return 1
   end
 
@@ -42,11 +42,11 @@ function main(...)
   }
 
   local input = ...
-  if input:match('%.RES$') then
+  if input:match('%.[Rr][Ee][Ss]$') then
     printf('Loading resource file %s\n', input)
     local rf = assert(res.load(input))
 
-    local dir = input:gsub('%.RES$', '.D')
+    local dir = input:gsub('%.[Rr][Ee][Ss]$', '.d')
     printf('Creating output directory %s\n', dir)
     os.execute('mkdir "%s"' % dir) -- HACK HACK HACK
 
@@ -67,12 +67,14 @@ function main(...)
     printf('Finishing trnstrng.txt\n')
     fd:printf("save 'TRNSTRNG.RES'\n")
     fd:close()
-  else
+  elseif input:match('%.d$') then
     printf('Reading %s/trnstrng.txt and generating new res file\n', input)
     _DIR = input
     fn = assert(loadfile(input .. '/trnstrng.txt'))
     setfenv(fn, loader_environment)
     fn()
+  else
+    print('Run me by dragging a ___STRNG.RES file or ___STRNG.d directory onto ss1trans.exe')
   end
 end
 
