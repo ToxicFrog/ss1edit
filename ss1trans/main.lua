@@ -89,10 +89,18 @@ if love then
       -- this means argv[1] is the name of the love archive, not the name of the res file
       table.remove(argv, 1)
     end
-    main(unpack(argv))
-    print('Done! Press enter...')
-    io.read()
-    os.exit(0)
+    local success,err = xpcall(main, debug.traceback, unpack(argv))
+    if success then
+      print('Done! Press enter...')
+      io.read()
+      os.exit(0)
+    else
+      print(err)
+      print('An error occurred. Please report this as a bug.')
+      print('Press enter...')
+      io.read()
+      os.exit(1)
+    end
   end
 else
   return main(...)
