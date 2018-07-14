@@ -47,7 +47,7 @@ end
 function repack.log(rf, log)
   -- Similar to paper, but we have more metadata to worry about.
   local data = {
-    rf:read(log.resid)[0], -- metadata; unchanged from original
+    [0] = rf:read(log.resid)[0], -- metadata; unchanged from original
     log.title, log.sender, log.subject;
   }
   for _,line in ipairs(log.verbose) do
@@ -58,6 +58,7 @@ function repack.log(rf, log)
     table.insert(data, line)
   end
   table.insert(data, '')
-  end
+  rf:write(log.resid, data)
+end
 
 return repack
