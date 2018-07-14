@@ -15,23 +15,23 @@ function main(...)
   local res = require "ss1.res"
 
   if select('#', ...) ~= 1 then
-    print('Run me by dragging a ___STRNG.RES or ___strng.txt file onto ss1trans.exe')
+    print('Run me by dragging a ___STRNG.RES file or ___STRNG.D directory onto ss1trans.exe')
     return 1
   end
 
-  local _RF
+  local _RF,_DIR
   local loader_environment = {
     load = function(path)
-      printf('Loading resource file %s...\n', path)
+      printf('Loading resource file %s\n', path)
       _RF = assert(res.load(path))
     end;
     save = function(path)
-      printf('Saving resource file %s...\n', path)
+      printf('Saving resource file %s\n', path)
       _RF:save(path)
     end;
     patch = function(path)
-      printf('Applying patch %s...\n', path)
-      local fn = assert(loadfile(path))
+      printf('Applying patch %s\n', path)
+      local fn = assert(loadfile(_DIR .. '/' .. path))
       local env = {}
       for k,v in pairs(require 'repack') do
         env[k] = function(data) return v(_RF, data) end
@@ -43,9 +43,18 @@ function main(...)
 
   local input = ...
   if input:match('%.RES$') then
-    printf('Loading resource file %s...\n', input)
+    printf('Loading resource file %s\n', input)
     local rf = assert(res.load(input))
-    local fd = assert(io.open('trnstrng.txt', 'w'))
+
+    local dir = input:gsub('%.RES$', '.D')
+    printf('Creating output directory %s\n', dir)
+    if love then
+      love.filesystem.createDirectory(dir)
+    else
+      os.execute('mkdir -p "%s"' % dir) -- HACK HACK HACK
+    end
+
+    local fd = assert(io.open(dir .. '/trnstrng.txt', 'w'))
 
     fd:printf('-- edit this file to control the patch process:\n')
     fd:printf('-- which file is used as a basis (load)\n')
@@ -54,17 +63,18 @@ function main(...)
     fd:printf('load %q\n', input)
 
     for _,file in ipairs { 'textures', 'papers', 'logs', 'objects' } do
-      printf('Extracting %s...\n', file)
-      io.writefile(file .. '.txt', require(file)(rf))
+      printf('Extracting %s\n', file)
+      io.writefile(dir .. '/' .. file .. '.txt', require(file)(rf))
       fd:printf("patch '%s.txt'\n", file)
     end
 
-    printf('Finishing trnstrng.txt...\n')
+    printf('Finishing trnstrng.txt\n')
     fd:printf("save 'TRNSTRNG.RES'\n")
     fd:close()
   else
-    printf('Reading %s and generating new res file...\n', input)
-    fn = assert(loadfile(input))
+    printf('Reading %s/trnstrng.txt and generating new res file\n', input)
+    _DIR = input
+    fn = assert(loadfile(input .. '/trnstrng.txt'))
     setfenv(fn, loader_environment)
     fn()
   end
@@ -77,6 +87,7 @@ if love then
   function love.load(argv)
     love.filesystem.setRequirePath(package.path)
     print('argv:', unpack(argv))
+    print('pwd:', love.filesystem.getWorkingDirectory())
     if argv[1] and argv[1]:match('%.love$') then
       -- we were invoked as `love ss1trans.love CYBSTRNG.RES` or similar
       -- this means argv[1] is the name of the love archive, not the name of the res file
