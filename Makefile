@@ -1,6 +1,14 @@
 SRCS=$(shell find . -name "*.lua")
 
-all: maps/map.html maps/ss1maps.zip maps/*.js
+default:
+	@echo "Use 'make mapviewer|ss1trans|all'"
+
+all: mapviewer ss1trans
+
+ss1trans:
+	${MAKE} -C build ss1trans-win64.zip
+
+mapviewer: maps/map.html maps/ss1maps.zip maps/*.js
 
 maps/{0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15}.js: bin/map ARCHIVE.RES map/template.js
 	bin/map --res ARCHIVE.RES --prefix maps
@@ -18,3 +26,5 @@ map: $(SRCS)
 # much, much faster. You will of course have to provide your own ARCHIVE.DAT.
 ARCHIVE.RES: ARCHIVE.DAT
 	./res --decompress --res ARCHIVE.DAT -o ARCHIVE.RES
+
+.PHONY: ss1trans mapviewer all
