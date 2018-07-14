@@ -48,11 +48,7 @@ function main(...)
 
     local dir = input:gsub('%.RES$', '.D')
     printf('Creating output directory %s\n', dir)
-    if love then
-      love.filesystem.createDirectory(dir)
-    else
-      os.execute('mkdir -p "%s"' % dir) -- HACK HACK HACK
-    end
+    os.execute('mkdir "%s"' % dir) -- HACK HACK HACK
 
     local fd = assert(io.open(dir .. '/trnstrng.txt', 'w'))
 
