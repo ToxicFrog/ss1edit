@@ -14,8 +14,7 @@ local PAPER_TEMPLATE = [[
 -- %s
 paper {
   resid = %d;
-%s
-}
+%s}
 
 ]]
 

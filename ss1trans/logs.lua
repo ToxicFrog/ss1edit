@@ -32,11 +32,9 @@ log {
   sender = %q;
   subject = %q;
   verbose = {
-%s
-  };
+%s};
   terse = {
-%s
-  };
+%s};
 }
 
 ]]
