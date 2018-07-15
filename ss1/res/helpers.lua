@@ -50,9 +50,12 @@ function helpers.readonly(t)
   return setmetatable(t, mt)
 end
 
+local cp437 = require 'ss1.res.cp437'
+
 -- Called just after :read to turn the data into something the caller can more
 -- easily digest. Eventually this might convert image formats, sound formats,
--- etc; at the moment it just strips null termination from strings.
+-- etc; at the moment it just strips null termination from strings and converts
+-- them from cp437 to utf8.
 function helpers.postprocess(meta, data)
   if meta.typename ~= 'string' then
     return data
@@ -61,25 +64,26 @@ function helpers.postprocess(meta, data)
       -- postprocess is called on the copy of the data we're going to return to
       -- the caller, not the original data in the res file, so it's safe to
       -- mutate here.
-      data[k] = v:gsub('%z$', '')
+      data[k] = cp437.CP437toUTF8(v:gsub('%z$', ''))
     end
     return data
   else
-    return (data:gsub('%z$', ''))
+    return cp437.CP437toUTF8(data:gsub('%z$', ''))
   end
 end
 
 -- Called just before :write to turn the data into something that is valid for
--- SS1. At present this just adds null termination to strings.
+-- SS1. At present this just adds null termination to strings and converts them
+-- from utf8 to cp437.
 function helpers.preprocess(meta, data)
   if meta.typename ~= 'string' then
     return data
   elseif meta.compound then
     -- Make a copy, since we don't know if the caller wants to keep it and do
     -- more stuff with it.
-    return table.mapv(data, f'x => x .. "\0"')
+    return table.mapv(data, function(s) return cp437.UTF8toCP437(s)..'\0' end)
   else
-    return data .. '\0'
+    return cp437.UTF8toCP437(data) .. '\0'
   end
 end
 
