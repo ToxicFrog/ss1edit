@@ -15,7 +15,7 @@ lovec.exe blank.zip: love-11.1-win64.zip
 	rm -rf love-11.1.0-win64
 	touch lovec.exe  # make sure it has a more recent timestamp than the source zip!
 
-ss1trans.love: ../ss1trans/*.lua
+ss1trans.love: $(shell find -L ../ss1trans/ -name '*.lua')
 	rm -f ss1trans.love
 	cd ../ss1trans && zip -r ../build/ss1trans.love ./
 
