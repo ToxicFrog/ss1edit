@@ -1,4 +1,4 @@
-#!/usr/bin/env lua5.2
+#!/usr/bin/env luajit
 -- :mode=lua: --
 
 package.path = package.path .. ";lib/?.lua;lib/?/init.lua"
@@ -186,20 +186,21 @@ local function drawObjects(map)
 end
 
 local function main(...)
-  local opts = flags.parse(...)
+  flag = flags.parse({...})
   local levels = flag.levels
   local prefix = flag.prefix
   local index = {}
 
   if flag.help then
-    return flags.help()
+    print(flags.help())
+    return
   end
 
-  print("Loading templates...")
+  print("Loading templates from %s/template.{html,js}..." % prefix)
   local html = io.readfile("%s/template.html" % prefix)
   local js = io.readfile("%s/template.js" % prefix)
 
-  print("Loading ARCHIVE.DAT...")
+  print("Loading %s..." % flags.require 'res')
   local rf = assert(res.load(flags.require "res"))
 
   io.write("Processing levels:")
